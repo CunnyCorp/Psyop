@@ -186,7 +186,6 @@ public class Liberty implements ModInitializer {
         new Sprint().load();
         new SpinBot().load();
         new ElytraPause().load();
-        new LongJump().load();
 
         new BrandSpoof().load();
         new DetachMouse().load();

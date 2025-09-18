@@ -7,6 +7,7 @@ import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.EntityListSetting;
+import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.PacketUtils;
@@ -25,48 +26,13 @@ import java.util.Comparator;
 import java.util.List;
 
 public class KillAura extends Module {
-    public final GroupedSettings delayGroup = addGroup(new GroupedSettings("delays", "Attack delays."));
-    public final IntSetting minDelay =
-            new IntSetting.Builder()
-                    .name("min-delay")
-                    .description("The minimum delay per attack")
-                    .defaultTo(10)
-                    .range(0, 40)
-                    .addTo(delayGroup);
-    public final IntSetting delayMinVariance =
-            new IntSetting.Builder()
-                    .name("min-variance")
-                    .description("Minimum variance in delays.")
-                    .defaultTo(0)
-                    .range(0, 40)
-                    .addTo(delayGroup);
-    public final IntSetting delayMaxVariance =
-            new IntSetting.Builder()
-                    .name("max-variance")
-                    .description("Maximum variance in delays, min variance + max variance.")
-                    .defaultTo(5)
-                    .range(0, 40)
-                    .addTo(delayGroup);
-    public final GroupedSettings rotationGroup = addGroup(new GroupedSettings("rotations", "Changes to rotations for various anti-cheats."));
-    public final BoolSetting rotate =
-            new BoolSetting.Builder()
-                    .name("rotate")
-                    .description("Look at entities when you attack them.")
-                    .defaultTo(false)
-                    .addTo(rotationGroup);
-    public final BoolSetting grimRotate =
-            new BoolSetting.Builder()
-                    .name("grim-rotate")
-                    .description("Bypasses base-grim configs.")
-                    .defaultTo(false)
-                    .addTo(rotationGroup);
-    public final IntSetting rotationHold =
-            new IntSetting.Builder()
-                    .name("rotation-hold")
-                    .description("How long to hold rotations for.")
-                    .defaultTo(7)
-                    .range(1, 15)
-                    .addTo(delayGroup);
+    public final FloatSetting reach =
+            new FloatSetting.Builder()
+                    .name("reach")
+                    .description("How far you can hit entities.")
+                    .defaultTo(5f)
+                    .range(1.5f, 5f)
+                    .addTo(coreGroup);
     public final GroupedSettings checksGroup = addGroup(new GroupedSettings("checks", "Checks to run on entities before attacking."));
     public final EntityListSetting entityTypes =
             new EntityListSetting.Builder()
@@ -145,22 +111,6 @@ public class KillAura extends Module {
             return;
         }
 
-        if (attackNextTick) {
-            if (lastEntity != null) {
-                PacketUtils.send(
-                        ServerboundInteractPacket.createAttackPacket(
-                                lastEntity, MC.player.isShiftKeyDown()));
-                if (!MC.player.swinging) {
-                    PacketUtils.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
-                }
-
-                rotate(lastEntity);
-            }
-
-            attackNextTick = false;
-            return;
-        }
-
         List<Entity> entities = filterEntities();
 
         if (entities.isEmpty()) {
@@ -175,23 +125,8 @@ public class KillAura extends Module {
     protected void attackEntity(Entity entity) {
         assert MC.player != null;
         MC.player.resetAttackStrengthTicker();
-        delay += minDelay.get() + 1;
-        delay += (delayMaxVariance.get() != 0 ?
-                Liberty.RANDOM.nextInt(
-                        delayMinVariance.get(),
-                        delayMinVariance.get() + delayMaxVariance.get())
-                : delayMinVariance.get());
 
         lastEntity = entity;
-
-        if (rotate.get()) {
-            rotate(entity);
-
-            if (grimRotate.get()) {
-                attackNextTick = true;
-                holdRotFor = rotationHold.get();
-            }
-        }
 
         if (!attackNextTick) {
             PacketUtils.send(
@@ -221,6 +156,10 @@ public class KillAura extends Module {
 
         for (Entity entity : getNearbyEntitiesRaw()) {
             if (!entityTypes.value().contains(entity.getType())) {
+                continue;
+            }
+
+            if (MC.player.getEyePosition().distanceTo(entity.position()) > reach.get()) {
                 continue;
             }
 
@@ -281,6 +220,6 @@ public class KillAura extends Module {
             return new ArrayList<>();
         }
 
-        return MC.player.level().getEntities(MC.player, new AABB(MC.player.getX() + 5, MC.player.getY() + 5, MC.player.getZ() + 5, MC.player.getX() - 5, MC.player.getY() - 5, MC.player.getZ() - 5));
+        return MC.player.level().getEntities(MC.player, new AABB(MC.player.getX() + 9, MC.player.getY() + 9, MC.player.getZ() + 9, MC.player.getX() - 9, MC.player.getY() - 9, MC.player.getZ() - 9));
     }
 }

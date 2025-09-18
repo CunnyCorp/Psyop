@@ -1,7 +1,6 @@
 package monster.psyop.client.mixin;
 
 import monster.psyop.client.Liberty;
-import monster.psyop.client.impl.modules.movement.LongJump;
 import monster.psyop.client.impl.modules.movement.PlayerTimer;
 import monster.psyop.client.impl.modules.render.Chams;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -63,6 +62,10 @@ public class ClientLevelMixin {
             if (Liberty.MODULES.isActive(PlayerTimer.class)) {
                 PlayerTimer module = Liberty.MODULES.get(PlayerTimer.class);
 
+                if (module.whileJumping.get() && (!MC.options.keyJump.isDown() || MC.player.onGround())) {
+                    return;
+                }
+
                 for (int i = 0; i <= module.multiplier.get(); i++) {
                     MC.player.tick();
                 }
@@ -73,16 +76,6 @@ public class ClientLevelMixin {
                     }
 
                     PlayerTimer.lastBurst = module.burstDelay.get();
-                }
-            }
-
-            if (Liberty.MODULES.isActive(LongJump.class)) {
-                if (LongJump.queuedRuns != 0) {
-                    for (int i = 0; i < LongJump.queuedRuns; i++) {
-                        MC.player.tick();
-                    }
-
-                    LongJump.queuedRuns = 0;
                 }
             }
         }
