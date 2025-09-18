@@ -1,0 +1,103 @@
+//file:noinspection GroovyAccessibility
+plugins {
+    id 'fabric-loom' version '1.11-SNAPSHOT'
+    id 'maven-publish'
+    id "io.freefair.lombok" version "8.11"
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+configurations {
+    implementation.extendsFrom(api)
+    shadow.extendsFrom(api)
+}
+
+repositories {
+    mavenCentral()
+
+    maven { url 'https://jitpack.io' }
+
+    maven {
+        url "https://cursemaven.com"
+    }
+
+    maven {
+        name = "Meteor Dev Releases"
+        url = "https://maven.meteordev.org/releases"
+    }
+
+    maven {
+        name = "Meteor Dev Snapshots"
+        url = "https://maven.meteordev.org/snapshots"
+    }
+}
+
+dependencies {
+    // Minecraft
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+
+    // Fabric
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Mods
+    modImplementation "curse.maven:litematica-${project.litematica_id}:${project.litematica_version}"
+    modImplementation "meteordevelopment:meteor-client:${project.meteor_version}"
+    modImplementation "curse.maven:cobblemon-687131:6021010"
+    modImplementation "meteordevelopment:baritone:${project.minecraft_version}-SNAPSHOT"
+    
+    // ImGui
+    shadow "io.github.spair:imgui-java-binding:${project.imgui_version}"
+    shadow "io.github.spair:imgui-java-lwjgl3:${project.imgui_version}"
+    shadow "io.github.spair:imgui-java-natives-windows-ft:${project.imgui_version}"
+    shadow "io.github.spair:imgui-java-natives-linux-ft:${project.imgui_version}"
+    shadow "io.github.spair:imgui-java-natives-macos-ft:${project.imgui_version}"
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/psyop.accesswidener")
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    dependencies {
+        exclude(dependency('org.lwjgl:lwjgl.*'))
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+def targetJavaVersion = 17
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release = targetJavaVersion as Integer
+    }
+}
+
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+
+    archivesBaseName = project.archives_base_name
+
+    withSourcesJar()
+}
+
+remapJar {
+    dependsOn shadowJar
+    inputFile.set(shadowJar.archiveFile)
+}
+

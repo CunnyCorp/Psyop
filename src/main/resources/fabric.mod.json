@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "shondo",
+  "version": "${version}",
+  "name": "liberty",
+  "description": "Liberty for all of anarchy!.",
+  "authors": [
+    "Rosa1n"
+  ],
+  "contact": {
+    "email": "big@psyop.monster"
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "monster.psyop.liberty.Liberty"
+    ]
+  },
+  "accessWidener": "psyop.accesswidener",
+  "mixins": [
+    "minecraft_shondo.mixins.json",
+    "litematica_shondo.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": ">=1.21.8"
+  }
+}

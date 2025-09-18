@@ -1,0 +1,43 @@
+accessWidener	v2	named
+
+accessible field    net/minecraft/network/Connection channel Lio/netty/channel/Channel;
+
+accessible field    net/minecraft/world/item/Item builtInRegistryHolder Lnet/minecraft/core/Holder$Reference;
+
+accessible method   net/minecraft/server/network/ServerGamePacketListenerImpl isChatMessageIllegal (Ljava/lang/String;)Z
+
+accessible method   net/minecraft/world/entity/Entity calculateViewVector (FF)Lnet/minecraft/world/phys/Vec3;
+
+accessible field    net/minecraft/world/entity/LivingEntity jumping Z
+
+accessible field    net/minecraft/client/Minecraft pendingConnection Lnet/minecraft/network/Connection;
+
+accessible class    net/minecraft/client/multiplayer/ClientChunkCache$Storage
+
+accessible method   net/minecraft/network/protocol/game/ServerboundInteractPacket <init> (IZLnet/minecraft/network/protocol/game/ServerboundInteractPacket$Action;)V
+accessible field    net/minecraft/network/protocol/game/ServerboundInteractPacket entityId I
+accessible field    net/minecraft/network/protocol/game/ServerboundInteractPacket action Lnet/minecraft/network/protocol/game/ServerboundInteractPacket$Action;
+
+accessible method net/minecraft/client/player/LocalPlayer sendPosition ()V
+
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAction
+accessible method net/minecraft/network/protocol/game/ServerboundInteractPacket$InteractionAction <init> (Lnet/minecraft/world/InteractionHand;)V
+accessible method net/minecraft/network/protocol/game/ServerboundInteractPacket$Action getType ()Lnet/minecraft/network/protocol/game/ServerboundInteractPacket$ActionType;
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$ActionType
+
+accessible method net/minecraft/client/Minecraft continueAttack (Z)V
+accessible method net/minecraft/client/Minecraft startAttack ()Z
+
+accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyDelay I
+
+mutable field net/minecraft/world/phys/Vec3 x D
+mutable field net/minecraft/world/phys/Vec3 y D
+mutable field net/minecraft/world/phys/Vec3 z D
+
+mutable field net/minecraft/network/protocol/game/ClientboundSetEntityMotionPacket xa I
+mutable field net/minecraft/network/protocol/game/ClientboundSetEntityMotionPacket ya I
+mutable field net/minecraft/network/protocol/game/ClientboundSetEntityMotionPacket za I
+
+accessible field net/minecraft/world/entity/LivingEntity noJumpDelay I
+
+accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyProgress F

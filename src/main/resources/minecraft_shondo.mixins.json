@@ -1,0 +1,40 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "monster.psyop.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BlockLightEngineMixin",
+    "ClientConfigurationPacketListenerImplMixin",
+    "ConnectionMixin",
+    "EntityMixin",
+    "FishingHookMixin",
+    "IClipContext",
+    "LivingEntityMixin",
+    "ServerGamePacketListenerImplMixin",
+    "anti_detection.TranslatableContentsMixin"
+  ],
+  "client": [
+    "BlockEntityRenderDispatcherMixin",
+    "BookEditScreenMixin",
+    "ChatComponentMixin",
+    "ClientChunkCacheMixin",
+    "ClientLevelMixin",
+    "ClientPacketListenerMixin",
+    "EntityRendererMixin",
+    "FogRendererMixin",
+    "GameRendererMixin",
+    "ItemInHandRendererMixin",
+    "ItemRendererMixin",
+    "KeyboardHandlerMixin",
+    "LevelRendererMixin",
+    "LightTextureMixin",
+    "LocalPlayerMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
+    "TextFieldHelperMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
