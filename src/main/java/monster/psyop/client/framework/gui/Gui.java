@@ -39,6 +39,7 @@ public class Gui extends RenderProxy {
     private static final float WATERMARK_SCALE = 0.43f;
     private static int WATERMARK_ORIGINAL_WIDTH = 0;
     private static int WATERMARK_ORIGINAL_HEIGHT = 0;
+    private static long lastGlorpUpdate = 0;
     private static final List<Glorp> GLORPS = new ArrayList<>();
     private static boolean isGlorp = false;
 
@@ -121,8 +122,15 @@ public class Gui extends RenderProxy {
 
         if (IS_LOADED.get()) {
             if (isGlorp && !GLORPS.isEmpty()) {
+                long deltaTime = System.currentTimeMillis() - lastGlorpUpdate;
+
                 for (Glorp glorp : GLORPS) {
-                    glorp.update((int) io.getDisplaySizeX(), (int) io.getDisplaySizeY());
+                    // About 60 fps
+                    if (deltaTime > 17) {
+                        glorp.update((int) io.getDisplaySizeX(), (int) io.getDisplaySizeY());
+                        lastGlorpUpdate = System.currentTimeMillis();
+                    }
+
                     glorp.render();
                 }
             }
@@ -301,8 +309,8 @@ public class Gui extends RenderProxy {
             this.originalWidth = originalWidth;
             this.originalHeight = originalHeight;
             updateSize();
-            this.x = Liberty.RANDOM.nextInt(0, MC.getWindow().getWidth());
-            this.y = Liberty.RANDOM.nextInt(0, MC.getWindow().getHeight());
+            this.x = Liberty.RANDOM.nextInt(20, MC.getWindow().getWidth() - 20);
+            this.y = Liberty.RANDOM.nextInt(20, MC.getWindow().getHeight() - 20);
 
             if (Liberty.RANDOM.nextBoolean()) {
                 this.velocityX *= -1;
@@ -332,12 +340,25 @@ public class Gui extends RenderProxy {
             if (rotation > 360f) rotation -= 360f;
             if (rotation < 0f) rotation += 360f;
 
-            if (x <= 0 || x + width >= screenWidth) {
+            boolean widthChanged = false;
+            boolean heightChanged = false;
+
+            if (x <= 20 || x + width >= screenWidth - 20) {
                 velocityX *= -1;
+                widthChanged = true;
             }
 
-            if (y <= 0 || y + height >= screenHeight) {
+            if (y <= 20 || y + height >= screenHeight - 20) {
                 velocityY *= -1;
+                heightChanged = true;
+            }
+
+            if ((widthChanged || heightChanged) && !(widthChanged && heightChanged) && Liberty.RANDOM.nextBoolean()) {
+                if (widthChanged) {
+                    velocityY *= -1;
+                } else {
+                    velocityX *= -1;
+                }
             }
         }
 
