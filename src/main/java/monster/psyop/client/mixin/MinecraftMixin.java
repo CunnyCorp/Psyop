@@ -6,12 +6,14 @@ import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.impl.modules.misc.NoMiss;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Minecraft.class, priority = 777)
@@ -69,5 +71,16 @@ public class MinecraftMixin {
         if (Psyop.MODULES.isActive(NoMiss.class)) {
             ci.cancel();
         }
+    }
+
+    @Redirect(
+            method = "startUseItem",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
+    public boolean startUseItem(MultiPlayerGameMode instance) {
+        if (Psyop.MODULES.isActive(NoMiss.class)) {
+            return false;
+        }
+
+        return instance.isDestroying();
     }
 }

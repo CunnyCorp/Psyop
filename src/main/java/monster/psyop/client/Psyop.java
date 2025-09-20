@@ -6,18 +6,25 @@ import monster.psyop.client.framework.events.EventHandler;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.framework.gui.hud.features.PositionHud;
 import monster.psyop.client.framework.gui.utility.ColoredText;
-import monster.psyop.client.framework.gui.views.client.*;
+import monster.psyop.client.framework.gui.views.client.ConfigView;
+import monster.psyop.client.framework.gui.views.client.HudView;
+import monster.psyop.client.framework.gui.views.client.ModuleConfigView;
+import monster.psyop.client.framework.gui.views.client.ModulesView;
 import monster.psyop.client.framework.gui.views.features.BookEditorView;
 import monster.psyop.client.framework.gui.views.features.ClientLogView;
 import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
-import monster.psyop.client.impl.modules.combat.*;
+import monster.psyop.client.impl.modules.combat.AntiKb;
+import monster.psyop.client.impl.modules.combat.AttackBurst;
+import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.misc.*;
 import monster.psyop.client.impl.modules.movement.*;
 import monster.psyop.client.impl.modules.render.*;
-import monster.psyop.client.impl.modules.world.*;
+import monster.psyop.client.impl.modules.world.BreakDelay;
+import monster.psyop.client.impl.modules.world.FastBreak;
+import monster.psyop.client.impl.modules.world.SignFucker;
 import monster.psyop.client.impl.modules.world.printer.Printer;
 import monster.psyop.client.plugins.AddonManager;
 import monster.psyop.client.plugins.JavaAddon;
@@ -205,6 +212,7 @@ public class Psyop implements ModInitializer {
         }
 
         new BreakDelay().load();
+        new FastBreak().load();
         new SignFucker().load();
 
         new AntiKb().load();

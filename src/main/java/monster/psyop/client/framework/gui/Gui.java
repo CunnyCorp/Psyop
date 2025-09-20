@@ -1,6 +1,9 @@
 package monster.psyop.client.framework.gui;
 
-import imgui.*;
+import imgui.ImDrawList;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.ImVec2;
 import imgui.flag.ImDrawFlags;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
@@ -143,7 +146,7 @@ public class Gui extends RenderProxy {
         String position = "0, 0, 0 - (0, 0)";
 
         if (MC.player != null) {
-            position = Math.round(MC.player.getX()) + ", " + Math.round(MC.player.getY()) + ", " + Math.round(MC.player.getZ()) + " - (" + Math.round(MC.player.getX() / 8) + ", " +Math.round(MC.player.getZ() / 8) + ")";
+            position = Math.round(MC.player.getX()) + ", " + Math.round(MC.player.getY()) + ", " + Math.round(MC.player.getZ()) + " - (" + Math.round(MC.player.getX() / 8) + ", " + Math.round(MC.player.getZ() / 8) + ")";
         }
 
         float textX = 20f;
@@ -407,8 +410,8 @@ public class Gui extends RenderProxy {
         }
 
         private void updateSize() {
-            this.width = (int)(originalWidth * scale);
-            this.height = (int)(originalHeight * scale);
+            this.width = (int) (originalWidth * scale);
+            this.height = (int) (originalHeight * scale);
         }
 
         public void update(int screenWidth, int screenHeight) {

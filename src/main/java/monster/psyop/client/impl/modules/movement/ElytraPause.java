@@ -50,7 +50,8 @@ public class ElytraPause extends Module {
                     .addTo(coreGroup);
     private final KeybindingSetting controlKey =
             new KeybindingSetting.Builder()
-                    .action(() -> {})
+                    .action(() -> {
+                    })
                     .name("control-key")
                     .description("The key to accelerate or stop depending on further configuration.")
                     .defaultTo(new ImInt(KeyUtils.W))

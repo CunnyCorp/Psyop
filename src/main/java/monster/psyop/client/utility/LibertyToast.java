@@ -4,7 +4,6 @@
 package monster.psyop.client.utility;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -17,7 +16,9 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Environment(value=EnvType.CLIENT)
+import java.util.List;
+
+@Environment(value = EnvType.CLIENT)
 public class LibertyToast implements Toast {
     private static final int BACKGROUND_COLOR = 0xFF1E2F2F;
     private static final int BORDER_COLOR = 0xFF4DB6AC;
@@ -80,9 +81,9 @@ public class LibertyToast implements Toast {
             this.lastChanged = l;
             this.changed = false;
         }
-        double d = (double)this.id.displayTime * toastManager.getNotificationDisplayTimeMultiplier();
+        double d = (double) this.id.displayTime * toastManager.getNotificationDisplayTimeMultiplier();
         long m = l - this.lastChanged;
-        this.wantedVisibility = (double)m < d ? Toast.Visibility.SHOW : Toast.Visibility.HIDE;
+        this.wantedVisibility = (double) m < d ? Toast.Visibility.SHOW : Toast.Visibility.HIDE;
     }
 
     @Override
@@ -178,9 +179,9 @@ public class LibertyToast implements Toast {
 
 
     @Environment(value = EnvType.CLIENT)
-        public record LibertyToastId(long displayTime) {
-            public LibertyToastId() {
-                this(2000L);
-            }
+    public record LibertyToastId(long displayTime) {
+        public LibertyToastId() {
+            this(2000L);
         }
+    }
 }

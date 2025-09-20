@@ -5,12 +5,7 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.impl.events.game.OnPacket;
 import monster.psyop.client.impl.events.game.OnTick;
-import monster.psyop.client.utility.TextUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundPlayerLookAtPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 
 public class AutoWalk extends Module {
     public final BoolSetting autoJump = new BoolSetting.Builder()
@@ -38,7 +33,6 @@ public class AutoWalk extends Module {
     public AutoWalk() {
         super(Categories.MOVEMENT, "auto-walk", "Automatically presses input keys.", AutoWalk::resetKeys, AutoWalk::resetKeys);
     }
-
 
 
     @EventListener
