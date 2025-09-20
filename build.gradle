@@ -44,7 +44,6 @@ dependencies {
 
     // Mods
     modImplementation "curse.maven:litematica-${project.litematica_id}:${project.litematica_version}"
-    modImplementation "meteordevelopment:meteor-client:${project.meteor_version}"
     modImplementation "curse.maven:cobblemon-687131:6021010"
     modImplementation "meteordevelopment:baritone:${project.minecraft_version}-SNAPSHOT"
     

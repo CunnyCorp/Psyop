@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.exploits.LoginFuckery;
 import monster.psyop.client.utility.StringUtils;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
@@ -20,7 +20,7 @@ import java.util.List;
 public class ClientConfigurationPacketListenerImplMixin {
     @Inject(method = "handleSelectKnownPacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
     public void isAcceptingMessages(ClientboundSelectKnownPacks clientboundSelectKnownPacks, CallbackInfo ci) {
-        LoginFuckery module = Liberty.MODULES.get(LoginFuckery.class);
+        LoginFuckery module = Psyop.MODULES.get(LoginFuckery.class);
 
         if (!module.active()) {
             return;

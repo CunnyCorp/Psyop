@@ -41,7 +41,6 @@ public class ElytraPause extends Module {
                     .description("Makes you into a jitter bug.")
                     .defaultTo(false)
                     .addTo(coreGroup);
-
     private final FloatSetting idleRate =
             new FloatSetting.Builder()
                     .name("idle-rate")

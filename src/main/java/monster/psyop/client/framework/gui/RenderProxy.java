@@ -3,10 +3,10 @@ package monster.psyop.client.framework.gui;
 import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.On2DRender;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public abstract class RenderProxy {
     private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
@@ -25,7 +25,7 @@ public abstract class RenderProxy {
         imGuiGlfw.newFrame();
         ImGui.newFrame();
         process();
-        Liberty.EVENT_HANDLER.call(On2DRender.get());
+        Psyop.EVENT_HANDLER.call(On2DRender.get());
         ImGui.render();
         imGuiGl3.renderDrawData(ImGui.getDrawData());
         //GLFW.glfwSwapBuffers(MC.getWindow().getWindow());

@@ -1,7 +1,7 @@
 package monster.psyop.client.mixin;
 
 import imgui.ImGui;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.framework.gui.utility.KeyUtils;
 import monster.psyop.client.framework.modules.Categories;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 @Mixin(value = KeyboardHandler.class, priority = 1)
 public abstract class KeyboardHandlerMixin {
@@ -41,7 +41,7 @@ public abstract class KeyboardHandlerMixin {
 
         int remapped = KeyUtils.getKeyMapFromGlfwCode(key);
 
-        Liberty.debug("Pressed Key: {} - {} - {}", key, remapped, KeyUtils.getTranslation(remapped));
+        Psyop.debug("Pressed Key: {} - {} - {}", key, remapped, KeyUtils.getTranslation(remapped));
 
         if (remapped == -1) {
             return;
@@ -50,14 +50,14 @@ public abstract class KeyboardHandlerMixin {
         ImGui.getIO().setKeysDown(remapped, action == 1 || action == 2);
 
         for (Category category : Categories.INDEX) {
-            for (Module module : Liberty.MODULES.getCategory(category)) {
+            for (Module module : Psyop.MODULES.getCategory(category)) {
                 module.keyPressed(remapped, action);
             }
         }
 
         OnKeyInput event = OnKeyInput.get(remapped, action);
 
-        Liberty.EVENT_HANDLER.call(event);
+        Psyop.EVENT_HANDLER.call(event);
 
         if (event.isCancelled()) {
             ci.cancel();

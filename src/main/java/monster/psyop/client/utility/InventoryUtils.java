@@ -1,6 +1,5 @@
 package monster.psyop.client.utility;
 
-import meteordevelopment.meteorclient.utils.player.SlotUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -13,8 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static meteordevelopment.meteorclient.MeteorClient.mc;
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 /**
  * The type Inv utils.
@@ -89,28 +87,28 @@ public class InventoryUtils {
     }
 
     public static void swapSlot(int i) {
-        assert mc.player != null;
-        mc.player.getInventory().setSelectedSlot(i);
-        mc.player.connection.send(new ServerboundSetCarriedItemPacket(i));
+        assert MC.player != null;
+        MC.player.getInventory().setSelectedSlot(i);
+        MC.player.connection.send(new ServerboundSetCarriedItemPacket(i));
     }
 
     public static void dropSlot(AbstractContainerMenu container, int i, boolean stack) {
-        if (mc.player == null || mc.gameMode == null || i > mc.player.getInventory().getContainerSize() + 16) {
+        if (MC.player == null || MC.gameMode == null || i > MC.player.getInventory().getContainerSize() + 16) {
             return;
         }
 
-        mc.gameMode.handleInventoryMouseClick(container.containerId, i, stack ? 1 : 0, ClickType.THROW, mc.player);
+        MC.gameMode.handleInventoryMouseClick(container.containerId, i, stack ? 1 : 0, ClickType.THROW, MC.player);
     }
 
     public static int findEmptySlotInHotbar(int i) {
-        if (mc.player != null) {
+        if (MC.player != null) {
             for (var ref =
                  new Object() {
                      int i = 0;
                  };
                  ref.i < 9;
                  ref.i++) {
-                if (mc.player.getInventory().getItem(getHotbarOffset() + ref.i).isEmpty()) {
+                if (MC.player.getInventory().getItem(getHotbarOffset() + ref.i).isEmpty()) {
                     return ref.i;
                 }
             }
@@ -119,10 +117,10 @@ public class InventoryUtils {
     }
 
     public static int getInventoryOffset() {
-        assert mc.player != null;
-        return mc.player.containerMenu.slots.size() == 46
-                ? mc.player.containerMenu instanceof CraftingMenu ? 10 : 9
-                : mc.player.containerMenu.slots.size() - 36;
+        assert MC.player != null;
+        return MC.player.containerMenu.slots.size() == 46
+                ? MC.player.containerMenu instanceof CraftingMenu ? 10 : 9
+                : MC.player.containerMenu.slots.size() - 36;
     }
 
     public static int getHotbarOffset() {
@@ -130,51 +128,35 @@ public class InventoryUtils {
     }
 
     public static void swapToHotbar(int slot, int hot) {
-        if (mc.player == null || mc.gameMode == null) {
+        if (MC.player == null || MC.gameMode == null) {
             return;
         }
 
-        mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, slot, hot, ClickType.SWAP, mc.player);
+        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, hot, ClickType.SWAP, MC.player);
     }
 
     public static void placeItem(int slot) {
-        if (mc.player == null || mc.gameMode == null) {
+        if (MC.player == null || MC.gameMode == null) {
             return;
         }
 
-        // This is vanilla functionality.
-        // mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, -999, 0, ClickType.THROW, mc.player);
-        mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, slot, 1, ClickType.PICKUP, mc.player);
+        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, 1, ClickType.PICKUP, MC.player);
     }
 
     public static void pickup(int slot) {
-        if (mc.player == null || mc.gameMode == null) {
+        if (MC.player == null || MC.gameMode == null) {
             return;
         }
 
-        // This is vanilla functionality.
-        // mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, -999, 0, ClickType.THROW, mc.player);
-        mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, slot, 0, ClickType.PICKUP, mc.player);
+        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, 0, ClickType.PICKUP, MC.player);
     }
 
     public static void quickMove(int slot) {
-        if (mc.player == null || mc.gameMode == null) {
+        if (MC.player == null || MC.gameMode == null) {
             return;
         }
 
-        // This is vanilla functionality.
-        // mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, -999, 0, ClickType.THROW, mc.player);
-        mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, slot, 0, ClickType.QUICK_MOVE, mc.player);
-    }
-
-    public static boolean isInventoryFull() {
-        for (int i = SlotUtils.indexToId(SlotUtils.MAIN_START); i < SlotUtils.indexToId(SlotUtils.MAIN_START) + 4 * 9; i++) {
-            if (!mc.player.containerMenu.getSlot(i).hasItem()) {
-                return false;
-            }
-        }
-
-        return true;
+        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, 0, ClickType.QUICK_MOVE, MC.player);
     }
 
     @FunctionalInterface
@@ -242,8 +224,8 @@ public class InventoryUtils {
 
     public static int findMatchingSlot(StackCheck check) {
         int slot = 0;
-        assert mc.player != null;
-        for (ItemStack stack : mc.player.containerMenu.getItems()) {
+        assert MC.player != null;
+        for (ItemStack stack : MC.player.containerMenu.getItems()) {
             if (check.run(stack, slot)) {
                 return slot;
             }

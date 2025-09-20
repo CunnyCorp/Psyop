@@ -1,6 +1,6 @@
 package monster.psyop.client.utility.movement;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
@@ -15,7 +15,7 @@ public class MovementUtils {
      * @param intensity  Movement intensity (0 to 1)
      */
     public static void moveTowards(double xDirection, double zDirection, float intensity) {
-        if (Liberty.MC.player == null) return;
+        if (Psyop.MC.player == null) return;
 
         // Normalize the direction vector
         double length = Math.sqrt(xDirection * xDirection + zDirection * zDirection);
@@ -43,10 +43,10 @@ public class MovementUtils {
      * @param intensity Movement intensity (0 to 1)
      */
     public static void moveTowardsSec(double targetX, double targetZ, float intensity) {
-        if (Liberty.MC.player == null) return;
+        if (Psyop.MC.player == null) return;
 
-        double deltaX = targetX - Liberty.MC.player.getX();
-        double deltaZ = targetZ - Liberty.MC.player.getZ();
+        double deltaX = targetX - Psyop.MC.player.getX();
+        double deltaZ = targetZ - Psyop.MC.player.getZ();
 
         moveTowards(deltaX, deltaZ, intensity);
     }
@@ -69,7 +69,7 @@ public class MovementUtils {
      */
     private static void handleDirectionalInputs(double xMovement, double zMovement) {
         // Get player's look direction for relative movement
-        float yaw = Liberty.MC.player.getYRot();
+        float yaw = Psyop.MC.player.getYRot();
         double radYaw = Math.toRadians(yaw);
 
         // Rotate movement vector to be relative to player's view
@@ -101,32 +101,32 @@ public class MovementUtils {
         // Handle forward/backward movement
         if (absZ > absX) {
             if (relativeZ > MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyUp.setDown(true);
+                Psyop.MC.options.keyUp.setDown(true);
             } else if (relativeZ < -MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyDown.setDown(true);
+                Psyop.MC.options.keyDown.setDown(true);
             }
         }
         // Handle left/right movement
         else {
             if (relativeX > MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyRight.setDown(true);
+                Psyop.MC.options.keyRight.setDown(true);
             } else if (relativeX < -MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyLeft.setDown(true);
+                Psyop.MC.options.keyLeft.setDown(true);
             }
         }
 
         // Handle diagonal movement (both axes significant)
         if (absX > MOVEMENT_THRESHOLD * 0.7 && absZ > MOVEMENT_THRESHOLD * 0.7) {
             if (relativeZ > MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyUp.setDown(true);
+                Psyop.MC.options.keyUp.setDown(true);
             } else if (relativeZ < -MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyDown.setDown(true);
+                Psyop.MC.options.keyDown.setDown(true);
             }
 
             if (relativeX > MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyRight.setDown(true);
+                Psyop.MC.options.keyRight.setDown(true);
             } else if (relativeX < -MOVEMENT_THRESHOLD) {
-                Liberty.MC.options.keyLeft.setDown(true);
+                Psyop.MC.options.keyLeft.setDown(true);
             }
         }
     }
@@ -135,10 +135,10 @@ public class MovementUtils {
      * Resets all movement keys to not pressed
      */
     public static void resetMovement() {
-        Liberty.MC.options.keyUp.setDown(false);
-        Liberty.MC.options.keyDown.setDown(false);
-        Liberty.MC.options.keyLeft.setDown(false);
-        Liberty.MC.options.keyRight.setDown(false);
+        Psyop.MC.options.keyUp.setDown(false);
+        Psyop.MC.options.keyDown.setDown(false);
+        Psyop.MC.options.keyLeft.setDown(false);
+        Psyop.MC.options.keyRight.setDown(false);
     }
 
     /**
@@ -149,7 +149,7 @@ public class MovementUtils {
     public static void strafeLeft(float intensity) {
         resetMovement();
         if (intensity > MOVEMENT_THRESHOLD) {
-            Liberty.MC.options.keyLeft.setDown(true);
+            Psyop.MC.options.keyLeft.setDown(true);
         }
     }
 
@@ -161,7 +161,7 @@ public class MovementUtils {
     public static void strafeRight(float intensity) {
         resetMovement();
         if (intensity > MOVEMENT_THRESHOLD) {
-            Liberty.MC.options.keyRight.setDown(true);
+            Psyop.MC.options.keyRight.setDown(true);
         }
     }
 
@@ -173,7 +173,7 @@ public class MovementUtils {
     public static void moveForward(float intensity) {
         resetMovement();
         if (intensity > MOVEMENT_THRESHOLD) {
-            Liberty.MC.options.keyUp.setDown(true);
+            Psyop.MC.options.keyUp.setDown(true);
         }
     }
 
@@ -185,7 +185,7 @@ public class MovementUtils {
     public static void moveBackward(float intensity) {
         resetMovement();
         if (intensity > MOVEMENT_THRESHOLD) {
-            Liberty.MC.options.keyDown.setDown(true);
+            Psyop.MC.options.keyDown.setDown(true);
         }
     }
 
@@ -198,10 +198,10 @@ public class MovementUtils {
         double x = 0;
         double z = 0;
 
-        if (Liberty.MC.options.keyUp.isDown()) z += 1;
-        if (Liberty.MC.options.keyDown.isDown()) z -= 1;
-        if (Liberty.MC.options.keyLeft.isDown()) x -= 1;
-        if (Liberty.MC.options.keyRight.isDown()) x += 1;
+        if (Psyop.MC.options.keyUp.isDown()) z += 1;
+        if (Psyop.MC.options.keyDown.isDown()) z -= 1;
+        if (Psyop.MC.options.keyLeft.isDown()) x -= 1;
+        if (Psyop.MC.options.keyRight.isDown()) x += 1;
 
         // Normalize if moving diagonally
         double length = Math.sqrt(x * x + z * z);
@@ -219,10 +219,10 @@ public class MovementUtils {
      * @return True if any movement key is pressed
      */
     public static boolean isMoving() {
-        return Liberty.MC.options.keyUp.isDown() ||
-                Liberty.MC.options.keyDown.isDown() ||
-                Liberty.MC.options.keyLeft.isDown() ||
-                Liberty.MC.options.keyRight.isDown();
+        return Psyop.MC.options.keyUp.isDown() ||
+                Psyop.MC.options.keyDown.isDown() ||
+                Psyop.MC.options.keyLeft.isDown() ||
+                Psyop.MC.options.keyRight.isDown();
     }
 
     /**
@@ -231,7 +231,7 @@ public class MovementUtils {
      * @return The cardinal direction the player is facing
      */
     public static Direction getFacingDirection() {
-        float yaw = Liberty.MC.player.getYRot();
+        float yaw = Psyop.MC.player.getYRot();
         yaw = (yaw % 360 + 360) % 360; // Normalize to 0-360
 
         if (yaw >= 315 || yaw < 45) return Direction.SOUTH;

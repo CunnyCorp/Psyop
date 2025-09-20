@@ -1,6 +1,6 @@
 package monster.psyop.client.utility;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ public class FileSystem {
         try {
             Files.write(path, value.getBytes());
         } catch (IOException e) {
-            Liberty.LOG.info(path + " failed to write.", e);
+            Psyop.LOG.info(path + " failed to write.", e);
         }
     }
 
@@ -34,7 +34,7 @@ public class FileSystem {
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
-            Liberty.LOG.info(path + " failed to create directories.", e);
+            Psyop.LOG.info(path + " failed to create directories.", e);
         }
     }
 }

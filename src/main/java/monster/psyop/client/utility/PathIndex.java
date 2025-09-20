@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PathIndex {
-    public static final Path CLIENT = Paths.get(System.getProperty("user.dir")).resolve("shondo");
+    public static final Path CLIENT = Paths.get(System.getProperty("user.dir")).resolve("psyop");
     public static final Path LOGS = CLIENT.resolve("logs");
     public static final Path FONTS = CLIENT.resolve("fonts");
     public static final Path WORLD_SAVE = CLIENT.resolve("world_saving");

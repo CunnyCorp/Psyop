@@ -4,13 +4,13 @@ import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.gui.PersistentGuiSettings;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.utility.StringUtils;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public abstract class HudElement {
     public PersistentGuiSettings settings = new PersistentGuiSettings();
@@ -87,10 +87,10 @@ public abstract class HudElement {
 
     public void populateSettings(Config config) {
         if (config.hudElements.containsKey(name())) {
-            Liberty.log("Loading config for {} Hud Element.", name());
+            Psyop.log("Loading config for {} Hud Element.", name());
             this.settings = config.hudElements.get(name());
         } else {
-            Liberty.warn("Hud Element {} has no config.", name());
+            Psyop.warn("Hud Element {} has no config.", name());
         }
     }
 

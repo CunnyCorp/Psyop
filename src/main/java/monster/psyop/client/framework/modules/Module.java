@@ -5,7 +5,7 @@ import imgui.type.ImInt;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 import lombok.Setter;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.framework.gui.utility.KeyUtils;
 import monster.psyop.client.framework.gui.views.ViewHandler;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Module {
-    protected static final Minecraft MC = Liberty.MC;
+    protected static final Minecraft MC = Psyop.MC;
     protected boolean dev = false;
     public final ImBoolean active = new ImBoolean(false);
     public final Category category;
@@ -69,23 +69,23 @@ public class Module {
     }
 
     protected void enabled() {
-        Liberty.log("Module {} was enabled.", name);
-        Liberty.EVENT_HANDLER.add(this);
+        Psyop.log("Module {} was enabled.", name);
+        Psyop.EVENT_HANDLER.add(this);
         if (onEnabled != null) {
             onEnabled.run();
         }
     }
 
     protected void disabled() {
-        Liberty.log("Module {} was disabled.", name);
-        Liberty.EVENT_HANDLER.remove(this);
+        Psyop.log("Module {} was disabled.", name);
+        Psyop.EVENT_HANDLER.remove(this);
         if (onDisabled != null) {
             onDisabled.run();
         }
     }
 
     public void toggled() {
-        Liberty.log("Module {} was {}", name, this.active.get() ? "enabled." : "disabled.");
+        Psyop.log("Module {} was {}", name, this.active.get() ? "enabled." : "disabled.");
         if (this.active.get()) {
             enabled();
         } else {
@@ -109,15 +109,18 @@ public class Module {
                 disabled();
             }
 
-            MutableComponent component = Component.empty();
-            component.append(Component.literal(label).withStyle(TextUtils.MODULE_NAME_STYLE));
-            component.append(Component.literal(" was ").withStyle(TextUtils.MODULE_INFO_STYLE));
-            component.append(Component.literal(active ? "enabled." : "disabled.").withStyle(TextUtils.MODULE_INFO_SUB_STYLE).withColor(active ? new Color(154, 243, 232, 255).getRGB() : new Color(199, 109, 244, 255).getRGB()));
-            MC.gui.getChat().addMessage(component);
+            if (MC.player != null) {
+                MutableComponent component = Component.empty();
+                component.append(Component.literal(label).withStyle(TextUtils.MODULE_NAME_STYLE));
+                component.append(Component.literal(" was ").withStyle(TextUtils.MODULE_INFO_STYLE));
+                component.append(Component.literal(active ? "enabled." : "disabled.").withStyle(TextUtils.MODULE_INFO_SUB_STYLE).withColor(active ? new Color(154, 243, 232, 255).getRGB() : new Color(199, 109, 244, 255).getRGB()));
 
-            LibertyToast.add(MC.getToastManager(), new LibertyToast.LibertyToastId(), TextUtils.CLIENT_TITLE, component);
+                MC.gui.getChat().addMessage(component);
 
-            Liberty.log("Module {} was {}", name, active ? "enabled." : "disabled.");
+                LibertyToast.add(MC.getToastManager(), new LibertyToast.LibertyToastId(), TextUtils.CLIENT_TITLE, component);
+            }
+
+            Psyop.log("Module {} was {}", name, active ? "enabled." : "disabled.");
         }
 
         this.active.set(active);
@@ -184,6 +187,6 @@ public class Module {
         }
 
         if (dependencies.isEmpty() || dependencies.stream().allMatch(Dependency::isLoaded))
-            Liberty.MODULES.add(this);
+            Psyop.MODULES.add(this);
     }
 }

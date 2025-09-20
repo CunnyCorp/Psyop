@@ -1,6 +1,6 @@
 package monster.psyop.client.plugins;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -25,20 +25,20 @@ public class AddonManager {
     }
 
     public void addEventListener(JavaAddon addon, Object o) {
-        Liberty.EVENT_HANDLER.add(o);
+        Psyop.EVENT_HANDLER.add(o);
         events.computeIfAbsent(addon, v -> new ArrayList<>()).add(o);
     }
 
     public void enableEvents(JavaAddon addon) {
-        for (Object o : events.get(addon)) Liberty.EVENT_HANDLER.enable(o);
+        for (Object o : events.get(addon)) Psyop.EVENT_HANDLER.enable(o);
     }
 
     public void disableEvents(JavaAddon addon) {
-        for (Object o : events.get(addon)) Liberty.EVENT_HANDLER.disable(o);
+        for (Object o : events.get(addon)) Psyop.EVENT_HANDLER.disable(o);
     }
 
     public void removeEvents(JavaAddon addon) {
-        for (Object o : events.get(addon)) Liberty.EVENT_HANDLER.remove(o);
+        for (Object o : events.get(addon)) Psyop.EVENT_HANDLER.remove(o);
     }
 
     public void initialize() {
@@ -46,6 +46,6 @@ public class AddonManager {
 
         FabricLoader.getInstance().invokeEntrypoints(ENTRYPOINT, JavaAddon.class, JavaAddon::onInit);
 
-        Liberty.log("Took {} nanoseconds to init plugins.", System.nanoTime() - ns);
+        Psyop.log("Took {} nanoseconds to init plugins.", System.nanoTime() - ns);
     }
 }

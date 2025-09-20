@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnMove;
 import monster.psyop.client.impl.modules.movement.AntiPush;
 import net.minecraft.world.entity.Entity;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 @Mixin(value = Entity.class, priority = 777)
 public abstract class EntityMixin {
@@ -24,7 +24,7 @@ public abstract class EntityMixin {
             at = @At("HEAD"),
             cancellable = true)
     public void push(double d, double e, double f, CallbackInfo ci) {
-        if (getId() == MC.player.getId() && Liberty.MODULES.isActive(AntiPush.class)) {
+        if (getId() == MC.player.getId() && Psyop.MODULES.isActive(AntiPush.class)) {
             ci.cancel();
         }
     }
@@ -54,9 +54,9 @@ public abstract class EntityMixin {
             at = @At(value = "HEAD"))
     public void onMove(MoverType moverType, Vec3 vec3, CallbackInfo ci) {
         if ((Object) this == MC.player) {
-            Liberty.EVENT_HANDLER.call(OnMove.Player.get(vec3, moverType));
+            Psyop.EVENT_HANDLER.call(OnMove.Player.get(vec3, moverType));
         } else {
-            Liberty.EVENT_HANDLER.call(OnMove.Entity.get(vec3, moverType, (Entity) (Object) this));
+            Psyop.EVENT_HANDLER.call(OnMove.Entity.get(vec3, moverType, (Entity) (Object) this));
         }
     }
 }

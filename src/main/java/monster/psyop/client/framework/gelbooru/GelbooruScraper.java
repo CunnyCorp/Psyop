@@ -2,7 +2,7 @@ package monster.psyop.client.framework.gelbooru;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.utility.FileSystem;
 
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class GelbooruScraper {
         rawTags = str;
         tags = String.join("+", str.split(" ")).toLowerCase();
         if (!newTags.isEmpty()) tags += (tags.isBlank() ? "" : "+") + String.join("+", newTags);
-        Liberty.LOG.info(tags);
+        Psyop.LOG.info(tags);
     }
 
     public void nextPost() {

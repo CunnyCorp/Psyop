@@ -1,6 +1,6 @@
 package monster.psyop.client.impl.modules.world;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -52,7 +52,7 @@ public class SignFucker extends Module {
                 PacketUtils.send(
                         new ServerboundSignUpdatePacket(
                                 hitResult.getBlockPos(),
-                                Liberty.RANDOM.nextBoolean(),
+                                Psyop.RANDOM.nextBoolean(),
                                 StringUtils.randomText(textLength.value().get(), uniChars.get()),
                                 StringUtils.randomText(textLength.value().get(), uniChars.get()),
                                 StringUtils.randomText(textLength.value().get(), uniChars.get()),

@@ -1,6 +1,6 @@
 package monster.psyop.client.utility;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Dependencies;
 import monster.psyop.client.impl.events.game.OnPacket;
@@ -13,8 +13,8 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import java.util.Objects;
 
-import static monster.psyop.client.Liberty.EVENT_HANDLER;
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.EVENT_HANDLER;
+import static monster.psyop.client.Psyop.MC;
 
 public class PacketUtils {
     public static boolean NO_SWING = false;
@@ -29,7 +29,7 @@ public class PacketUtils {
         IS_VFP_LOADED = Dependencies.VFP.isLoaded();
 
         if (IS_VFP_LOADED) {
-            Liberty.warn("VFP is loaded, automatically changing how packets are sent.");
+            Psyop.warn("VFP is loaded, automatically changing how packets are sent.");
         }
 
         EVENT_HANDLER.add(new PacketUtils());
@@ -63,7 +63,7 @@ public class PacketUtils {
     public void onTickPost(OnTick.Post event) {
         if (!wasModified && modifyCurrentTickRots) {
             assert MC.player != null;
-            Liberty.warn("Server wasn't updated on rotations, updating them now.");
+            Psyop.warn("Server wasn't updated on rotations, updating them now.");
             send(new ServerboundMovePlayerPacket.Rot(modifiedYaw, modifiedPitch, MC.player.onGround(), MC.player.horizontalCollision));
             wasModified = false;
         }
@@ -75,7 +75,7 @@ public class PacketUtils {
     public static void send(Packet<?> packet) {
         if (MC.player != null) send(MC.player.connection.getConnection(), packet);
         else if (MC.pendingConnection != null) send(MC.pendingConnection, packet);
-        else Liberty.warn("Go fuck yourself!");
+        else Psyop.warn("Go fuck yourself!");
     }
 
     public static void send(Connection connection, Packet<?> packet) {

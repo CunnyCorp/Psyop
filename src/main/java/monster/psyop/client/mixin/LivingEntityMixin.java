@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.movement.Jumping;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,8 +18,8 @@ public abstract class LivingEntityMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getJumpPower(F)F")
     )
     public float push(LivingEntity instance, float f) {
-        if (Liberty.MODULES.isActive(Jumping.class)) {
-            return getJumpPower(Liberty.MODULES.get(Jumping.class).jumpHeight.get());
+        if (Psyop.MODULES.isActive(Jumping.class)) {
+            return getJumpPower(Psyop.MODULES.get(Jumping.class).jumpHeight.get());
         }
 
         return getJumpPower(f);

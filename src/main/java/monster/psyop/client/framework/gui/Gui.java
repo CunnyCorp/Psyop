@@ -1,9 +1,11 @@
 package monster.psyop.client.framework.gui;
 
 import imgui.*;
+import imgui.flag.ImDrawFlags;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.type.ImBoolean;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.gui.hud.HudHandler;
@@ -12,7 +14,9 @@ import monster.psyop.client.framework.gui.themes.ThemeManager;
 import monster.psyop.client.framework.gui.utility.KeyUtils;
 import monster.psyop.client.framework.gui.views.View;
 import monster.psyop.client.framework.gui.views.ViewHandler;
+import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.game.OnKeyInput;
+import monster.psyop.client.impl.events.game.OnMouseClick;
 import monster.psyop.client.utility.PathIndex;
 import org.lwjgl.opengl.GL11;
 
@@ -26,7 +30,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class Gui extends RenderProxy {
     public static ImBoolean IS_LOADED = new ImBoolean(false);
@@ -36,7 +40,7 @@ public class Gui extends RenderProxy {
     public static ImGuiIO io;
 
     private int WATERMARK_ID = 0;
-    private static final float WATERMARK_SCALE = 0.43f;
+    private static final float WATERMARK_SCALE = 0.18f;
     private static int WATERMARK_ORIGINAL_WIDTH = 0;
     private static int WATERMARK_ORIGINAL_HEIGHT = 0;
     private static long lastGlorpUpdate = 0;
@@ -44,9 +48,20 @@ public class Gui extends RenderProxy {
     private static boolean isGlorp = false;
 
     public void launch() {
-        Liberty.EVENT_HANDLER.add(this);
+        Psyop.EVENT_HANDLER.add(this);
         initialize();
         preRun();
+    }
+
+    @EventListener(inGame = false)
+    public void onClick(OnMouseClick event) {
+        if (event.action != 1) {
+            return;
+        }
+
+        for (Glorp glorp : GLORPS) {
+            //glorp.handleClicked(event.key);
+        }
     }
 
     @EventListener(inGame = false)
@@ -111,7 +126,9 @@ public class Gui extends RenderProxy {
             float scaledWidth = WATERMARK_ORIGINAL_WIDTH * WATERMARK_SCALE;
             float scaledHeight = WATERMARK_ORIGINAL_HEIGHT * WATERMARK_SCALE;
             float padding = 10f;
+            float halfPad = padding / 2;
 
+            drawBackground(halfPad, halfPad, padding + halfPad + scaledWidth, padding + halfPad + scaledHeight);
             drawList.addImage(
                     WATERMARK_ID,
                     padding, padding,
@@ -119,6 +136,20 @@ public class Gui extends RenderProxy {
                     0, 0, 1, 1
             );
         }
+
+        float screenWidth = io.getDisplaySizeX();
+        float screenHeight = io.getDisplaySizeY();
+
+        String position = "0, 0, 0 - (0, 0)";
+
+        if (MC.player != null) {
+            position = Math.round(MC.player.getX()) + ", " + Math.round(MC.player.getY()) + ", " + Math.round(MC.player.getZ()) + " - (" + Math.round(MC.player.getX() / 8) + ", " +Math.round(MC.player.getZ() / 8) + ")";
+        }
+
+        float textX = 20f;
+        float textY = screenHeight - 30f;
+
+        drawString(position, textX, textY, 240f, true);
 
         if (IS_LOADED.get()) {
             if (isGlorp && !GLORPS.isEmpty()) {
@@ -145,10 +176,10 @@ public class Gui extends RenderProxy {
                         if (ImGui.isMouseClicked(2) && ImGui.isItemHovered()) {
                             if (Config.get().guiSettings.consistentViews.contains(view.name())) {
                                 Config.get().guiSettings.consistentViews.remove(view.name());
-                                Liberty.log("Removed view {} from consistency.", view.name());
+                                Psyop.log("Removed view {} from consistency.", view.name());
                             } else {
                                 Config.get().guiSettings.consistentViews.add(view.name());
-                                Liberty.log("Added view {} to be consistent.", view.name());
+                                Psyop.log("Added view {} to be consistent.", view.name());
                             }
                         }
                     }
@@ -186,15 +217,43 @@ public class Gui extends RenderProxy {
         if (!MC.mouseHandler.isMouseGrabbed() && MC.screen == null) MC.mouseHandler.grabMouse();
     }
 
+    public void drawBackground(float x, float y, float width, float height) {
+        ImDrawList drawList = ImGui.getBackgroundDrawList();
+        drawList.addRectFilled(x, y, width, height, new ImColorW(new Color(71, 69, 69, 182)).packed(), 4f, ImDrawFlags.RoundCornersAll);
+        drawList.addRect(x, y, width, height, new ImColorW(new Color(25, 24, 24, 255)).packed(), 4f, ImDrawFlags.RoundCornersAll);
+    }
+
+    public void drawString(String text, float x, float y, float minWidth, boolean withBackground) {
+        ImDrawList drawList = ImGui.getBackgroundDrawList();
+
+        if (withBackground) {
+            ImVec2 textSize = new ImVec2();
+            ImGui.calcTextSize(textSize, text);
+
+            float padding = 10f;
+            float bgX = x - padding;
+            float bgY = y - padding;
+            float bgWidth = Math.max(minWidth, textSize.x + padding * 2);
+            float bgHeight = textSize.y + padding * 2;
+
+            // Draw background first
+            drawBackground(bgX, bgY, bgX + bgWidth, bgY + bgHeight);
+        }
+
+        // Draw the text
+        drawList.addText(x, y, ImGui.getColorU32(ImGuiCol.Text), text);
+    }
+
+
     protected void preRun() {
-        Liberty.LOG.info("Starting GUI");
+        Psyop.LOG.info("Starting GUI");
     }
 
     private int loadTexture(String path) {
         try {
             InputStream is = getClass().getResourceAsStream(path);
             if (is == null) {
-                Liberty.LOG.error("Image not found in resources");
+                Psyop.LOG.error("Image not found in resources");
                 return -1;
             }
 
@@ -237,7 +296,7 @@ public class Gui extends RenderProxy {
 
             return textureId;
         } catch (IOException e) {
-            Liberty.LOG.error("Failed to load texture", e);
+            Psyop.LOG.error("Failed to load texture", e);
             return -1;
         }
     }
@@ -246,7 +305,7 @@ public class Gui extends RenderProxy {
         try {
             InputStream is = getClass().getResourceAsStream("/glorp.png");
             if (is == null) {
-                Liberty.LOG.error("Glorp not found.");
+                Psyop.LOG.error("Glorp not found.");
                 return -1;
             }
 
@@ -288,7 +347,7 @@ public class Gui extends RenderProxy {
 
             return textureId;
         } catch (IOException e) {
-            Liberty.LOG.error("Failed to load DVD logo texture", e);
+            Psyop.LOG.error("Failed to load DVD logo texture", e);
             return -1;
         }
     }
@@ -298,33 +357,53 @@ public class Gui extends RenderProxy {
         private int width, height;
         private final int originalWidth;
         private final int originalHeight;
-        private int velocityX = Liberty.RANDOM.nextInt(1, 4), velocityY = Liberty.RANDOM.nextInt(1, 4);
+        private int velocityX = Psyop.RANDOM.nextInt(1, 4), velocityY = Psyop.RANDOM.nextInt(1, 4);
         private final int textureId;
-        private final float scale = 0.25f;
+        private float scale = 0.25f;
         private float rotation = 0f;
-        private float rotationSpeed = Liberty.RANDOM.nextFloat() * 2f + 1f;
+        private float rotationSpeed = Psyop.RANDOM.nextFloat() * 2f + 1f;
 
         public Glorp(int textureId, int originalWidth, int originalHeight) {
             this.textureId = textureId;
             this.originalWidth = originalWidth;
             this.originalHeight = originalHeight;
             updateSize();
-            this.x = Liberty.RANDOM.nextInt(20, MC.getWindow().getWidth() - 20);
-            this.y = Liberty.RANDOM.nextInt(20, MC.getWindow().getHeight() - 20);
+            this.x = Psyop.RANDOM.nextInt(20, MC.getWindow().getWidth() - 20);
+            this.y = Psyop.RANDOM.nextInt(20, MC.getWindow().getHeight() - 20);
 
-            if (Liberty.RANDOM.nextBoolean()) {
+            if (Psyop.RANDOM.nextBoolean()) {
                 this.velocityX *= -1;
             }
 
-            if (Liberty.RANDOM.nextBoolean()) {
+            if (Psyop.RANDOM.nextBoolean()) {
                 this.velocityY *= -1;
             }
 
-            this.rotation = Liberty.RANDOM.nextFloat() * 360f;
+            this.rotation = Psyop.RANDOM.nextFloat() * 360f;
 
-            if (Liberty.RANDOM.nextBoolean()) {
+            if (Psyop.RANDOM.nextBoolean()) {
                 this.rotationSpeed *= -1;
             }
+        }
+
+        public boolean isMouseOver() {
+            if (ImGui.isMouseHoveringRect(x, y, width, height)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void handleClicked(int key) {
+            if (isMouseOver()) {
+                if (key == 0) {
+                    this.scale = Math.min(1.0f, this.scale + (this.scale * 0.15f));
+                } else if (key == 1) {
+                    this.scale = Math.max(0.075f, this.scale - (this.scale * 0.25f));
+                }
+            }
+
+
         }
 
         private void updateSize() {
@@ -353,7 +432,7 @@ public class Gui extends RenderProxy {
                 heightChanged = true;
             }
 
-            if ((widthChanged || heightChanged) && !(widthChanged && heightChanged) && Liberty.RANDOM.nextBoolean()) {
+            if ((widthChanged || heightChanged) && !(widthChanged && heightChanged) && Psyop.RANDOM.nextBoolean()) {
                 if (widthChanged) {
                     velocityY *= -1;
                 } else {

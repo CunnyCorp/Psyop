@@ -1,7 +1,7 @@
 package monster.psyop.client.mixin;
 
 import io.netty.channel.ChannelFutureListener;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnGameQuit;
 import monster.psyop.client.impl.events.game.OnPacket;
 import monster.psyop.client.utility.PacketUtils;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 @Mixin(value = Connection.class, priority = 99999999)
 public abstract class ConnectionMixin {
@@ -30,7 +30,7 @@ public abstract class ConnectionMixin {
             Packet<T> packet, PacketListener listener, CallbackInfo ci) {
         if (listener instanceof ClientPacketListener) {
             OnPacket.Received event = OnPacket.Received.get(packet);
-            Liberty.EVENT_HANDLER.call(event);
+            Psyop.EVENT_HANDLER.call(event);
 
             if (event.wasModified) {
                 packet.handle((T) listener);
@@ -47,7 +47,7 @@ public abstract class ConnectionMixin {
     @Inject(method = "disconnect*", at = @At("HEAD"), cancellable = true)
     public void disconnect(Component component, CallbackInfo ci) {
         OnGameQuit event = OnGameQuit.get(component);
-        Liberty.EVENT_HANDLER.call(event);
+        Psyop.EVENT_HANDLER.call(event);
         if (event.isCancelled()) {
             ci.cancel();
         }
@@ -62,7 +62,7 @@ public abstract class ConnectionMixin {
             Packet<?> packet, ChannelFutureListener channelFutureListener, CallbackInfo ci) {
         OnPacket.Send event = OnPacket.Send.get(packet);
 
-        Liberty.EVENT_HANDLER.call(event);
+        Psyop.EVENT_HANDLER.call(event);
 
         if (event.isCancelled()) {
             ci.cancel();
@@ -71,7 +71,7 @@ public abstract class ConnectionMixin {
 
         if (MC.player != null && event.wasModified) {
             PacketUtils.send(event.packet());
-            Liberty.EVENT_HANDLER.call(OnPacket.Sent.get(event.packet()));
+            Psyop.EVENT_HANDLER.call(OnPacket.Sent.get(event.packet()));
 
             ci.cancel();
         }
@@ -84,6 +84,6 @@ public abstract class ConnectionMixin {
     )
     public void sendTail(
             Packet<?> packet, ChannelFutureListener channelFutureListener, CallbackInfo ci) {
-        Liberty.EVENT_HANDLER.call(OnPacket.Sent.get(packet));
+        Psyop.EVENT_HANDLER.call(OnPacket.Sent.get(packet));
     }
 }

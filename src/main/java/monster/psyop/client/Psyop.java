@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Liberty implements ModInitializer {
+public class Psyop implements ModInitializer {
     public static final RandomSource RANDOM = RandomSource.create();
     public static final Logger LOG = LoggerFactory.getLogger("Psyop");
     public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
@@ -42,7 +42,7 @@ public class Liberty implements ModInitializer {
     public static final EventHandler EVENT_HANDLER = new EventHandler();
     public static final Modules MODULES = new Modules();
     public static Minecraft MC;
-    public static Liberty INSTANCE;
+    public static Psyop INSTANCE;
     public static Gui GUI;
     public static Config CONFIG;
     public static boolean DEBUGGING = false;
@@ -179,14 +179,18 @@ public class Liberty implements ModInitializer {
         new HoldPackets().load();
 
         new AntiPush().load();
+        new AutoWalk().load();
         new Jumping().load();
         new Phase().load();
         new Sneak().load();
+        new Warp().load();
         new PlayerTimer().load();
         new Sprint().load();
         new SpinBot().load();
         new ElytraPause().load();
 
+        new NoMiss().load();
+        new FastUse().load();
         new BrandSpoof().load();
         new DetachMouse().load();
         new PingSpoof().load();
@@ -210,6 +214,7 @@ public class Liberty implements ModInitializer {
         new BlockLights().load();
         new Chams().load();
         new HandView().load();
+        new HideArmor().load();
         new ItemView().load();
         new WorldView().load();
 
@@ -224,13 +229,13 @@ public class Liberty implements ModInitializer {
                 try {
                     Config.get().populateModule(module);
                 } catch (RuntimeException exception) {
-                    Liberty.LOG.error("The module {} failed to populate configurations.", module.name, exception);
+                    Psyop.LOG.error("The module {} failed to populate configurations.", module.name, exception);
                     Config.get().modules.remove(module.name);
                 }
             }
         }
 
 
-        Liberty.log("Took {} nanoseconds to load.", System.nanoTime() - loadedStart);
+        Psyop.log("Took {} nanoseconds to load.", System.nanoTime() - loadedStart);
     }
 }

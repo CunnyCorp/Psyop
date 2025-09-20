@@ -8,7 +8,7 @@ import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImString;
 import lombok.Getter;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.gui.ModuleConfigSettings;
 import monster.psyop.client.config.gui.PersistentGuiSettings;
@@ -82,7 +82,7 @@ public class ModuleConfigView extends View {
         PersistentGuiSettings settings = Config.get().moduleConfigGui;
 
         if (module == null && !Objects.equals(config.moduleName.get(), "none")) {
-            module = Liberty.MODULES.get(config.moduleName.get());
+            module = Psyop.MODULES.get(config.moduleName.get());
             assert module != null;
         }
 
@@ -312,7 +312,7 @@ public class ModuleConfigView extends View {
                             }
 
                             if (ImGui.smallButton("Reset")) {
-                                Liberty.log("Resetting {} to defaults.", setting.name);
+                                Psyop.log("Resetting {} to defaults.", setting.name);
                                 setting.resetToDefault();
                             }
 

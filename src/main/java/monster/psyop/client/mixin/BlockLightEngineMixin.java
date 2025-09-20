@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.render.BlockLights;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.BlockLightEngine;
@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class BlockLightEngineMixin {
     @Redirect(method = "getEmission", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"))
     private int forceBrightLightmap(BlockState instance) {
-        if (Liberty.MODULES.isActive(BlockLights.class)) {
-            BlockLights module = Liberty.MODULES.get(BlockLights.class);
+        if (Psyop.MODULES.isActive(BlockLights.class)) {
+            BlockLights module = Psyop.MODULES.get(BlockLights.class);
 
             if (module.blockList.value().contains(instance.getBlock())) {
                 return module.light.get();

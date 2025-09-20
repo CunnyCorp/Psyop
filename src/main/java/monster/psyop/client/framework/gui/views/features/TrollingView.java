@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 
 import java.util.Objects;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class TrollingView extends View {
 

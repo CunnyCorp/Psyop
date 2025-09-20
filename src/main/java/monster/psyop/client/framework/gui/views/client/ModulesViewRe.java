@@ -4,7 +4,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiTableFlags;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.gui.PersistentGuiSettings;
 import monster.psyop.client.framework.gui.views.View;
@@ -40,7 +40,7 @@ public class ModulesViewRe extends View {
 
             ImGui.beginTable("##categories", 1, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit);
             for (Category category : Categories.INDEX) {
-                if (Liberty.MODULES.getModules(category).isEmpty()) continue;
+                if (Psyop.MODULES.getModules(category).isEmpty()) continue;
 
                 ImGui.selectable(category.getLabel(), previewCategory == category);
 
@@ -59,7 +59,7 @@ public class ModulesViewRe extends View {
             ImGui.endTable();
 
             if (ImGui.beginChild(previewCategory.name + ":preview")) {
-                for (Iterator<Module> it = Liberty.MODULES.getModules(previewCategory).listIterator();
+                for (Iterator<Module> it = Psyop.MODULES.getModules(previewCategory).listIterator();
                      it.hasNext(); ) {
                     Module module = it.next();
 

@@ -1,6 +1,5 @@
 package monster.psyop.client.impl.modules.world.printer.movesets;
 
-import meteordevelopment.meteorclient.utils.player.Rotations;
 import monster.psyop.client.impl.modules.world.printer.PrinterUtils;
 import monster.psyop.client.utility.RotationUtils;
 import monster.psyop.client.utility.blocks.BlockUtils;
@@ -9,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static meteordevelopment.meteorclient.MeteorClient.mc;
+import static monster.psyop.client.Psyop.MC;
 
 public class AdvancedMove extends DefaultMove {
     private int holdBackTicks = 0;
@@ -21,7 +20,7 @@ public class AdvancedMove extends DefaultMove {
 
     @Override
     public void tick(BlockPos pos) {
-        assert mc.player != null;
+        assert MC.player != null;
         boolean moveForward = true;
         boolean moveBack = false;
         boolean jump = false;
@@ -42,13 +41,13 @@ public class AdvancedMove extends DefaultMove {
         }
 
         if (!holdFurtherLogic) {
-            if (mc.player.onGround()) {
-                int xOffset = mc.player.getMotionDirection().getStepX();
-                int zOffset = mc.player.getMotionDirection().getStepZ();
-                int xOffsetOpp = mc.player.getMotionDirection().getOpposite().getStepX();
-                int zOffsetOpp = mc.player.getMotionDirection().getOpposite().getStepZ();
+            if (MC.player.onGround()) {
+                int xOffset = MC.player.getMotionDirection().getStepX();
+                int zOffset = MC.player.getMotionDirection().getStepZ();
+                int xOffsetOpp = MC.player.getMotionDirection().getOpposite().getStepX();
+                int zOffsetOpp = MC.player.getMotionDirection().getOpposite().getStepZ();
 
-                BlockPos.MutableBlockPos fwBlock = mc.player.getOnPos().mutable();
+                BlockPos.MutableBlockPos fwBlock = MC.player.getOnPos().mutable();
 
                 boolean wouldNotBeSafe = false;
 
@@ -75,7 +74,7 @@ public class AdvancedMove extends DefaultMove {
                 fwBlock.setX(fwBlock.getX() + xOffset);
                 fwBlock.setZ(fwBlock.getZ() + zOffset);
 
-                BlockPos.MutableBlockPos backBlock = mc.player.blockPosition().mutable();
+                BlockPos.MutableBlockPos backBlock = MC.player.blockPosition().mutable();
 
                 backBlock.setX(backBlock.getX() + xOffsetOpp);
                 backBlock.setZ(backBlock.getZ() + zOffsetOpp);
@@ -86,11 +85,11 @@ public class AdvancedMove extends DefaultMove {
                 ffBlock.setY(PrinterUtils.PRINTER.yLevel.get());
                 ffBlock.setX(ffBlock.getZ() + zOffset);
 
-                assert mc.level != null;
-                BlockState fwBlockState = mc.level.getBlockState(fwBlock);
+                assert MC.level != null;
+                BlockState fwBlockState = MC.level.getBlockState(fwBlock);
 
-                if (fwBlockState.getInteractionShape(mc.level, fwBlock).max(Direction.Axis.Y) == 0.5) {
-                    yaw = Mth.wrapDegrees((float) (yaw + (Rotations.getYaw(fwBlock.getBottomCenter()) * 0.3)));
+                if (fwBlockState.getInteractionShape(MC.level, fwBlock).max(Direction.Axis.Y) == 0.5) {
+                    yaw = Mth.wrapDegrees((float) (yaw + (RotationUtils.getYaw(fwBlock.getBottomCenter()) * 0.3)));
                 } else {
                     if (wouldNotBeSafe) {
                         fwBlock.setY(PrinterUtils.PRINTER.yLevel.get());
@@ -104,23 +103,23 @@ public class AdvancedMove extends DefaultMove {
             }
         }
 
-        mc.options.keyUp.setDown(moveForward);
-        mc.options.keyDown.setDown(moveBack);
-        mc.player.setSprinting(sprinting);
-        mc.options.keyJump.setDown(jump);
-        mc.player.setYRot(yaw);
-        mc.player.setXRot(pitch);
+        MC.options.keyUp.setDown(moveForward);
+        MC.options.keyDown.setDown(moveBack);
+        MC.player.setSprinting(sprinting);
+        MC.options.keyJump.setDown(jump);
+        MC.player.setYRot(yaw);
+        MC.player.setXRot(pitch);
     }
 
     @Override
     public void cancel(BlockPos pos) {
-        if (mc.player == null) {
+        if (MC.player == null) {
             return;
         }
 
-        mc.options.keyUp.setDown(false);
-        mc.options.keyDown.setDown(false);
-        mc.options.keyLeft.setDown(false);
-        mc.options.keyRight.setDown(false);
+        MC.options.keyUp.setDown(false);
+        MC.options.keyDown.setDown(false);
+        MC.options.keyLeft.setDown(false);
+        MC.options.keyRight.setDown(false);
     }
 }

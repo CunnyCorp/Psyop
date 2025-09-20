@@ -1,6 +1,6 @@
 package monster.psyop.client.impl.modules.misc.logger;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import net.minecraft.network.protocol.Packet;
 
 public record PacketConversion(ProcessPacket process) {
@@ -8,7 +8,7 @@ public record PacketConversion(ProcessPacket process) {
         try {
             process.run(packet);
         } catch (Exception exception) {
-            Liberty.LOG.error("Unknown exception while trying to log a packet.", exception);
+            Psyop.LOG.error("Unknown exception while trying to log a packet.", exception);
         }
     }
 }

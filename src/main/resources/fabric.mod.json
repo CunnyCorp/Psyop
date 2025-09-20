@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "shondo",
+  "id": "psyop",
   "version": "${version}",
-  "name": "liberty",
-  "description": "Liberty for all of anarchy!.",
+  "name": "Psyop",
+  "description": "Run the psyop.",
   "authors": [
     "Rosa1n"
   ],
@@ -13,13 +13,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "monster.psyop.client.Liberty"
+      "monster.psyop.client.Psyop"
     ]
   },
   "accessWidener": "psyop.accesswidener",
   "mixins": [
-    "minecraft_shondo.mixins.json",
-    "litematica_shondo.mixins.json"
+    "minecraft_psyop.mixins.json",
+    "litematica_psyop.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16.14",

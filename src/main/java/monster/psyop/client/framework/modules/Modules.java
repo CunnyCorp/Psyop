@@ -2,7 +2,7 @@ package monster.psyop.client.framework.modules;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -27,20 +27,20 @@ public class Modules {
 
     public void add(Module... modules) {
         if (modules == null) {
-            Liberty.error("NO ! DUCKS FLIGHTLESS !");
+            Psyop.error("NO ! DUCKS FLIGHTLESS !");
             return;
         }
 
         for (Module module : modules) {
             if (module == null) {
-                Liberty.error("DUCKS CANNOT FLY ! ! !");
+                Psyop.error("DUCKS CANNOT FLY ! ! !");
                 continue;
             }
 
             List<Module> moduleSet = MODULES.get(module.category);
 
             if (moduleSet.contains(module) || NAME_TO_MODULE.containsKey(module.name)) {
-                Liberty.warn("Module {} has a duplicate.", module.name);
+                Psyop.warn("Module {} has a duplicate.", module.name);
                 continue;
             }
 
@@ -48,7 +48,7 @@ public class Modules {
             NAME_TO_MODULE.put(module.name, module);
             CLASS_TO_MODULE.put(module.getClass(), module);
 
-            Liberty.log("Module {} was successfully loaded.", module.name);
+            Psyop.log("Module {} was successfully loaded.", module.name);
 
             module.active(false);
         }

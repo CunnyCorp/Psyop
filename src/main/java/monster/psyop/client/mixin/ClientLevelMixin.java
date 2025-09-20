@@ -1,7 +1,8 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.movement.PlayerTimer;
+import monster.psyop.client.impl.modules.movement.Warp;
 import monster.psyop.client.impl.modules.render.Chams;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -17,14 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 @Mixin(ClientLevel.class)
 public class ClientLevelMixin {
     @Inject(method = "getGloballyRenderedBlockEntities", at = @At("RETURN"), cancellable = true)
     public void modifyGlobalBlockEntities(CallbackInfoReturnable<Set<BlockEntity>> cir) {
-        if (Liberty.MODULES.isActive(Chams.class)) {
-            Chams module = Liberty.MODULES.get(Chams.class);
+        if (Psyop.MODULES.isActive(Chams.class)) {
+            Chams module = Psyop.MODULES.get(Chams.class);
 
             Set<BlockEntity> blockEntities = new HashSet<>();
 
@@ -59,23 +60,31 @@ public class ClientLevelMixin {
         assert MC.player != null;
 
         if (MC.player == entity) {
-            if (Liberty.MODULES.isActive(PlayerTimer.class)) {
-                PlayerTimer module = Liberty.MODULES.get(PlayerTimer.class);
+            if (Psyop.MODULES.isActive(Warp.class)) {
+                Warp module = Psyop.MODULES.get(Warp.class);
 
-                if (module.whileJumping.get() && (!MC.options.keyJump.isDown() || MC.player.onGround())) {
+                if (!MC.options.keyJump.isDown() || MC.player.onGround()) {
                     return;
                 }
+
+                for (int i = 0; i <= module.multiplier.get(); i++) {
+                    if (!module.onlyAir.get() || !MC.player.onGround()) MC.player.tick();
+                }
+            }
+
+            if (Psyop.MODULES.isActive(PlayerTimer.class)) {
+                PlayerTimer module = Psyop.MODULES.get(PlayerTimer.class);
 
                 for (int i = 0; i <= module.multiplier.get(); i++) {
                     MC.player.tick();
                 }
 
-                if (PlayerTimer.lastBurst == 0) {
+                if (module.lastBurst == 0) {
                     for (int i = 0; i < module.burstMultiplier.get(); i++) {
                         MC.player.tick();
                     }
 
-                    PlayerTimer.lastBurst = module.burstDelay.get();
+                    module.lastBurst = module.burstDelay.get();
                 }
             }
         }

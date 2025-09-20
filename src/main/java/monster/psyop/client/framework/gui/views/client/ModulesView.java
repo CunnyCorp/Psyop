@@ -4,7 +4,7 @@ import imgui.ImGui;
 import imgui.ImVec4;
 import imgui.flag.*;
 import imgui.type.ImString;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.gui.PersistentGuiSettings;
 import monster.psyop.client.framework.gui.utility.KeyUtils;
@@ -134,7 +134,7 @@ public class ModulesView extends View {
         }
 
         for (Category category : Categories.INDEX) {
-            if (filterEmptyCategories && Liberty.MODULES.getModules(category).isEmpty()) continue;
+            if (filterEmptyCategories && Psyop.MODULES.getModules(category).isEmpty()) continue;
 
             float categoryHover = categoryHoverAnimations.getOrDefault(category, 0f);
             float categoryActive = categoryActiveAnimations.getOrDefault(category, 0f);
@@ -202,7 +202,7 @@ public class ModulesView extends View {
         List<Module> modules = new ArrayList<>();
         if (searchActive) {
             for (Category cat : Categories.INDEX) {
-                for (Module module : Liberty.MODULES.getModules(cat)) {
+                for (Module module : Psyop.MODULES.getModules(cat)) {
                     boolean matchesName = module.getLabel().toLowerCase().contains(searchText.get().toLowerCase());
                     boolean matchesDescription = searchIncludesDescription &&
                             module.description() != null &&
@@ -214,7 +214,7 @@ public class ModulesView extends View {
                 }
             }
         } else {
-            modules.addAll(Liberty.MODULES.getModules(previewCategory));
+            modules.addAll(Psyop.MODULES.getModules(previewCategory));
         }
 
         for (Module module : modules) {

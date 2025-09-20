@@ -1,6 +1,6 @@
 package monster.psyop.client.impl.modules.combat;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -99,7 +99,7 @@ public class AntiKb extends Module {
                 double zVel = ((packet.getXa() - deltaMovement.z) * horizontalMulti.get()) + deltaMovement.z;
 
                 if (log.get()) {
-                    Liberty.log("KB: {}, {}, {} from {}, {}, {}", xVel, yVel, zVel, packet.getXa(), packet.getYa(), packet.getZa());
+                    Psyop.log("KB: {}, {}, {} from {}, {}, {}", xVel, yVel, zVel, packet.getXa(), packet.getYa(), packet.getZa());
                 }
 
                 MC.player.lerpMotion(xVel, yVel, zVel);

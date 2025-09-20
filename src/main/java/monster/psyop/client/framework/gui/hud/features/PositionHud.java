@@ -1,7 +1,7 @@
 package monster.psyop.client.framework.gui.hud.features;
 
 import imgui.ImGui;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.framework.gui.hud.HudElement;
@@ -71,15 +71,15 @@ public class PositionHud extends HudElement {
         float[] soft = Gui.THEME.getSoftColor();
         float[] harsh = Gui.THEME.getHarshColor();
 
-        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(Liberty.MC.player != null ? Liberty.MC.player.getX() : 749.47));
+        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(Psyop.MC.player != null ? Psyop.MC.player.getX() : 749.47));
         ImGui.sameLine(0);
         ImGui.textColored(harsh[0], harsh[1], harsh[2], harsh[3], ",");
         ImGui.sameLine(0);
-        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(Liberty.MC.player != null ? Liberty.MC.player.getY() : 7.49));
+        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(Psyop.MC.player != null ? Psyop.MC.player.getY() : 7.49));
         ImGui.sameLine(0);
         ImGui.textColored(harsh[0], harsh[1], harsh[2], harsh[3], ",");
         ImGui.sameLine(0);
-        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(Liberty.MC.player != null ? Liberty.MC.player.getZ() : 749.47));
+        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(Psyop.MC.player != null ? Psyop.MC.player.getZ() : 749.47));
     }
 
     private void renderOppPosition() {
@@ -88,11 +88,11 @@ public class PositionHud extends HudElement {
 
         ImGui.textColored(harsh[0], harsh[1], harsh[2], harsh[3], "(");
         ImGui.sameLine(0);
-        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(getOpposite(Liberty.MC.player != null ? Liberty.MC.player.getX() : 749.47)));
+        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(getOpposite(Psyop.MC.player != null ? Psyop.MC.player.getX() : 749.47)));
         ImGui.sameLine(0);
         ImGui.textColored(harsh[0], harsh[1], harsh[2], harsh[3], ",");
         ImGui.sameLine(0);
-        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(getOpposite(Liberty.MC.player != null ? Liberty.MC.player.getZ() : 749.47)));
+        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], numberFormat.format(getOpposite(Psyop.MC.player != null ? Psyop.MC.player.getZ() : 749.47)));
         ImGui.sameLine(0);
         ImGui.textColored(harsh[0], harsh[1], harsh[2], harsh[3], ")");
     }
@@ -128,11 +128,11 @@ public class PositionHud extends HudElement {
         float[] soft = Gui.THEME.getSoftColor();
         float[] harsh = Gui.THEME.getHarshColor();
 
-        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], Liberty.MC.player != null ? parseNamespace(Liberty.MC.player.level().dimensionTypeRegistration().getRegisteredName()) : "Purgatory");
+        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], Psyop.MC.player != null ? parseNamespace(Psyop.MC.player.level().dimensionTypeRegistration().getRegisteredName()) : "Purgatory");
         ImGui.sameLine(0);
         ImGui.textColored(harsh[0], harsh[1], harsh[2], harsh[3], " | ");
         ImGui.sameLine(0);
-        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], Liberty.MC.player != null ? parseNamespace(Liberty.MC.player.level().getBiome(Liberty.MC.player.getOnPos()).getRegisteredName()) : "Uoh");
+        ImGui.textColored(soft[0], soft[1], soft[2], soft[3], Psyop.MC.player != null ? parseNamespace(Psyop.MC.player.level().getBiome(Psyop.MC.player.getOnPos()).getRegisteredName()) : "Uoh");
     }
 
     private String parseNamespace(String namespace) {

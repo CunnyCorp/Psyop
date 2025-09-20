@@ -5,7 +5,7 @@ import baritone.api.IBaritone;
 import baritone.api.pathing.goals.GoalNear;
 import net.minecraft.core.BlockPos;
 
-import static meteordevelopment.meteorclient.MeteorClient.mc;
+import static monster.psyop.client.Psyop.MC;
 
 public class BaritoneMove extends DefaultMove {
     private final IBaritone baritone = BaritoneAPI.getProvider().getPrimaryBaritone();
@@ -24,7 +24,7 @@ public class BaritoneMove extends DefaultMove {
 
     @Override
     public void cancel(BlockPos pos) {
-        if (mc.player == null) {
+        if (MC.player == null) {
             return;
         }
 

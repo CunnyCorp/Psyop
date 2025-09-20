@@ -1,6 +1,6 @@
 package monster.psyop.client.impl.events.game;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.Event;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
@@ -26,7 +26,7 @@ public abstract class OnMove extends Event {
             INSTANCE.refresh();
             INSTANCE.vec3 = vec3;
             INSTANCE.moverType = moverType;
-            INSTANCE.entity = Liberty.MC.player;
+            INSTANCE.entity = Psyop.MC.player;
             return INSTANCE;
         }
     }

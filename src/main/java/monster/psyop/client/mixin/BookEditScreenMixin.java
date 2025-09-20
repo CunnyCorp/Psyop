@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnBookSign;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
 import org.spongepowered.asm.mixin.Final;
@@ -21,7 +21,7 @@ public abstract class BookEditScreenMixin {
     @Inject(method = "saveChanges", at = @At("HEAD"), cancellable = true)
     public void onSaveChanges(CallbackInfo ci) {
         OnBookSign event = OnBookSign.get(pages);
-        Liberty.EVENT_HANDLER.call(event);
+        Psyop.EVENT_HANDLER.call(event);
         if (event.stop) {
             ci.cancel();
         } else {

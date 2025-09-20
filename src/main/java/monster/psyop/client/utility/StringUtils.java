@@ -2,7 +2,7 @@ package monster.psyop.client.utility;
 
 import it.unimi.dsi.fastutil.objects.ObjectBigArrayBigList;
 import lombok.SneakyThrows;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.gui.CoreConfig;
 
 import java.nio.file.Files;
@@ -150,7 +150,7 @@ public class StringUtils {
     }
 
     public StringUtils() {
-        Liberty.EXECUTOR.submit(StringUtils::loadWordList);
+        Psyop.EXECUTOR.submit(StringUtils::loadWordList);
         owoMap.putAll(Map.of("hacker", "haxor", "hacks", "hax", "ch", "chw", "Qu", "Qwu", "qu", "qwu"));
         owoMap.putAll(
                 Map.of(
@@ -202,7 +202,7 @@ public class StringUtils {
 
         if (Files.exists(WORDS) && Files.isRegularFile(WORDS)) {
             wordList.addAll(Files.readAllLines(WORDS));
-            Liberty.LOG.info("Word List took {}ns to load", System.nanoTime() - worldListStart);
+            Psyop.LOG.info("Word List took {}ns to load", System.nanoTime() - worldListStart);
         } else {
             Files.write(
                     WORDS,

@@ -2,7 +2,7 @@ package monster.psyop.client.impl.modules.world.printer;
 
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.McDataCache;
 import monster.psyop.client.utility.PacketUtils;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static meteordevelopment.meteorclient.MeteorClient.mc;
+import static monster.psyop.client.Psyop.MC;
 
 public class PlacingManager {
     public static List<int[]> chunkScanningOrder = new ArrayList<>();
@@ -41,7 +41,7 @@ public class PlacingManager {
     public static boolean sortPlaceableBlocks() {
         WorldSchematic worldSchematic = SchematicWorldHandler.getSchematicWorld();
 
-        if (worldSchematic == null || mc.level == null || mc.player == null) {
+        if (worldSchematic == null || MC.level == null || MC.player == null) {
             return false;
         }
 
@@ -49,7 +49,7 @@ public class PlacingManager {
 
         if (!PrinterUtils.PRINTER.anchor.get()) {
             for (int i = -PrinterUtils.PRINTER.placeRadius.get(); i <= PrinterUtils.PRINTER.placeRadius.get(); i++) {
-                printerBlocks.addAll(getBlocksForYLevel(worldSchematic, mc.player.getBlockY() + i));
+                printerBlocks.addAll(getBlocksForYLevel(worldSchematic, MC.player.getBlockY() + i));
             }
         } else {
             printerBlocks.addAll(getBlocksForYLevel(worldSchematic, PrinterUtils.PRINTER.yLevel.get()));
@@ -79,27 +79,27 @@ public class PlacingManager {
     }
 
     private static List<int[]> getBlocksForYLevel(WorldSchematic worldSchematic, int y) {
-        if (worldSchematic == null || mc.level == null || mc.player == null) {
+        if (worldSchematic == null || MC.level == null || MC.player == null) {
             return new ArrayList<>();
         }
 
         BlockPos.MutableBlockPos srcBlock = new BlockPos.MutableBlockPos(0, 0, 0);
 
-        return BlockUtils.findNearBlocksByRadius(mc.player.blockPosition().mutable().setY(srcBlock.getY() + y),
+        return BlockUtils.findNearBlocksByRadius(MC.player.blockPosition().mutable().setY(srcBlock.getY() + y),
                 PrinterUtils.PRINTER.placeRadius.get(),
                 (pos) -> {
                     srcBlock.set(pos[0], pos[1], pos[2]);
 
-                    BlockState blockState = mc.level.getBlockState(srcBlock);
+                    BlockState blockState = MC.level.getBlockState(srcBlock);
 
                     BlockState required = worldSchematic.getBlockState(srcBlock);
 
-                    if (mc.player.blockPosition().closerThan(srcBlock, PrinterUtils.PRINTER.placeRadius.get())
+                    if (MC.player.blockPosition().closerThan(srcBlock, PrinterUtils.PRINTER.placeRadius.get())
                             && blockState.canBeReplaced()
                             && !required.isAir()
                             && blockState.getBlock() != required.getBlock()
                             && (BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get()) || (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get(), true)))
-                            && !mc.player
+                            && !MC.player
                             .getBoundingBox()
                             .intersects(Vec3.atLowerCornerOf(srcBlock), Vec3.atLowerCornerOf(srcBlock).add(1, 1, 1))) {
 
@@ -116,13 +116,13 @@ public class PlacingManager {
     }
 
     protected static List<int[]> getBlocksForYLevelBasic(WorldSchematic worldSchematic, int y) {
-        if (worldSchematic == null || mc.level == null || mc.player == null) {
+        if (worldSchematic == null || MC.level == null || MC.player == null) {
             return new ArrayList<>();
         }
 
         BlockPos.MutableBlockPos srcBlock = new BlockPos.MutableBlockPos(0, 0, 0);
 
-        srcBlock.set(mc.player.blockPosition());
+        srcBlock.set(MC.player.blockPosition());
 
         srcBlock.setY(srcBlock.getY() + y);
 
@@ -131,16 +131,16 @@ public class PlacingManager {
                 (pos) -> {
                     srcBlock.set(pos[0], pos[1], pos[2]);
 
-                    BlockState blockState = mc.level.getBlockState(srcBlock);
+                    BlockState blockState = MC.level.getBlockState(srcBlock);
 
                     BlockState required = worldSchematic.getBlockState(srcBlock);
 
-                    return mc.player.blockPosition().closerThan(srcBlock, PrinterUtils.PRINTER.placeRadius.get())
+                    return MC.player.blockPosition().closerThan(srcBlock, PrinterUtils.PRINTER.placeRadius.get())
                             && blockState.canBeReplaced()
                             && !required.isAir()
                             && blockState.getBlock() != required.getBlock()
                             && (BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get()) || (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get(), true)))
-                            && !mc.player
+                            && !MC.player
                             .getBoundingBox()
                             .intersects(new Vec3(srcBlock), new Vec3(srcBlock).add(1, 1, 1));
                 }
@@ -148,7 +148,7 @@ public class PlacingManager {
     }
 
     public static void tryPlacingBlocks() {
-        if (mc.player == null || mc.gameMode == null) {
+        if (MC.player == null || MC.gameMode == null) {
             return;
         }
 
@@ -198,10 +198,10 @@ public class PlacingManager {
             }
 
             if ((!PrinterUtils.PRINTER.strictNoColor.get()
-                    && McDataCache.getColor(mc.player.getMainHandItem())
+                    && McDataCache.getColor(MC.player.getMainHandItem())
                     != McDataCache.getColor(item)
                     || (PrinterUtils.PRINTER.strictNoColor.get()
-                    && mc.player.getMainHandItem().getItem() != item))
+                    && MC.player.getMainHandItem().getItem() != item))
                     && hand != InteractionHand.OFF_HAND) {
                 PrinterUtils.PRINTER.swapTimer = PrinterUtils.PRINTER.swapDelay.get();
 
@@ -221,7 +221,7 @@ public class PlacingManager {
             } else if (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(blockPos, PrinterUtils.PRINTER.placeDistance.get(), true)) {
                 waterPlaceable.add(pos);
             } else {
-                Liberty.log("Failed liquid place check & Air: {} - {}", blockPos.toShortString(), BlockUtils.shouldLiquidPlace(blockPos));
+                Psyop.log("Failed liquid place check & Air: {} - {}", blockPos.toShortString(), BlockUtils.shouldLiquidPlace(blockPos));
             }
         }
 
@@ -266,10 +266,10 @@ public class PlacingManager {
             }
 
             if ((!PrinterUtils.PRINTER.strictNoColor.get()
-                    && McDataCache.getColor(mc.player.getMainHandItem())
+                    && McDataCache.getColor(MC.player.getMainHandItem())
                     != McDataCache.getColor(item)
                     || (PrinterUtils.PRINTER.strictNoColor.get()
-                    && mc.player.getMainHandItem().getItem() != item))
+                    && MC.player.getMainHandItem().getItem() != item))
                     && hand != InteractionHand.OFF_HAND) {
                 PrinterUtils.PRINTER.swapTimer = PrinterUtils.PRINTER.swapDelay.get();
                 if (slot < 9) {
@@ -288,7 +288,7 @@ public class PlacingManager {
             PrinterUtils.PRINTER.lastLiquidPlace = PrinterUtils.PRINTER.liquidPlaceTimeout.get();
 
             BlockPos lowerPos = blockPos.relative(Direction.DOWN);
-            Liberty.log("Trying to liquid place on {}", lowerPos.toShortString());
+            Psyop.log("Trying to liquid place on {}", lowerPos.toShortString());
 
             PacketUtils.send(new ServerboundUseItemOnPacket(hand, new BlockHitResult(BlockUtils.clickOffset(lowerPos, Direction.UP), Direction.UP, lowerPos, false), 0));
             PrinterUtils.placeBlock(hand, slot, blockPos);

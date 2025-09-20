@@ -27,6 +27,8 @@ accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$A
 
 accessible method net/minecraft/client/Minecraft continueAttack (Z)V
 accessible method net/minecraft/client/Minecraft startAttack ()Z
+accessible field net/minecraft/client/Minecraft rightClickDelay I
+accessible field net/minecraft/client/Minecraft missTime I
 
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyDelay I
 

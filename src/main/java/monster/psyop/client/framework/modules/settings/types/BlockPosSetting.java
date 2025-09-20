@@ -7,7 +7,7 @@ import monster.psyop.client.framework.modules.settings.Setting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImBlockPos;
 import net.minecraft.core.BlockPos;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class BlockPosSetting extends Setting<BlockPosSetting, ImBlockPos> {
     public BlockPosSetting(BlockPosSetting.Builder builder) {

@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.render.WorldView;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.LightTexture;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class LightTextureMixin {
     @Redirect(method = "updateLightTexture", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/DimensionSpecialEffects;forceBrightLightmap()Z"))
     private boolean forceBrightLightmap(DimensionSpecialEffects instance) {
-        if (Liberty.MODULES.isActive(WorldView.class)) {
-            WorldView module = Liberty.MODULES.get(WorldView.class);
+        if (Psyop.MODULES.isActive(WorldView.class)) {
+            WorldView module = Psyop.MODULES.get(WorldView.class);
 
             if (module.forceLightMap.get()) {
                 return true;
@@ -25,8 +25,8 @@ public class LightTextureMixin {
 
     @Redirect(method = "updateLightTexture", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/DimensionType;ambientLight()F"))
     private float ambientLight(DimensionType instance) {
-        if (Liberty.MODULES.isActive(WorldView.class)) {
-            WorldView module = Liberty.MODULES.get(WorldView.class);
+        if (Psyop.MODULES.isActive(WorldView.class)) {
+            WorldView module = Psyop.MODULES.get(WorldView.class);
 
             if (module.modifyAmbient.get()) {
                 return module.ambientLight.get();

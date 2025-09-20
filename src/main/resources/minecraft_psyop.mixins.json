@@ -11,8 +11,8 @@
     "FishingHookMixin",
     "IClipContext",
     "LivingEntityMixin",
-    "ServerGamePacketListenerImplMixin",
-    "anti_detection.TranslatableContentsMixin"
+    "PlayerMixin",
+    "ServerGamePacketListenerImplMixin"
   ],
   "client": [
     "BlockEntityRenderDispatcherMixin",
@@ -22,6 +22,7 @@
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "EntityRendererMixin",
+    "EquipmentLayerRendererMixin",
     "FogRendererMixin",
     "GameRendererMixin",
     "ItemInHandRendererMixin",

@@ -3,7 +3,6 @@ package monster.psyop.client.impl.modules.movement;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
-import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.impl.events.game.OnTick;
 
@@ -20,20 +19,20 @@ public class PlayerTimer extends Module {
             .addTo(coreGroup);
     public IntSetting burstDelay = new IntSetting.Builder()
             .name("burst-delay")
-            .description("How long to wait between bursts in ticks.")
-            .defaultTo(5)
-            .range(0, 20)
-            .addTo(coreGroup);
-    public BoolSetting whileJumping = new BoolSetting.Builder()
-            .name("while-jumping")
-            .description("Only activates if you are in the air and holding the jump button.")
-            .defaultTo(false)
+            .description("How long between bursts.")
+            .defaultTo(10)
             .addTo(coreGroup);
 
-    public static int queuedRuns = 0;
-    public static int lastBurst = 5;
+    public int lastBurst = 0;
 
     public PlayerTimer() {
         super(Categories.MOVEMENT, "player-timer", "Sends multiple player ticks.");
+    }
+
+    @EventListener
+    public void onTick(OnTick.Post event) {
+        if (lastBurst > 1) {
+            lastBurst--;
+        }
     }
 }

@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.render.WorldView;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -45,8 +45,8 @@ public abstract class EntityRendererMixin {
 
     @Inject(method = "getSkyLightLevel", at = @At(value = "HEAD"), cancellable = true)
     public void getSkyLightLevel(Entity entity, BlockPos blockPos, CallbackInfoReturnable<Integer> cir) {
-        if (Liberty.MODULES.isActive(WorldView.class)) {
-            WorldView module = Liberty.MODULES.get(WorldView.class);
+        if (Psyop.MODULES.isActive(WorldView.class)) {
+            WorldView module = Psyop.MODULES.get(WorldView.class);
 
             if (module.modifyEntityLighting.get()) {
                 cir.setReturnValue(module.entityLight.get());
@@ -56,8 +56,8 @@ public abstract class EntityRendererMixin {
 
     @Inject(method = "getBlockLightLevel", at = @At(value = "HEAD"), cancellable = true)
     public void getBlockLightLevel(Entity entity, BlockPos blockPos, CallbackInfoReturnable<Integer> cir) {
-        if (Liberty.MODULES.isActive(WorldView.class)) {
-            WorldView module = Liberty.MODULES.get(WorldView.class);
+        if (Psyop.MODULES.isActive(WorldView.class)) {
+            WorldView module = Psyop.MODULES.get(WorldView.class);
 
             if (module.modifyEntityLighting.get()) {
                 cir.setReturnValue(module.entityLight.get());

@@ -1,6 +1,6 @@
 package monster.psyop.client.utility;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.blocks.BlockUtils;
@@ -15,14 +15,14 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Predicate;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class WorldUtils {
     private int checkTimer = 0;
     private static DimensionType dimensionType;
 
     public static void load() {
-        Liberty.EVENT_HANDLER.add(new WorldUtils());
+        Psyop.EVENT_HANDLER.add(new WorldUtils());
 
 
     }

@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class EntityUtils {
     private static final List<EntityType<?>> collidable =

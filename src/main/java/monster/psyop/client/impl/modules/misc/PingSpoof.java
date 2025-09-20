@@ -1,6 +1,6 @@
 package monster.psyop.client.impl.modules.misc;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -95,8 +95,8 @@ public class PingSpoof extends Module {
     private int getDelay() {
         int i = ping.get();
 
-        if (jitter.get() && Liberty.RANDOM.nextFloat() <= jitterChance.get()) {
-            i += Liberty.RANDOM.nextInt(jitterMin.get(), jitterMin.get() + jitterMax.get());
+        if (jitter.get() && Psyop.RANDOM.nextFloat() <= jitterChance.get()) {
+            i += Psyop.RANDOM.nextInt(jitterMin.get(), jitterMin.get() + jitterMax.get());
         }
 
         return i;

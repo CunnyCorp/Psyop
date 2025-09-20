@@ -9,10 +9,17 @@ import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.StringListSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
 import net.minecraft.network.protocol.game.ClientboundDeleteChatPacket;
+import net.minecraft.network.protocol.game.ServerboundChatPacket;
 
 import java.util.List;
 
 public class BetterChat extends Module {
+    public final BoolSetting noChatLoss =
+            new BoolSetting.Builder()
+                    .name("no-chat-loss")
+                    .description("Keeps chat messages in the chat history.")
+                    .defaultTo(true)
+                    .addTo(coreGroup);
     public final GroupedSettings filterGroup = addGroup(new GroupedSettings("filter", "Filters for messages"));
     public final BoolSetting selfFilter =
             new BoolSetting.Builder()
@@ -34,8 +41,23 @@ public class BetterChat extends Module {
 
     @EventListener
     public void onPacketReceived(OnPacket.Received event) {
-        if (event.packet() instanceof ClientboundDeleteChatPacket) {
+        if (noChatLoss.get() && event.packet() instanceof ClientboundDeleteChatPacket) {
             event.cancel();
+        }
+    }
+
+    @EventListener
+    public void onPacketSend(OnPacket.Send event) {
+        if (selfFilter.get() && event.packet() instanceof ServerboundChatPacket packet) {
+            String msg = packet.message();
+
+            for (ImString str : selfFilterText.value()) {
+                if (msg.contains(str.get())) {
+                    msg = msg.replaceAll(str.get(), "*".repeat(str.get().length()));
+                }
+            }
+
+            event.packet(new ServerboundChatPacket(msg, packet.timeStamp(), packet.salt(), packet.signature(), packet.lastSeenMessages()));
         }
     }
 }

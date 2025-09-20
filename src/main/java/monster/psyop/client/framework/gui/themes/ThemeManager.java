@@ -1,7 +1,7 @@
 package monster.psyop.client.framework.gui.themes;
 
 import imgui.ImGui;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 
 import java.io.IOException;
@@ -52,13 +52,13 @@ public class ThemeManager {
 
                                 ImGui.getStyle().setColor(STRING_TO_COL.get(assignmentPart), new ImColorW(color).packed());
                             } else {
-                                Liberty.warn("The color {} was not defined.", assignmentPart);
+                                Psyop.warn("The color {} was not defined.", assignmentPart);
                             }
                         }
                     }
                 }
             } catch (IOException e) {
-                Liberty.LOG.error("An exception occurred loading a theme.", e);
+                Psyop.LOG.error("An exception occurred loading a theme.", e);
             }
         }
     }

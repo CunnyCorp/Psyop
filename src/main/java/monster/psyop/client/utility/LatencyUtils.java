@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
 
 import java.util.ArrayList;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class LatencyUtils {
     public static final ArrayList<Integer> pings = new ArrayList<>();

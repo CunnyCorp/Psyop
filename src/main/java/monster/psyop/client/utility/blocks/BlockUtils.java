@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class BlockUtils {
     public static final Comparator<int[]> CLOSEST_XZ_COMPARATOR =

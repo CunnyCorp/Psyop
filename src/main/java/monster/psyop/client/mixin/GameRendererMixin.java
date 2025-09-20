@@ -1,7 +1,7 @@
 package monster.psyop.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.render.HandView;
 import net.minecraft.client.DeltaTracker;
@@ -21,8 +21,8 @@ public abstract class GameRendererMixin {
     // HandView - NoHurt
     @Redirect(method = "renderItemInHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;bobHurt(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
     public void renderItemInHand0(GameRenderer instance, PoseStack poseStack, float f) {
-        if (Liberty.MODULES.isActive(HandView.class)) {
-            HandView module = Liberty.MODULES.get(HandView.class);
+        if (Psyop.MODULES.isActive(HandView.class)) {
+            HandView module = Psyop.MODULES.get(HandView.class);
 
             if (module.noHurt.get()) {
                 return;
@@ -34,7 +34,7 @@ public abstract class GameRendererMixin {
 
     @Inject(method = "renderLevel", at = @At(value = "TAIL", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;renderScreenEffect(ZF)V"))
     public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
-        Liberty.EVENT_HANDLER.call(OnRender.get());
+        Psyop.EVENT_HANDLER.call(OnRender.get());
 
     }
 }

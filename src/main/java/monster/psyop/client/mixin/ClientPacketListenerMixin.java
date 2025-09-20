@@ -1,6 +1,6 @@
 package monster.psyop.client.mixin;
 
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnBlockModify;
 import monster.psyop.client.impl.modules.combat.AntiKb;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -16,7 +16,7 @@ public abstract class ClientPacketListenerMixin {
     @Inject(method = "handleBlockUpdate", at = @At("TAIL"))
     public void handleBlockUpdate(
             ClientboundBlockUpdatePacket clientboundBlockUpdatePacket, CallbackInfo ci) {
-        Liberty.EVENT_HANDLER.call(
+        Psyop.EVENT_HANDLER.call(
                 OnBlockModify.Update.get(
                         clientboundBlockUpdatePacket.getBlockState(), clientboundBlockUpdatePacket.getPos()));
     }
@@ -24,8 +24,8 @@ public abstract class ClientPacketListenerMixin {
     @Inject(method = "handleExplosion", at = @At(value = "INVOKE", target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V"), cancellable = true)
     public void handleExplosion(
             ClientboundExplodePacket clientboundExplodePacket, CallbackInfo ci) {
-        if (Liberty.MODULES.isActive(AntiKb.class)) {
-            AntiKb module = Liberty.MODULES.get(AntiKb.class);
+        if (Psyop.MODULES.isActive(AntiKb.class)) {
+            AntiKb module = Psyop.MODULES.get(AntiKb.class);
 
             if (module.skipCaring() || !module.explosions.get()) {
                 return;

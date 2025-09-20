@@ -1,9 +1,10 @@
 package monster.psyop.client.impl.modules.world.printer.movesets;
 
-import meteordevelopment.meteorclient.utils.player.Rotations;
+import monster.psyop.client.utility.RotationUtils;
 import net.minecraft.core.BlockPos;
 
-import static meteordevelopment.meteorclient.MeteorClient.mc;
+import static monster.psyop.client.Psyop.MC;
+
 
 public class VanillaMove extends DefaultMove {
     @Override
@@ -13,27 +14,27 @@ public class VanillaMove extends DefaultMove {
 
     @Override
     public void tick(BlockPos pos) {
-        assert mc.player != null;
+        assert MC.player != null;
 
-        mc.player.setYRot((float) Rotations.getYaw(pos));
+        MC.player.setYRot((float) RotationUtils.getYaw(pos));
 
-        mc.options.keyDown.setDown(false);
-        mc.options.keyLeft.setDown(false);
-        mc.options.keyRight.setDown(false);
+        MC.options.keyDown.setDown(false);
+        MC.options.keyLeft.setDown(false);
+        MC.options.keyRight.setDown(false);
 
-        if (!mc.options.keyUp.isDown()) {
-            mc.options.keyUp.setDown(true);
+        if (!MC.options.keyUp.isDown()) {
+            MC.options.keyUp.setDown(true);
         }
     }
 
     @Override
     public void cancel(BlockPos pos) {
-        if (mc.player == null) {
+        if (MC.player == null) {
             return;
         }
 
-        if (mc.options.keyUp.isDown()) {
-            mc.options.keyUp.setDown(false);
+        if (MC.options.keyUp.isDown()) {
+            MC.options.keyUp.setDown(false);
         }
     }
 }

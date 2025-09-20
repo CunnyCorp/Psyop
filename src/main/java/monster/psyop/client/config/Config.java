@@ -8,7 +8,7 @@ import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 import imgui.type.ImString;
 import lombok.SneakyThrows;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.adapters.*;
 import monster.psyop.client.config.gui.*;
 import monster.psyop.client.config.modules.ModuleConfig;
@@ -36,7 +36,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.util.*;
 
-import static monster.psyop.client.Liberty.MC;
+import static monster.psyop.client.Psyop.MC;
 
 public class Config {
     private static final ExclusionStrategy excludeOptional =
@@ -101,7 +101,7 @@ public class Config {
 
     public void save() {
         for (Category category : Categories.INDEX) {
-            for (Module module : Liberty.MODULES.getModules(category)) {
+            for (Module module : Psyop.MODULES.getModules(category)) {
                 ModuleConfig moduleConfig = new ModuleConfig();
                 moduleConfig.active = module.active;
                 for (GroupedSettings sg : module.getGroupedSettings()) {
@@ -110,15 +110,15 @@ public class Config {
                         Setting<?, ?> setting = it.next();
 
                         if (setting.settingConfig == null || setting.value() == null) {
-                            Liberty.debug("{} in {} had a null setting config", setting.name, module.name);
+                            Psyop.debug("{} in {} had a null setting config", setting.name, module.name);
                             continue;
                         }
 
                         try {
                             setting.settingConfig.fromSetting(setting);
-                            Liberty.debug("Setting {} to {} in module {}", setting.name, setting.value().toString(), module.name);
+                            Psyop.debug("Setting {} to {} in module {}", setting.name, setting.value().toString(), module.name);
                         } catch (Exception e) {
-                            Liberty.debug(e.getLocalizedMessage(), e);
+                            Psyop.debug(e.getLocalizedMessage(), e);
                         }
 
                         groupConfig.settings.put(setting.name, setting.settingConfig);
@@ -150,8 +150,8 @@ public class Config {
 
             FileSystem.write(PathIndex.CONFIG, toJson);
         } catch (Exception e) {
-            Liberty.error("Config failed to load: {}", e.getLocalizedMessage());
-            Liberty.LOG.info("Config failed to load.", e);
+            Psyop.error("Config failed to load: {}", e.getLocalizedMessage());
+            Psyop.LOG.info("Config failed to load.", e);
         }
     }
 
@@ -163,8 +163,8 @@ public class Config {
                 Config.INSTANCE = GSON.fromJson(file, Config.class);
             } catch (Exception e) {
                 FileSystem.write(PathIndex.CLIENT.resolve(file.hashCode() + "_c.json"), file);
-                Liberty.LOG.info("Config Failed to load.", e);
-                Liberty.error("Config failed to load, reset.", e);
+                Psyop.LOG.info("Config Failed to load.", e);
+                Psyop.error("Config failed to load, reset.", e);
                 Config.INSTANCE = this;
             }
         } else {
@@ -174,12 +174,12 @@ public class Config {
 
     public void populateModule(Module module) {
         if (modules.containsKey(module.name)) {
-            Liberty.debug("Loading config for {}", module.name);
+            Psyop.debug("Loading config for {}", module.name);
             ModuleConfig moduleConfig = get().modules.get(module.name);
             module.active(moduleConfig.active.get());
             for (GroupedSettings sg : module.getGroupedSettings()) {
                 if (!moduleConfig.groups.containsKey(sg.name)) {
-                    Liberty.debug("Skipping {} in {]", sg.name, module.name);
+                    Psyop.debug("Skipping {} in {]", sg.name, module.name);
                     continue;
                 }
 
@@ -187,7 +187,7 @@ public class Config {
                     Setting<?, ?> setting = it.next();
 
                     if (!moduleConfig.groups.get(sg.name).settings.containsKey(setting.name)) {
-                        Liberty.debug("Skipping {} - {} in {}", sg.name, setting.name, module.name);
+                        Psyop.debug("Skipping {} - {} in {}", sg.name, setting.name, module.name);
                         continue;
                     }
 
@@ -195,13 +195,13 @@ public class Config {
 
                     setting.settingConfig.populateSetting(setting);
 
-                    Liberty.debug("Setting {} in {} to {}", setting.name, module.name, setting.value().toString());
+                    Psyop.debug("Setting {} in {} to {}", setting.name, module.name, setting.value().toString());
 
                     setting.onPopulated();
                 }
             }
         } else {
-            Liberty.log("Module {} does not exist?", module.name);
+            Psyop.log("Module {} does not exist?", module.name);
         }
     }
 

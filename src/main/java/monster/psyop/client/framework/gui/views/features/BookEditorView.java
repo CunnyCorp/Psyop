@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import imgui.ImGui;
 import imgui.flag.*;
 import imgui.type.ImString;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.gui.BookSettings;
 import monster.psyop.client.config.gui.PersistentGuiSettings;
@@ -22,8 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static monster.psyop.client.Liberty.MC;
-import static monster.psyop.client.Liberty.RANDOM;
+import static monster.psyop.client.Psyop.MC;
+import static monster.psyop.client.Psyop.RANDOM;
 
 public class BookEditorView extends View {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -256,7 +256,7 @@ public class BookEditorView extends View {
                                 autoSignTask, config.signDelay.get(), config.signDelay.get(), TimeUnit.SECONDS);
                         addStatusMessage("Auto-sign timer started (" + config.signDelay.get() + "s)");
                     } catch (Exception e) {
-                        Liberty.error("Exception in Build Timer: " + e.getLocalizedMessage());
+                        Psyop.error("Exception in Build Timer: " + e.getLocalizedMessage());
                         addStatusMessage("Error starting timer: " + e.getMessage());
                     }
                 }
@@ -286,7 +286,7 @@ public class BookEditorView extends View {
     private void addStatusMessage(String message) {
         statusMessage.set(message);
         statusMessageTime = System.currentTimeMillis();
-        Liberty.log("[Book Editor] " + message);
+        Psyop.log("[Book Editor] " + message);
     }
 
     public void signBook() {
@@ -324,12 +324,12 @@ public class BookEditorView extends View {
         }
 
         if (MC.player == null) {
-            Liberty.warn("Player is null, not in-game.");
+            Psyop.warn("Player is null, not in-game.");
             addStatusMessage("Error: Not in-game");
         } else {
             int slot = InventoryUtils.findAnySlot(Items.WRITABLE_BOOK);
             if (slot == -1) {
-                Liberty.warn("No books found.");
+                Psyop.warn("No books found.");
                 addStatusMessage("Error: No writable books found");
                 return;
             }
@@ -341,7 +341,7 @@ public class BookEditorView extends View {
             }
 
             if (slot == -1) {
-                Liberty.warn("Book was not found.");
+                Psyop.warn("Book was not found.");
                 addStatusMessage("Error: Book not found");
                 return;
             } else if (InventoryUtils.isHotbarSlot(slot)) {
@@ -377,12 +377,12 @@ public class BookEditorView extends View {
         }
 
         if (MC.player == null) {
-            Liberty.warn("Player is null, not in-game.");
+            Psyop.warn("Player is null, not in-game.");
             addStatusMessage("Error: Not in-game");
         } else {
             int slot = InventoryUtils.findAnySlot(Items.WRITABLE_BOOK);
             if (slot == -1) {
-                Liberty.warn("No books found.");
+                Psyop.warn("No books found.");
                 addStatusMessage("Error: No writable books found");
                 return;
             }
@@ -394,7 +394,7 @@ public class BookEditorView extends View {
             }
 
             if (slot == -1) {
-                Liberty.warn("Book was not found.");
+                Psyop.warn("Book was not found.");
                 addStatusMessage("Error: Book not found");
                 return;
             } else if (InventoryUtils.isHotbarSlot(slot)) {
@@ -410,12 +410,12 @@ public class BookEditorView extends View {
 
     public void writeEmptyBook() {
         if (MC.player == null) {
-            Liberty.warn("Player is null, not in-game.");
+            Psyop.warn("Player is null, not in-game.");
             addStatusMessage("Error: Not in-game");
         } else {
             int slot = InventoryUtils.findAnySlot(Items.WRITABLE_BOOK);
             if (slot == -1) {
-                Liberty.warn("No books found.");
+                Psyop.warn("No books found.");
                 addStatusMessage("Error: No writable books found");
                 return;
             }
@@ -427,7 +427,7 @@ public class BookEditorView extends View {
             }
 
             if (slot == -1) {
-                Liberty.warn("Book was not found.");
+                Psyop.warn("Book was not found.");
                 addStatusMessage("Error: Book not found");
                 return;
             } else if (InventoryUtils.isHotbarSlot(slot)) {
@@ -443,12 +443,12 @@ public class BookEditorView extends View {
 
     public void signEmptyBook() {
         if (MC.player == null) {
-            Liberty.warn("Player is null, not in-game.");
+            Psyop.warn("Player is null, not in-game.");
             addStatusMessage("Error: Not in-game");
         } else {
             int slot = InventoryUtils.findAnySlot(Items.WRITABLE_BOOK);
             if (slot == -1) {
-                Liberty.warn("No books found.");
+                Psyop.warn("No books found.");
                 addStatusMessage("Error: No writable books found");
                 return;
             }
@@ -460,7 +460,7 @@ public class BookEditorView extends View {
             }
 
             if (slot == -1) {
-                Liberty.warn("Book was not found.");
+                Psyop.warn("Book was not found.");
                 addStatusMessage("Error: Book not found");
                 return;
             } else if (InventoryUtils.isHotbarSlot(slot)) {
@@ -478,7 +478,7 @@ public class BookEditorView extends View {
     public void populateSettings(Config conf) {
         this.settings = conf.booksGui;
         this.config = conf.bookSettings;
-        Liberty.log("Sign Delay: {}", this.config.signDelay.get());
+        Psyop.log("Sign Delay: {}", this.config.signDelay.get());
         executor.scheduleAtFixedRate(
                 autoSignTask, config.signDelay.get(), config.signDelay.get(), TimeUnit.SECONDS);
     }

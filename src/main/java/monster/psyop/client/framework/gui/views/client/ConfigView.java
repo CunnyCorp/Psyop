@@ -5,7 +5,7 @@ import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImBoolean;
 import imgui.type.ImInt;
-import monster.psyop.client.Liberty;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.gui.CoreConfig;
 import monster.psyop.client.framework.events.EventListener;
@@ -130,7 +130,7 @@ public class ConfigView extends View {
     @Override
     public void load() {
         super.load();
-        Liberty.EVENT_HANDLER.add(this);
+        Psyop.EVENT_HANDLER.add(this);
 
         // Run all initialization callbacks
         initializationCallbacks.forEach(callback -> callback.accept(this));
