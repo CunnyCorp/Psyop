@@ -22,6 +22,7 @@ import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.misc.*;
 import monster.psyop.client.impl.modules.movement.*;
 import monster.psyop.client.impl.modules.render.*;
+import monster.psyop.client.impl.modules.world.AutoMine;
 import monster.psyop.client.impl.modules.world.BreakDelay;
 import monster.psyop.client.impl.modules.world.FastBreak;
 import monster.psyop.client.impl.modules.world.SignFucker;
@@ -195,12 +196,15 @@ public class Psyop implements ModInitializer {
         new Sprint().load();
         new SpinBot().load();
         new ElytraPause().load();
+        new SillyBot().load();
 
+        new AutoEat().load();
         new NoMiss().load();
         new FastUse().load();
         new BrandSpoof().load();
         new DetachMouse().load();
         new PingSpoof().load();
+        new Reach().load();
         new Rotation().load();
         new TestModule().load();
         new UseControl().load();
@@ -211,6 +215,7 @@ public class Psyop implements ModInitializer {
             }
         }
 
+        new AutoMine().load();
         new BreakDelay().load();
         new FastBreak().load();
         new SignFucker().load();

@@ -16,6 +16,7 @@ public class PlayerMixin {
 
             return original + (double) module.block.get();
         }
+
         return original;
     }
 
@@ -26,6 +27,7 @@ public class PlayerMixin {
 
             return original + (double) module.entity.get();
         }
+
         return original;
     }
 }

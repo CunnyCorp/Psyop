@@ -60,8 +60,8 @@ public class Warp extends Module {
         }
     }
 
-    @EventListener(priority = 999)
-    public void onTick(OnTick.Pre event) {
+    @Override
+    public void update() {
         if (!waitForGround.get() || MC.player.onGround()) {
             ticks--;
         }

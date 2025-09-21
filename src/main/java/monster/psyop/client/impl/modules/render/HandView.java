@@ -434,8 +434,8 @@ public class HandView extends Module {
         super(Categories.RENDER, "hand-view", "Allows for modifying how hands are rendered.");
     }
 
-    @EventListener
-    public void onTickPost(OnTick.Post event) {
+    @Override
+    public void update() {
         if (mainHand.get() && mainHandSpin.get() && !mainHandSpinFPS.get()) {
             mainHandXSpin = Mth.wrapDegrees(mainHandXSpin + (mainHandXSpinFactor.get() * getSpinMulti(false)));
             mainHandYSpin = Mth.wrapDegrees(mainHandYSpin + (mainHandYSpinFactor.get() * getSpinMulti(false)));

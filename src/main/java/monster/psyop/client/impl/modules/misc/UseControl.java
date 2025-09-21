@@ -48,8 +48,8 @@ public class UseControl extends Module {
         }
     }
 
-    @EventListener
-    public void onTick(OnTick.Pre event) {
+    @Override
+    public void update() {
         if (MC.player.getVehicle() != null) {
             if (lastKnownVehicle != MC.player.getVehicle().getId()) {
                 vehicleTicks = 0;

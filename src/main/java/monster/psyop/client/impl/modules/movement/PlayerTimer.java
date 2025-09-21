@@ -29,8 +29,8 @@ public class PlayerTimer extends Module {
         super(Categories.MOVEMENT, "player-timer", "Sends multiple player ticks.");
     }
 
-    @EventListener
-    public void onTick(OnTick.Post event) {
+    @Override
+    public void update() {
         if (lastBurst > 1) {
             lastBurst--;
         }

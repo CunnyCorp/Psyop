@@ -3,8 +3,11 @@ package monster.psyop.client.framework.modules;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import monster.psyop.client.Psyop;
+import monster.psyop.client.framework.events.EventListener;
+import monster.psyop.client.impl.events.game.OnTick;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +21,42 @@ public class Modules {
     public Modules() {
         for (Category category : Categories.INDEX) {
             MODULES.putIfAbsent(category, new ObjectArrayList<>());
+        }
+
+        Psyop.EVENT_HANDLER.add(this);
+    }
+
+    @EventListener
+    public void onTickPre(OnTick.Pre event) {
+        shadowUpdate();
+    }
+
+    @EventListener
+    public void onTickPost(OnTick.Post event) {
+        shadowUpdate();
+    }
+
+    private void shadowUpdate() {
+        List<Module> modules = new ArrayList<>(NAME_TO_MODULE.values());
+
+        modules.sort((m1, m2) -> m2.priority.get() - m1.priority.get());
+
+        boolean skipOtherHotbars = false;
+
+        for (Module module : modules) {
+            if (!module.active()) {
+                continue;
+            }
+
+            if (skipOtherHotbars && module.controlsHotbar()) {
+                continue;
+            }
+
+            if (module.controlsHotbar() && module.inUse()) {
+                skipOtherHotbars = true;
+            }
+
+            module.update();
         }
     }
 

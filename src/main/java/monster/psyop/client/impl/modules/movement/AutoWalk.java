@@ -35,8 +35,8 @@ public class AutoWalk extends Module {
     }
 
 
-    @EventListener
-    public void onTick(OnTick.Pre event) {
+    @Override
+    public void update() {
         if (autoJump.get()) {
             if (lastJumpTicks > 0) {
                 MC.options.keyJump.setDown(false);

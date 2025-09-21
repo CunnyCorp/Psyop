@@ -36,8 +36,8 @@ public class Sneak extends Module {
         }
     }
 
-    @EventListener
-    public void onTick(OnTick.Pre event) {
+    @Override
+    public void update() {
         if (MC.player == null) return;
 
         if (cycle.get()) shouldSneak = !shouldSneak;

@@ -22,7 +22,7 @@ public class Reach extends Module {
 
 
     public Reach() {
-        super(Categories.MISC, "rotations", "Allows you to modify how you rotate.");
+        super(Categories.MISC, "reach", "Modify reach.");
     }
 
 

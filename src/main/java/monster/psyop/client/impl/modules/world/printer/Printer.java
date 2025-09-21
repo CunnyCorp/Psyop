@@ -2,16 +2,13 @@ package monster.psyop.client.impl.modules.world.printer;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
-import baritone.api.pathing.goals.GoalNear;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.modules.settings.wrappers.ImBlockPos;
-import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.impl.modules.world.printer.movesets.AdvancedMove;
 import monster.psyop.client.impl.modules.world.printer.movesets.BaritoneMove;
 import monster.psyop.client.utility.InventoryUtils;
@@ -59,13 +56,6 @@ public class Printer extends Module {
                     .description("The range to check for placeable blocks.")
                     .defaultTo(5)
                     .range(1, 5)
-                    .addTo(coreGroup);
-    public final FloatSetting placeDistance =
-            new FloatSetting.Builder()
-                    .name("place-distance")
-                    .description("The max distance to place blocks.")
-                    .defaultTo(3.75f)
-                    .range(3.2f, 5.0f)
                     .addTo(coreGroup);
     public final IntSetting delay =
             new IntSetting.Builder()
@@ -289,8 +279,8 @@ public class Printer extends Module {
     private BlockPos returnTo;
     private int lastSecond = 0;
     private int lastMessageSecond = -1;
-    private BaritoneMove baritoneMove = new BaritoneMove();
-    private AdvancedMove vanillaMove = new AdvancedMove();
+    private final BaritoneMove baritoneMove = new BaritoneMove();
+    private final AdvancedMove vanillaMove = new AdvancedMove();
 
 
     public Printer() {
@@ -327,8 +317,18 @@ public class Printer extends Module {
         vanillaMove.cancel(BlockPos.ZERO);
     }
 
-    @EventListener
-    public void onTick(OnTick.Pre event) {
+    @Override
+    public boolean controlsHotbar() {
+        return true;
+    }
+
+    @Override
+    public boolean inUse() {
+        return swapTimer > 0;
+    }
+
+    @Override
+    public void update() {
         if (MC.player == null || MC.level == null || MC.gameMode == null) {
             return;
         }
@@ -556,11 +556,6 @@ public class Printer extends Module {
 
     public void returnMovement(BlockPos pos) {
         baritoneMove.tick(pos);
-    }
-
-    private void baritoneTo(BlockPos pos) {
-        if (baritone.getPathingBehavior().hasPath()) baritone.getPathingBehavior().cancelEverything();
-        baritone.getCustomGoalProcess().setGoalAndPath(new GoalNear(pos, 2));
     }
 
 

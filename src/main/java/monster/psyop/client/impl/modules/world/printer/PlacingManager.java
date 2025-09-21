@@ -98,7 +98,7 @@ public class PlacingManager {
                             && blockState.canBeReplaced()
                             && !required.isAir()
                             && blockState.getBlock() != required.getBlock()
-                            && (BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get()) || (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get(), true)))
+                            && (BlockUtils.canPlace(srcBlock, MC.player.blockInteractionRange()) || (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(srcBlock, MC.player.blockInteractionRange(), true)))
                             && !MC.player
                             .getBoundingBox()
                             .intersects(Vec3.atLowerCornerOf(srcBlock), Vec3.atLowerCornerOf(srcBlock).add(1, 1, 1))) {
@@ -139,7 +139,7 @@ public class PlacingManager {
                             && blockState.canBeReplaced()
                             && !required.isAir()
                             && blockState.getBlock() != required.getBlock()
-                            && (BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get()) || (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(srcBlock, PrinterUtils.PRINTER.placeDistance.get(), true)))
+                            && (BlockUtils.canPlace(srcBlock, MC.player.blockInteractionRange()) || (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(srcBlock, MC.player.blockInteractionRange(), true)))
                             && !MC.player
                             .getBoundingBox()
                             .intersects(new Vec3(srcBlock), new Vec3(srcBlock).add(1, 1, 1));
@@ -213,12 +213,12 @@ public class PlacingManager {
                 break;
             }
 
-            if (BlockUtils.canPlace(blockPos, PrinterUtils.PRINTER.placeDistance.get())) {
+            if (BlockUtils.canPlace(blockPos, MC.player.blockInteractionRange())) {
                 placeableBlocks.add(new PlaceableBlock(InteractionHand.MAIN_HAND, slot, blockPos.immutable()));
                 PrinterUtils.PRINTER.placeTimer = 0;
                 placed++;
                 PrinterUtils.PRINTER.blocksPlacedThisSec++;
-            } else if (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(blockPos, PrinterUtils.PRINTER.placeDistance.get(), true)) {
+            } else if (PrinterUtils.PRINTER.liquidPlace.get() && BlockUtils.canPlace(blockPos, MC.player.blockInteractionRange(), true)) {
                 waterPlaceable.add(pos);
             } else {
                 Psyop.log("Failed liquid place check & Air: {} - {}", blockPos.toShortString(), BlockUtils.shouldLiquidPlace(blockPos));

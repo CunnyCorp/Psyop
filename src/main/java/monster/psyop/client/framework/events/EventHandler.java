@@ -5,8 +5,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static monster.psyop.client.Psyop.MC;
 
@@ -14,7 +12,6 @@ import static monster.psyop.client.Psyop.MC;
  * The type Event handler.
  */
 public class EventHandler {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
     private final Object2ObjectArrayMap<Class<?>, ObjectArrayList<EventWrapper>> eventMap = new Object2ObjectArrayMap<>();
     private final Object2ObjectArrayMap<Method, EventWrapper> methodWrappers = new Object2ObjectArrayMap<>();
     private final Object2ObjectArrayMap<Object, ObjectArrayList<EventWrapper>> disabled = new Object2ObjectArrayMap<>();

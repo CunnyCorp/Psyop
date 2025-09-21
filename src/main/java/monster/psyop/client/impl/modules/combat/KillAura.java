@@ -69,8 +69,8 @@ public class KillAura extends Module {
                 "Automatically hits entities around the player.");
     }
 
-    @EventListener
-    public void onTick(OnTick.Pre event) {
+    @Override
+    public void update() {
         assert MC.player != null;
 
         delay--;
@@ -111,7 +111,7 @@ public class KillAura extends Module {
                 continue;
             }
 
-            if (MC.player.getEyePosition().distanceTo(entity.position()) > reach.get()) {
+            if (MC.player.getEyePosition().distanceTo(entity.position()) > MC.player.entityInteractionRange()) {
                 continue;
             }
 

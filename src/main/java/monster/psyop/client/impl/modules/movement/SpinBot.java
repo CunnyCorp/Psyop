@@ -96,8 +96,8 @@ public class SpinBot extends Module {
         tickCounter = 0;
     }
 
-    @EventListener
-    public void onTick(OnTick.Post event) {
+    @Override
+    public void update() {
         if (MC.player == null || MC.level == null || MC.player.isDeadOrDying()) return;
 
         if (!initialized) {

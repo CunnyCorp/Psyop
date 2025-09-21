@@ -48,8 +48,8 @@ public class Sprint extends Module {
         }
     }
 
-    @EventListener
-    public void onTick(OnTick.Pre event) {
+    @Override
+    public void update() {
         if (MC.player == null) return;
 
         // Not enough food.

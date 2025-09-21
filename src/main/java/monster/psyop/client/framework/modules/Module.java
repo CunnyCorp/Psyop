@@ -12,6 +12,8 @@ import monster.psyop.client.framework.gui.views.ViewHandler;
 import monster.psyop.client.framework.gui.views.client.ModuleConfigView;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.Setting;
+import monster.psyop.client.framework.modules.settings.types.BoolSetting;
+import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.KeybindingSetting;
 import monster.psyop.client.utility.LibertyToast;
 import monster.psyop.client.utility.StringUtils;
@@ -48,6 +50,25 @@ public class Module {
                     .name("bind")
                     .description("The key to bind for the client.")
                     .defaultTo(new ImInt(-1))
+                    .addTo(coreGroup);
+    public IntSetting priority =
+            new IntSetting.Builder()
+                    .name("priority")
+                    .description("The priority of the module.")
+                    .defaultTo(100)
+                    .range(1, 1000)
+                    .addTo(coreGroup);
+    public BoolSetting preTick =
+            new BoolSetting.Builder()
+                    .name("pre-tick")
+                    .description("Run before the tick.")
+                    .defaultTo(true)
+                    .addTo(coreGroup);
+    public BoolSetting postTick =
+            new BoolSetting.Builder()
+                    .name("post-tick")
+                    .description("Run after the tick.")
+                    .defaultTo(false)
                     .addTo(coreGroup);
 
     public Module(Category category, String name, String description) {
@@ -149,6 +170,18 @@ public class Module {
                 }
             }
         }
+    }
+
+    public void update() {
+
+    }
+
+    public boolean controlsHotbar() {
+        return false;
+    }
+
+    public boolean inUse() {
+        return false;
     }
 
     public @Nullable KeybindingSetting getActiveBinding() {

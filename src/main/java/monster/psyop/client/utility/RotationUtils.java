@@ -170,16 +170,13 @@ public class RotationUtils {
      * - speed: lerp factor per tick in [0, 1]
      * - clampPitch: if true, clamps pitch to [-90, 90]
      */
-    public static void smoothRotateTowards(float targetPitch, float targetYaw, float speed) {
+    public static void smoothRotateTowards(float targetYaw, float speed) {
         assert MC.player != null : "Player was null";
 
-        float currentPitch = MC.player.getXRot();
         float currentYaw = MC.player.getYRot();
 
-        float nextPitch = Mth.clamp(smoothAngle(currentPitch, targetPitch, speed), -90, 90);
         float nextYaw = smoothAngle(currentYaw, targetYaw, speed);
 
-        MC.player.setXRot(nextPitch);
         MC.player.setYRot(nextYaw);
     }
 
