@@ -68,7 +68,10 @@ public class ClientLevelMixin {
                 }
 
                 for (int i = 0; i <= module.multiplier.get(); i++) {
-                    if (!module.onlyAir.get() || !MC.player.onGround()) MC.player.tick();
+                    if (!module.onlyAir.get() || !MC.player.onGround()) {
+                        MC.player.tick();
+                        MC.player.attackStrengthTicker--;
+                    }
                 }
             }
 
@@ -77,11 +80,13 @@ public class ClientLevelMixin {
 
                 for (int i = 0; i <= module.multiplier.get(); i++) {
                     MC.player.tick();
+                    MC.player.attackStrengthTicker--;
                 }
 
                 if (module.lastBurst == 0) {
                     for (int i = 0; i < module.burstMultiplier.get(); i++) {
                         MC.player.tick();
+                        MC.player.attackStrengthTicker--;
                     }
 
                     module.lastBurst = module.burstDelay.get();

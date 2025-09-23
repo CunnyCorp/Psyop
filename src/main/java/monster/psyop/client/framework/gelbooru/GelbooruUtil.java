@@ -12,15 +12,12 @@ public class GelbooruUtil {
     @Getter
     @Setter
     private static Posts.Post post;
-    private GelbooruScraper.ImageType imageType = GelbooruScraper.ImageType.Direct;
+    private GelbooruScraper.ImageType imageType = GelbooruScraper.ImageType.Preview;
+    @Setter
     private int maxSize = 256;
 
     public void setType(GelbooruScraper.ImageType type) {
         this.imageType = type;
-    }
-
-    public void setMaxSize(int i) {
-        this.maxSize = i;
     }
 
     public InputStream getImage() {

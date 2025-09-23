@@ -15,9 +15,10 @@ import monster.psyop.client.framework.modules.settings.Setting;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.KeybindingSetting;
-import monster.psyop.client.utility.LibertyToast;
 import monster.psyop.client.utility.StringUtils;
 import monster.psyop.client.utility.TextUtils;
+import monster.psyop.client.utility.gui.NotificationEvent;
+import monster.psyop.client.utility.gui.NotificationManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -70,6 +71,13 @@ public class Module {
                     .description("Run after the tick.")
                     .defaultTo(false)
                     .addTo(coreGroup);
+    public BoolSetting array =
+            new BoolSetting.Builder()
+                    .name("array")
+                    .description("Show the module in the array.")
+                    .defaultTo(true)
+                    .addTo(coreGroup);
+
 
     public Module(Category category, String name, String description) {
         this(category, name, description, null, null);
@@ -137,9 +145,9 @@ public class Module {
                 component.append(Component.literal(active ? "enabled." : "disabled.").withStyle(TextUtils.MODULE_INFO_SUB_STYLE).withColor(active ? new Color(154, 243, 232, 255).getRGB() : new Color(199, 109, 244, 255).getRGB()));
 
                 MC.gui.getChat().addMessage(component);
-
-                LibertyToast.add(MC.getToastManager(), new LibertyToast.LibertyToastId(), TextUtils.CLIENT_TITLE, component);
             }
+
+            NotificationManager.get().addNotification("Module Toggled", this.label + " was " + (active ? "enabled." : "disabled."), NotificationEvent.Type.INFO, 5000L);
 
             Psyop.log("Module {} was {}", name, active ? "enabled." : "disabled.");
         }

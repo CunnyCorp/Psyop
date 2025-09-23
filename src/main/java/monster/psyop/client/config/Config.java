@@ -18,8 +18,6 @@ import monster.psyop.client.config.sub.Inventory;
 import monster.psyop.client.config.sub.Placing;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.friends.RoleType;
-import monster.psyop.client.framework.gui.hud.HudElement;
-import monster.psyop.client.framework.gui.hud.HudHandler;
 import monster.psyop.client.framework.gui.views.ViewHandler;
 import monster.psyop.client.framework.gui.views.client.ConfigView;
 import monster.psyop.client.framework.modules.Categories;
@@ -138,10 +136,6 @@ public class Config {
         }
 
         hudElements.clear();
-
-        for (HudElement element : HudHandler.getElements()) {
-            hudElements.put(element.name(), element.settings);
-        }
 
         ConfigView.populateConfig();
 

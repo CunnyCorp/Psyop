@@ -25,7 +25,6 @@ public abstract class RenderProxy {
         imGuiGlfw.newFrame();
         ImGui.newFrame();
         process();
-        Psyop.EVENT_HANDLER.call(On2DRender.get());
         ImGui.render();
         imGuiGl3.renderDrawData(ImGui.getDrawData());
         //GLFW.glfwSwapBuffers(MC.getWindow().getWindow());

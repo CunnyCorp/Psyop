@@ -3,8 +3,11 @@ package monster.psyop.client.framework.gelbooru;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import monster.psyop.client.Psyop;
-import monster.psyop.client.utility.FileSystem;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class GelbooruScraper {
@@ -14,9 +17,9 @@ public class GelbooruScraper {
     public Posts posts;
     public String rawTags = "";
     public String rawExcludedTags = "";
+    public String apiCredentials;
     private int page = 0;
     private int currentImage = 0;
-    private String rating = "";
     private String tags = "";
 
     public GelbooruScraper() {
@@ -24,16 +27,10 @@ public class GelbooruScraper {
     }
 
     public boolean load() {
-        StringBuilder urlBuilder = new StringBuilder(BASE_URL);
-        urlBuilder.append("&tags=").append(tags);
+        String urlBuilder = BASE_URL + apiCredentials + "&tags=" + tags +
+                "&pid=" + page;
 
-        if (!rating.isEmpty()) {
-            urlBuilder.append("+rating%3a").append(rating);
-        }
-
-        urlBuilder.append("&pid=").append(page);
-
-        String response = FileSystem.getUrl(urlBuilder.toString());
+        String response = fetchUrlContent(urlBuilder);
 
         if (response == null || response.equals("Too deep! Pull it back some. Holy fuck.")) {
             page = 0;
@@ -55,7 +52,38 @@ public class GelbooruScraper {
 
         page++;
 
+        Psyop.LOG.info("Loaded page " + page);
+
         return !isCurrentPostInvalid;
+    }
+
+    private String fetchUrlContent(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                Psyop.LOG.warn("HTTP request failed with response code: " + responseCode);
+                return null;
+            }
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                return response.toString();
+            }
+        } catch (Exception e) {
+            Psyop.LOG.warn("Failed to fetch URL content: " + e.getMessage());
+            return null;
+        }
     }
 
     public boolean isInvalid() {
@@ -98,10 +126,6 @@ public class GelbooruScraper {
 
     public Posts get() {
         return posts;
-    }
-
-    public void setRating(Rating r) {
-        rating = r.name().toLowerCase();
     }
 
     @SuppressWarnings("unused")

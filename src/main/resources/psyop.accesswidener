@@ -44,3 +44,5 @@ mutable field net/minecraft/network/protocol/game/ClientboundSetEntityMotionPack
 accessible field net/minecraft/world/entity/LivingEntity noJumpDelay I
 
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyProgress F
+
+accessible field net/minecraft/world/entity/LivingEntity attackStrengthTicker I

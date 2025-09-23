@@ -1,6 +1,7 @@
 package monster.psyop.client.mixin;
 
 import monster.psyop.client.Psyop;
+import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.render.BlockLights;
 import monster.psyop.client.impl.modules.render.Chams;
 import net.minecraft.client.Minecraft;
@@ -20,9 +21,24 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class LevelRendererMixin {
     @Unique
     private EntityType<?> lastGlowingEntityType;
+    @Unique
+    private Entity lastGlowingEntity;
+
 
     @Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OutlineBufferSource;setColor(IIII)V"))
     public void setColor0(OutlineBufferSource instance, int i, int j, int k, int l) {
+        if (Psyop.MODULES.isActive(KillAura.class)) {
+            KillAura module = Psyop.MODULES.get(KillAura.class);
+
+            if (module.shouldGlow.get()) {
+                if (module.target == lastGlowingEntity) {
+                    float[] glowColor = module.glowColor.get();
+                    instance.setColor((int) (glowColor[0] * 255), (int) (glowColor[1] * 255), (int) (glowColor[2] * 255), (int) (glowColor[3] * 255));
+                    return;
+                }
+            }
+        }
+
         if (Psyop.MODULES.isActive(Chams.class)) {
             Chams module = Psyop.MODULES.get(Chams.class);
             if (module.glowEntities.value().contains(lastGlowingEntityType)) {
@@ -38,9 +54,19 @@ public class LevelRendererMixin {
     @Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;shouldEntityAppearGlowing(Lnet/minecraft/world/entity/Entity;)Z"))
     public boolean shouldEntityAppearGlowing0(Minecraft instance, Entity entity) {
         lastGlowingEntityType = entity.getType();
+        lastGlowingEntity = entity;
+
         if (Psyop.MODULES.isActive(Chams.class)) {
             Chams module = Psyop.MODULES.get(Chams.class);
             if (module.glowEntities.value().contains(entity.getType())) {
+                return true;
+            }
+        }
+
+        if (Psyop.MODULES.isActive(KillAura.class)) {
+            KillAura module = Psyop.MODULES.get(KillAura.class);
+
+            if (module.shouldGlow.get() && module.target == entity) {
                 return true;
             }
         }

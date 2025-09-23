@@ -4,10 +4,8 @@ import monster.psyop.client.config.Config;
 import monster.psyop.client.framework.AnActualRat;
 import monster.psyop.client.framework.events.EventHandler;
 import monster.psyop.client.framework.gui.Gui;
-import monster.psyop.client.framework.gui.hud.features.PositionHud;
 import monster.psyop.client.framework.gui.utility.ColoredText;
 import monster.psyop.client.framework.gui.views.client.ConfigView;
-import monster.psyop.client.framework.gui.views.client.HudView;
 import monster.psyop.client.framework.gui.views.client.ModuleConfigView;
 import monster.psyop.client.framework.gui.views.client.ModulesView;
 import monster.psyop.client.framework.gui.views.features.BookEditorView;
@@ -15,6 +13,7 @@ import monster.psyop.client.framework.gui.views.features.ClientLogView;
 import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
+import monster.psyop.client.impl.modules.hud.*;
 import monster.psyop.client.impl.modules.combat.AntiKb;
 import monster.psyop.client.impl.modules.combat.AttackBurst;
 import monster.psyop.client.impl.modules.combat.KillAura;
@@ -22,6 +21,8 @@ import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.misc.*;
 import monster.psyop.client.impl.modules.movement.*;
 import monster.psyop.client.impl.modules.render.*;
+import monster.psyop.client.impl.modules.silly.HappyHands;
+import monster.psyop.client.impl.modules.silly.OiledUp;
 import monster.psyop.client.impl.modules.world.AutoMine;
 import monster.psyop.client.impl.modules.world.BreakDelay;
 import monster.psyop.client.impl.modules.world.FastBreak;
@@ -33,6 +34,7 @@ import monster.psyop.client.utility.*;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.RandomSource;
+import org.lwjgl.opengl.GL11;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +80,6 @@ public class Psyop implements ModInitializer {
         AnActualRat.actuallyJustRatYourself();
 
         WorldUtils.load();
-
-
     }
 
     public static void log(Color color, String str, Object... args) {
@@ -167,7 +167,6 @@ public class Psyop implements ModInitializer {
 
         // Views
         new ConfigView().load();
-        new HudView().load();
         new ModulesView().load();
         new ModuleConfigView().load();
         new ClientLogView().load();
@@ -175,7 +174,10 @@ public class Psyop implements ModInitializer {
         new TrollingView().load();
 
         // Hud
-        new PositionHud().load();
+        new ArmorHUD().load();
+        new ArrayHUD().load();
+        new PositionHUD().load();
+        new NotificationHUD().load();
 
         // Modules
 
@@ -230,6 +232,9 @@ public class Psyop implements ModInitializer {
         new HideArmor().load();
         new ItemView().load();
         new WorldView().load();
+
+        new HappyHands().load();
+        new OiledUp().load();
 
         EVENT_HANDLER.add(new LatencyUtils());
 

@@ -1,9 +1,6 @@
 package monster.psyop.client.framework.gui;
 
-import imgui.ImDrawList;
-import imgui.ImGui;
-import imgui.ImGuiIO;
-import imgui.ImVec2;
+import imgui.*;
 import imgui.flag.ImDrawFlags;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
@@ -11,13 +8,13 @@ import imgui.type.ImBoolean;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.framework.events.EventListener;
-import monster.psyop.client.framework.gui.hud.HudHandler;
 import monster.psyop.client.framework.gui.themes.OfficialTheme;
 import monster.psyop.client.framework.gui.themes.ThemeManager;
 import monster.psyop.client.framework.gui.utility.KeyUtils;
 import monster.psyop.client.framework.gui.views.View;
 import monster.psyop.client.framework.gui.views.ViewHandler;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
+import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnKeyInput;
 import monster.psyop.client.impl.events.game.OnMouseClick;
 import monster.psyop.client.utility.PathIndex;
@@ -30,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +44,9 @@ public class Gui extends RenderProxy {
     private static final float WATERMARK_SCALE = 0.18f;
     private static int WATERMARK_ORIGINAL_WIDTH = 0;
     private static int WATERMARK_ORIGINAL_HEIGHT = 0;
-    private static long lastGlorpUpdate = 0;
-    private static final List<Glorp> GLORPS = new ArrayList<>();
-    private static boolean isGlorp = false;
+    private static long lastSillyImageTick = 0;
+    private static final List<SillyImage> SILLY_IMAGES = new ArrayList<>();
+    private static boolean hasAtMinimumOneSillyImageButCouldHaveMoreWeDontReallyNeedToKnowAndThatsOkayNotEverythingCanBeInOurControlItsFine = false;
 
     public void launch() {
         Psyop.EVENT_HANDLER.add(this);
@@ -62,8 +60,8 @@ public class Gui extends RenderProxy {
             return;
         }
 
-        for (Glorp glorp : GLORPS) {
-            //glorp.handleClicked(event.key);
+        for (SillyImage sillyImage : SILLY_IMAGES) {
+            sillyImage.handleClicked(event.key);
         }
     }
 
@@ -97,7 +95,6 @@ public class Gui extends RenderProxy {
 
         io = ImGui.getIO();
 
-        io.setIniFilename("imgui_config");
         io.setKeyMap(KeyUtils.keyMap);
         io.setNavInputs(0, 0);
         io.setNavActive(false);
@@ -109,17 +106,28 @@ public class Gui extends RenderProxy {
             ThemeManager.loadTheme(PathIndex.CLIENT.resolve("themes").resolve("theme.txt"));
         }
 
-        int glorp = loadGlorp();
-        if (glorp != -1) {
-            isGlorp = true;
-        } else {
-            System.err.println("Put Glorp back...");
-            System.exit(1);
+        WATERMARK_ID = loadLogo();
+
+        try {
+            for (Path path : Files.list(PathIndex.CLIENT.resolve("silly")).toList()) {
+                if (!Files.isDirectory(path) && (path.toString().endsWith(".png") || path.toString().endsWith(".jpg") || path.toString().endsWith(".jpeg"))) {
+                    int textureId = loadSillyImage(path);
+
+                    if (textureId == -1) {
+                        Psyop.log("Failed to load silly image: {}. Skipping...", path.getFileName());
+                    } else {
+                        Psyop.log("Loading silly image: {}.", path.getFileName());
+
+                        hasAtMinimumOneSillyImageButCouldHaveMoreWeDontReallyNeedToKnowAndThatsOkayNotEverythingCanBeInOurControlItsFine = true;
+                    }
+                } else {
+                    Psyop.log("Skipping invalid silly image: {}.", path.getFileName());
+                }
+            }
+        } catch (Exception e) {
+            Psyop.LOG.error("Failed to load silly images", e);
         }
-
-        WATERMARK_ID = loadTexture("/watermark.png");
     }
-
 
     @Override
     public void process() {
@@ -140,32 +148,21 @@ public class Gui extends RenderProxy {
             );
         }
 
-        float screenWidth = io.getDisplaySizeX();
-        float screenHeight = io.getDisplaySizeY();
+        Psyop.EVENT_HANDLER.call(On2DRender.get());
 
-        String position = "0, 0, 0 - (0, 0)";
-
-        if (MC.player != null) {
-            position = Math.round(MC.player.getX()) + ", " + Math.round(MC.player.getY()) + ", " + Math.round(MC.player.getZ()) + " - (" + Math.round(MC.player.getX() / 8) + ", " + Math.round(MC.player.getZ() / 8) + ")";
-        }
-
-        float textX = 20f;
-        float textY = screenHeight - 30f;
-
-        drawString(position, textX, textY, 240f, true);
 
         if (IS_LOADED.get()) {
-            if (isGlorp && !GLORPS.isEmpty()) {
-                long deltaTime = System.currentTimeMillis() - lastGlorpUpdate;
+            if (hasAtMinimumOneSillyImageButCouldHaveMoreWeDontReallyNeedToKnowAndThatsOkayNotEverythingCanBeInOurControlItsFine && !SILLY_IMAGES.isEmpty()) {
+                long deltaTime = System.currentTimeMillis() - lastSillyImageTick;
 
-                for (Glorp glorp : GLORPS) {
+                for (SillyImage sillyImage : SILLY_IMAGES) {
                     // About 60 fps
                     if (deltaTime > 17) {
-                        glorp.update((int) io.getDisplaySizeX(), (int) io.getDisplaySizeY());
-                        lastGlorpUpdate = System.currentTimeMillis();
+                        sillyImage.update((int) io.getDisplaySizeX(), (int) io.getDisplaySizeY());
+                        lastSillyImageTick = System.currentTimeMillis();
                     }
 
-                    glorp.render();
+                    sillyImage.render();
                 }
             }
 
@@ -215,8 +212,6 @@ public class Gui extends RenderProxy {
             }
         }
 
-        HudHandler.showAll();
-
         if (!MC.mouseHandler.isMouseGrabbed() && MC.screen == null) MC.mouseHandler.grabMouse();
     }
 
@@ -224,6 +219,27 @@ public class Gui extends RenderProxy {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
         drawList.addRectFilled(x, y, width, height, new ImColorW(new Color(71, 69, 69, 182)).packed(), 4f, ImDrawFlags.RoundCornersAll);
         drawList.addRect(x, y, width, height, new ImColorW(new Color(25, 24, 24, 255)).packed(), 4f, ImDrawFlags.RoundCornersAll);
+    }
+
+    public void drawBackground(float x, float y, float width, float height, int outline, ImColorW color, ImColorW color2) {
+        ImDrawList drawList = ImGui.getBackgroundDrawList();
+        drawList.addRectFilled(x, y, width, height, color.packed(), 0f, ImDrawFlags.None);
+
+            switch (outline) {
+                case 1: // Full outline
+                    drawList.addRect(x, y, width, height, color2.packed(), 0f, ImDrawFlags.None);
+                    break;
+                case 2: // Top outline only
+                    drawList.addLine(x, y, width, y, color2.packed(), 0f);
+                    break;
+                case 3: // Bottom outline only
+                    drawList.addLine(x, height, width, height, color2.packed(), 0f);
+                    break;
+                case 4: // Left and right outlines
+                    drawList.addLine(x, y, x, height, color2.packed(), 0f);
+                    drawList.addLine(width, y, width, height, color2.packed(), 0f);
+                    break;
+            }
     }
 
     public void drawString(String text, float x, float y, float minWidth, boolean withBackground) {
@@ -247,14 +263,28 @@ public class Gui extends RenderProxy {
         drawList.addText(x, y, ImGui.getColorU32(ImGuiCol.Text), text);
     }
 
+    public void drawString(String text, float x, float y, ImColorW color) {
+        ImDrawList drawList = ImGui.getBackgroundDrawList();
+
+        // Draw the text
+        drawList.addText(x, y, color.packed(), text);
+    }
+
+    public void drawString(String text, float x, float y, int color) {
+        ImDrawList drawList = ImGui.getBackgroundDrawList();
+
+        // Draw the text
+        drawList.addText(x, y, color, text);
+    }
+
 
     protected void preRun() {
         Psyop.LOG.info("Starting GUI");
     }
 
-    private int loadTexture(String path) {
+    private int loadLogo() {
         try {
-            InputStream is = getClass().getResourceAsStream(path);
+            InputStream is = getClass().getResourceAsStream("/watermark.png");
             if (is == null) {
                 Psyop.LOG.error("Image not found in resources");
                 return -1;
@@ -264,10 +294,8 @@ public class Gui extends RenderProxy {
             int width = image.getWidth();
             int height = image.getHeight();
 
-            if (path.equals("/watermark.png")) {
-                WATERMARK_ORIGINAL_WIDTH = width;
-                WATERMARK_ORIGINAL_HEIGHT = height;
-            }
+            WATERMARK_ORIGINAL_WIDTH = width;
+            WATERMARK_ORIGINAL_HEIGHT = height;
 
             int[] pixels = new int[width * height];
             image.getRGB(0, 0, width, height, pixels, 0, width);
@@ -304,13 +332,9 @@ public class Gui extends RenderProxy {
         }
     }
 
-    private int loadGlorp() {
+    private int loadSillyImage(Path path) {
         try {
-            InputStream is = getClass().getResourceAsStream("/glorp.png");
-            if (is == null) {
-                Psyop.LOG.error("Glorp not found.");
-                return -1;
-            }
+            InputStream is = Files.newInputStream(path);
 
             BufferedImage image = ImageIO.read(is);
             int width = image.getWidth();
@@ -344,18 +368,24 @@ public class Gui extends RenderProxy {
 
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-            for (int i = 0; i < 24; i++) {
-                GLORPS.add(new Glorp(textureId, width, height));
+            boolean shouldSpin = path.toString().contains("_spin_");
+
+            if (path.toString().contains("_spawnmore_")) {
+                SILLY_IMAGES.add(new SillyImage(textureId, width, height, shouldSpin));
+                SILLY_IMAGES.add(new SillyImage(textureId, width, height, shouldSpin));
             }
+
+            SILLY_IMAGES.add(new SillyImage(textureId, width, height, shouldSpin));
 
             return textureId;
         } catch (IOException e) {
-            Psyop.LOG.error("Failed to load DVD logo texture", e);
+            Psyop.LOG.error("Failed to load texture", e);
             return -1;
         }
     }
 
-    public static class Glorp {
+    public static class SillyImage {
+        private static final int MAX_IMAGE_SIZE = 256;
         private int x, y;
         private int width, height;
         private final int originalWidth;
@@ -363,14 +393,18 @@ public class Gui extends RenderProxy {
         private int velocityX = Psyop.RANDOM.nextInt(1, 4), velocityY = Psyop.RANDOM.nextInt(1, 4);
         private final int textureId;
         private float scale = 0.25f;
+        private boolean shouldSpin = false;
         private float rotation = 0f;
         private float rotationSpeed = Psyop.RANDOM.nextFloat() * 2f + 1f;
 
-        public Glorp(int textureId, int originalWidth, int originalHeight) {
+        public SillyImage(int textureId, int originalWidth, int originalHeight, boolean shouldSpin) {
             this.textureId = textureId;
             this.originalWidth = originalWidth;
             this.originalHeight = originalHeight;
-            updateSize();
+            this.shouldSpin = shouldSpin;
+
+            autoAdjustScale();
+
             this.x = Psyop.RANDOM.nextInt(20, MC.getWindow().getWidth() - 20);
             this.y = Psyop.RANDOM.nextInt(20, MC.getWindow().getHeight() - 20);
 
@@ -382,31 +416,43 @@ public class Gui extends RenderProxy {
                 this.velocityY *= -1;
             }
 
-            this.rotation = Psyop.RANDOM.nextFloat() * 360f;
+            if (this.shouldSpin) {
+                this.rotation = Psyop.RANDOM.nextFloat() * 360f;
 
-            if (Psyop.RANDOM.nextBoolean()) {
-                this.rotationSpeed *= -1;
+                if (Psyop.RANDOM.nextBoolean()) {
+                    this.rotationSpeed *= -1;
+                }
             }
         }
 
         public boolean isMouseOver() {
-            if (ImGui.isMouseHoveringRect(x, y, width, height)) {
-                return true;
-            }
-
-            return false;
+            return MC.mouseHandler.xpos() >= x && MC.mouseHandler.xpos() <= x + width && MC.mouseHandler.ypos() >= y && MC.mouseHandler.ypos() <= y + height;
         }
 
         public void handleClicked(int key) {
             if (isMouseOver()) {
                 if (key == 0) {
                     this.scale = Math.min(1.0f, this.scale + (this.scale * 0.15f));
+                    this.autoAdjustScale();
                 } else if (key == 1) {
                     this.scale = Math.max(0.075f, this.scale - (this.scale * 0.25f));
+                    this.autoAdjustScale();
                 }
             }
+        }
 
+        private void autoAdjustScale() {
+            if (originalWidth > MAX_IMAGE_SIZE || originalHeight > MAX_IMAGE_SIZE) {
+                float maxWidthScale = (float) MAX_IMAGE_SIZE / originalWidth;
+                float maxHeightScale = (float) MAX_IMAGE_SIZE / originalHeight;
 
+                this.scale = Math.min(maxWidthScale, maxHeightScale);
+                this.scale = Math.max(0.075f, this.scale);
+            } else {
+                this.scale = 0.25f;
+            }
+
+            updateSize();
         }
 
         private void updateSize() {
@@ -418,9 +464,11 @@ public class Gui extends RenderProxy {
             x += velocityX;
             y += velocityY;
 
-            rotation += rotationSpeed;
-            if (rotation > 360f) rotation -= 360f;
-            if (rotation < 0f) rotation += 360f;
+            if (this.shouldSpin) {
+                rotation += rotationSpeed;
+                if (rotation > 360f) rotation -= 360f;
+                if (rotation < 0f) rotation += 360f;
+            }
 
             boolean widthChanged = false;
             boolean heightChanged = false;

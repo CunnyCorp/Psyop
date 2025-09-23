@@ -198,6 +198,24 @@ public class InventoryUtils {
         return -1;
     }
 
+    public static int findAnySlot(List<Item> itemList) {
+        if (MC.player == null) {
+            return -1;
+        }
+
+        int slot = 0;
+
+        for (ItemStack stack : MC.player.containerMenu.getItems()) {
+            if (itemList.contains(stack.getItem())) {
+                return slot;
+            }
+
+            slot++;
+        }
+
+        return -1;
+    }
+
     /**
      * Find the slot of items.
      *

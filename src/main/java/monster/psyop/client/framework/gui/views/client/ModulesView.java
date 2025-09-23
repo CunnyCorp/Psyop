@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ModulesView extends View {
     // Configuration variables
-    private Category previewCategory = Categories.MISC;
+    private Category previewCategory = Categories.COMBAT;
     private final ImString searchText = new ImString();
     private boolean searchActive = false;
     private float categoriesPanelWidth = 140.0f;
@@ -116,12 +116,10 @@ public class ModulesView extends View {
         }
         ImGui.end();
 
-        if (ImGui.isWindowAppearing()) {
-            settings.x = ImGui.getWindowPosX();
-            settings.y = ImGui.getWindowPosY();
-            settings.width = ImGui.getWindowWidth();
-            settings.height = ImGui.getWindowHeight();
-        }
+        settings.x = ImGui.getWindowPosX();
+        settings.y = ImGui.getWindowPosY();
+        settings.width = ImGui.getWindowWidth();
+        settings.height = ImGui.getWindowHeight();
     }
 
     private void renderCategoriesPanel(float deltaTime) {

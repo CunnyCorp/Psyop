@@ -1,33 +1,117 @@
 package monster.psyop.client.impl.modules.combat;
 
+import imgui.ImGui;
+import imgui.ImVec2;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
-import monster.psyop.client.framework.modules.settings.types.BoolSetting;
-import monster.psyop.client.framework.modules.settings.types.EntityListSetting;
-import monster.psyop.client.framework.modules.settings.types.FloatSetting;
-import monster.psyop.client.impl.events.game.OnTick;
+import monster.psyop.client.framework.modules.settings.types.*;
+import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
+import monster.psyop.client.impl.events.On2DRender;
+import monster.psyop.client.impl.modules.hud.HUD;
+import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
+import monster.psyop.client.utility.gui.GradientUtils;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class KillAura extends Module {
-    public final FloatSetting reach =
-            new FloatSetting.Builder()
-                    .name("reach")
-                    .description("How far you can hit entities.")
-                    .defaultTo(5f)
-                    .range(1.5f, 5f)
+import static monster.psyop.client.Psyop.GUI;
+
+public class KillAura extends HUD {
+    public final BoolSetting displayHUD =
+            new BoolSetting.Builder()
+                    .name("display-hud")
+                    .description("Displays a HUD element with entity info!")
+                    .defaultTo(false)
                     .addTo(coreGroup);
+    public ColorSetting textColor =
+            new ColorSetting.Builder()
+                    .name("text-color")
+                    .defaultTo(new float[]{0.90f, 0.90f, 0.95f, 0.95f})
+                    .addTo(coreGroup);
+    public ColorSetting upperColor =
+            new ColorSetting.Builder()
+                    .name("upper-color")
+                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
+                    .addTo(coreGroup);
+    public ColorSetting middleColor =
+            new ColorSetting.Builder()
+                    .name("middle-color")
+                    .defaultTo(new float[]{0.00f, 0.60f, 0.60f, 1.0f})
+                    .addTo(coreGroup);
+    public ColorSetting lowerColor =
+            new ColorSetting.Builder()
+                    .name("lower-color")
+                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
+                    .addTo(coreGroup);
+    public final IntSetting alpha =
+            new IntSetting.Builder()
+                    .name("alpha")
+                    .range(40, 200)
+                    .defaultTo(184)
+                    .addTo(coreGroup);
+    public final IntSetting waveSpeed =
+            new IntSetting.Builder()
+                    .name("wave-speed")
+                    .range(1, 10)
+                    .defaultTo(3)
+                    .addTo(coreGroup);
+    public final IntSetting waveDensity =
+            new IntSetting.Builder()
+                    .name("wave-density")
+                    .range(1, 10)
+                    .defaultTo(5)
+                    .addTo(coreGroup);
+    public final BoolSetting shouldGlow =
+            new BoolSetting.Builder()
+                    .name("should-glow")
+                    .description("Makes the target entity glow.")
+                    .defaultTo(true)
+                    .addTo(coreGroup);
+    public ColorSetting glowColor =
+            new ColorSetting.Builder()
+                    .name("glow-color")
+                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
+                    .addTo(coreGroup);
+    public final GroupedSettings switchGroup = addGroup(new GroupedSettings("auto-switch", "Automatically switch to weapons."));
+    public final BoolSetting autoSwitch =
+            new BoolSetting.Builder()
+                    .name("auto-switch")
+                    .description("Automatically switch to weapons.")
+                    .defaultTo(true)
+                    .addTo(switchGroup);
+    public final IntSetting dedicatedSlot =
+            new IntSetting.Builder()
+                    .name("dedicated-slot")
+                    .description("Slot for weapons!")
+                    .defaultTo(0)
+                    .range(0, 8)
+                    .addTo(switchGroup);
+    public ItemListSetting weapons =
+            new ItemListSetting.Builder()
+                    .name("weapons")
+                    .description("Weapons to switch to.")
+                    .defaultTo(List.of(Items.DIAMOND_SWORD, Items.NETHERITE_SWORD))
+                    .filter((v) -> v.getDefaultInstance().has(DataComponents.WEAPON))
+                    .addTo(switchGroup);
+    public final IntSetting timeout =
+            new IntSetting.Builder()
+                    .name("timeout")
+                    .description("Timeout for KillAura after switching.")
+                    .defaultTo(2)
+                    .range(0, 10)
+                    .addTo(switchGroup);
     public final GroupedSettings checksGroup = addGroup(new GroupedSettings("checks", "Checks to run on entities before attacking."));
     public final EntityListSetting entityTypes =
             new EntityListSetting.Builder()
@@ -60,7 +144,9 @@ public class KillAura extends Module {
                     .defaultTo(true)
                     .addTo(checksGroup);
 
+    private final GradientUtils gradientUtils = new GradientUtils(0.5f);
     private int delay = 0;
+    public Entity target = null;
 
     public KillAura() {
         super(
@@ -69,14 +155,93 @@ public class KillAura extends Module {
                 "Automatically hits entities around the player.");
     }
 
+    @EventListener
+    public void onRender2D(On2DRender event) {
+        if (!displayHUD.get()) {
+            return;
+        }
+
+        String targetingDistance = "0 Blocks Away";
+        String targetingHealth = "0/0";
+        String targetingName = "No Target";
+
+        assert MC.player != null;
+        if (target != null) {
+            targetingDistance = Math.round(MC.player.distanceTo(target)) + " Blocks Away";
+            if (target instanceof LivingEntity le) {
+                targetingHealth = Math.round(le.getHealth() + le.getAbsorptionAmount()) + "/" + Math.round(le.getMaxHealth());
+            }
+
+            if (target.hasCustomName()) {
+                targetingName = target.getDisplayName().getString();
+            } else {
+                targetingName = EntityType.getKey(target.getType()).getPath();
+            }
+        }
+
+
+
+        ImVec2 textSize = new ImVec2();
+        ImGui.calcTextSize(textSize, targetingDistance.length() > targetingName.length() ? targetingDistance : targetingName);
+
+        float padding = 8f;
+        float bgWidth = textSize.x + (padding * 2);
+        float bgHeight = (textSize.y * 3) + 6 + (padding * 2);
+
+        float bgX = xPos.get() - padding;
+        float bgY = yPos.get() - padding;
+
+        Color[] waveColors = {
+                GradientUtils.getColorFromSetting(upperColor),
+                GradientUtils.getColorFromSetting(middleColor),
+                GradientUtils.getColorFromSetting(lowerColor),
+                GradientUtils.getColorFromSetting(middleColor)
+        };
+
+        gradientUtils.drawHorizontalWaveGradientTile(
+                bgX, bgY, bgWidth, bgHeight,
+                waveColors, alpha.get(),
+                waveSpeed.get() / 2f,
+                waveDensity.get() / 2f
+        );
+
+        float textX = bgX + padding;
+        float textY = bgY + padding;
+
+        ImColorW colorW = new ImColorW(textColor.get());
+
+        GUI.drawString(targetingName, textX, textY, colorW);
+
+        textY += textSize.y + 2;
+        GUI.drawString(targetingHealth, textX, textY, colorW);
+
+        textY += textSize.y + 2;
+        GUI.drawString(targetingDistance, textX, textY, colorW);
+    }
+
     @Override
     public void update() {
         assert MC.player != null;
 
         delay--;
 
+        if (target != null) {
+            if (!target.isAlive()) {
+                target = null;
+            }
+        }
+
         if (MC.player.getAttackStrengthScale(0.5f) < 1.0f || delay > 0) {
             return;
+        }
+
+        if (target != null && autoSwitch.get()) {
+            if (!weapons.value().contains(MC.player.getMainHandItem().getItem())) {
+                delay = timeout.get();
+                InventoryUtils.swapToHotbar(InventoryUtils.findAnySlot(weapons.value()), dedicatedSlot.get());
+                InventoryUtils.swapSlot(dedicatedSlot.get());
+                return;
+            }
         }
 
         List<Entity> entities = filterEntities();
@@ -87,13 +252,22 @@ public class KillAura extends Module {
 
         entities.sort(Comparator.comparingDouble((e) -> e.distanceToSqr(MC.player)));
 
-        attackEntity(entities.get(0));
+        target = entities.get(0);
+
+        if (!autoSwitch.get() || weapons.value().contains(MC.player.getMainHandItem().getItem())) {
+            attackEntity(target);
+        }
     }
 
     protected void attackEntity(Entity entity) {
+        if (entity == null) {
+            return;
+        }
+
         assert MC.player != null;
         MC.player.resetAttackStrengthTicker();
 
+        // 9b doesn't need swinging!
         PacketUtils.send(
                 ServerboundInteractPacket.createAttackPacket(
                         entity, MC.player.isShiftKeyDown()));
@@ -134,7 +308,7 @@ public class KillAura extends Module {
                     continue;
                 }
 
-                if (healthCheck.get() && (living.getHealth() <= 0 && living.getMaxHealth() <= 0)) {
+                if (healthCheck.get() && (living.getHealth() <= 0 || living.getMaxHealth() <= 0)) {
                     continue;
                 }
             }
