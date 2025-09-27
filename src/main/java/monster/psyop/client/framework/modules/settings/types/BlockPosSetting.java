@@ -21,15 +21,15 @@ public class BlockPosSetting extends Setting<BlockPosSetting, ImBlockPos> {
 
         ImGui.tableNextColumn();
 
-        ImGui.inputInt("X", value().xData);
+        ImGui.inputInt("X", value().data[0]);
 
         ImGui.tableNextColumn();
 
-        ImGui.inputInt("Y", value().yData);
+        ImGui.inputInt("Y", value().data[1]);
 
         ImGui.tableNextColumn();
 
-        ImGui.inputInt("Z", value().zData);
+        ImGui.inputInt("Z", value().data[2]);
 
         ImGui.tableNextColumn();
         if (ImGui.button("Set Here")) {
