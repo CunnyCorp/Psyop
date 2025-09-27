@@ -45,7 +45,7 @@ public class FriendManager {
     }
 
     public static boolean canAttack(Player player) {
-        if (roles.containsKey(player.getUUID().toString())) {
+        if (roles.containsKey(player.getUUID().toString()) || roles.containsKey(player.getName().getString())) {
             return roles.get(player.getUUID().toString()).roleType.features.shouldAttack;
         }
 

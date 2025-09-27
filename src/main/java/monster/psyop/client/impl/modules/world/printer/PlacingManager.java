@@ -170,9 +170,8 @@ public class PlacingManager {
 
         List<PlaceableBlock> placeableBlocks = new ArrayList<>();
 
-        for (int[] pos : PrinterUtils.PRINTER.toSort) {
-            // Ins compat with aura and alike.
 
+        for (int[] pos : PrinterUtils.PRINTER.toSort) {
             blockPos.set(pos[0], pos[1], pos[2]);
 
             BlockState state = worldSchematic.getBlockState(blockPos);
@@ -189,27 +188,19 @@ public class PlacingManager {
                 continue;
             }
 
-            InteractionHand hand = InteractionHand.MAIN_HAND;
-
-            if (slot == 40) hand = InteractionHand.OFF_HAND;
-
             if (PrinterUtils.PRINTER.swapTimer > 0) {
                 break;
             }
 
-            if ((!PrinterUtils.PRINTER.strictNoColor.get()
-                    && McDataCache.getColor(MC.player.getMainHandItem())
-                    != McDataCache.getColor(item)
-                    || (PrinterUtils.PRINTER.strictNoColor.get()
-                    && MC.player.getMainHandItem().getItem() != item))
-                    && hand != InteractionHand.OFF_HAND) {
+            if (!PrinterUtils.PRINTER.strictNoColor.get()
+                    && McDataCache.getColor(MC.player.getMainHandItem()) != McDataCache.getColor(item)
+                    || PrinterUtils.PRINTER.strictNoColor.get()
+                    && MC.player.getMainHandItem().getItem() != item) {
                 PrinterUtils.PRINTER.swapTimer = PrinterUtils.PRINTER.swapDelay.get();
 
                 InventoryUtils.swapSlot(PrinterUtils.PRINTER.dedicatedSlot.get());
                 InventoryUtils.swapToHotbar(slot, PrinterUtils.PRINTER.dedicatedSlot.get());
-                InventoryUtils.pickup(PrinterUtils.PRINTER.dedicatedSlot.get());
-                InventoryUtils.placeItem(PrinterUtils.PRINTER.dedicatedSlot.get());
-
+                Psyop.LOG.info("Swapping slot {} for color check", slot);
                 break;
             }
 
@@ -254,6 +245,7 @@ public class PlacingManager {
 
 
             if (slot == -1) {
+                Psyop.LOG.info("Slot was -1");
                 continue;
             }
 
@@ -272,17 +264,8 @@ public class PlacingManager {
                     && MC.player.getMainHandItem().getItem() != item))
                     && hand != InteractionHand.OFF_HAND) {
                 PrinterUtils.PRINTER.swapTimer = PrinterUtils.PRINTER.swapDelay.get();
-                if (slot < 9) {
-                    InventoryUtils.swapSlot(slot);
-                    InventoryUtils.pickup(slot);
-                    InventoryUtils.placeItem(slot);
-                } else {
-                    InventoryUtils.swapSlot(PrinterUtils.PRINTER.dedicatedSlot.get());
-                    InventoryUtils.swapToHotbar(slot, PrinterUtils.PRINTER.dedicatedSlot.get());
-                    InventoryUtils.pickup(PrinterUtils.PRINTER.dedicatedSlot.get());
-                    InventoryUtils.placeItem(PrinterUtils.PRINTER.dedicatedSlot.get());
-                }
-
+                InventoryUtils.swapSlot(PrinterUtils.PRINTER.dedicatedSlot.get());
+                InventoryUtils.swapToHotbar(slot, PrinterUtils.PRINTER.dedicatedSlot.get());
                 break;
             }
             PrinterUtils.PRINTER.lastLiquidPlace = PrinterUtils.PRINTER.liquidPlaceTimeout.get();

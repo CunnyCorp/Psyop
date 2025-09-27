@@ -4,9 +4,7 @@ import imgui.type.ImInt;
 import net.minecraft.core.BlockPos;
 
 public class ImBlockPos {
-    public ImInt xData = new ImInt(0);
-    public ImInt yData = new ImInt(0);
-    public ImInt zData = new ImInt(0);
+    public int[] data = new int[]{0,0,0};
     protected transient BlockPos.MutableBlockPos original = new BlockPos.MutableBlockPos(0, 0, 0);
 
     public ImBlockPos() {
@@ -19,33 +17,33 @@ public class ImBlockPos {
     }
 
     public int x(int i) {
-        xData.set(i);
+        data[0] = i;
         original.setX(i);
         return i;
     }
 
     public int y(int i) {
-        yData.set(i);
+        data[1] = i;
         original.setY(i);
         return i;
     }
 
     public int z(int i) {
-        zData.set(i);
+        data[2] = i;
         original.setZ(i);
         return i;
     }
 
     public int x() {
-        return xData.get();
+        return data[0];
     }
 
     public int y() {
-        return yData.get();
+        return data[1];
     }
 
     public int z() {
-        return zData.get();
+        return data[2];
     }
 
     public BlockPos asImmutable() {

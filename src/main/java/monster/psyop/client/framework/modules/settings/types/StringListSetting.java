@@ -6,14 +6,17 @@ import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.modules.settings.ListSettingConfig;
+import monster.psyop.client.config.modules.settings.StringListSettingConfig;
 import monster.psyop.client.framework.modules.settings.Setting;
 
 import java.util.List;
 
 public class StringListSetting extends Setting<StringListSetting, List<ImString>> {
+    private final ImString txt = new ImString();
+
     public StringListSetting(SettingBuilder<StringListSetting, Builder, List<ImString>> builder) {
         super(builder);
-        this.settingConfig = new ListSettingConfig();
+        this.settingConfig = new StringListSettingConfig();
     }
 
     @Override
@@ -54,14 +57,19 @@ public class StringListSetting extends Setting<StringListSetting, List<ImString>
 
         ImGui.endChild();
 
-        ImString txt = new ImString();
-
-        ImGui.inputText("Text", txt, ImGuiInputTextFlags.CallbackResize);
+        boolean submit = ImGui.button("Submit##" + name + "_submit");
 
         ImGui.sameLine();
-        if (ImGui.arrowButton("Submit", 0)) {
-            value().add(txt.clone());
-            txt.clear();
+
+        ImGui.inputText("##Text" + name, txt, ImGuiInputTextFlags.CallbackResize);
+
+        if (submit) {
+            if (txt.isEmpty()) {
+                return;
+            }
+
+            value().add(new ImString(txt.get()));
+            txt.set("", true);
         }
     }
 

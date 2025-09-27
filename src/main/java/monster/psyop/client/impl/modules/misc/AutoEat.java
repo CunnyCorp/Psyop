@@ -47,6 +47,7 @@ public class AutoEat extends Module {
                     .addTo(coreGroup);
 
     private boolean useKeyDown = false;
+    private int hasHadFor = 0;
 
     public AutoEat() {
         super(Categories.MISC, "auto-eat", "Automatically eats food when you are hungry.");
@@ -57,20 +58,24 @@ public class AutoEat extends Module {
         boolean shouldGap = MC.player.getHealth() <= minHealth.get();
 
         if (shouldEat()) {
-            int slot = InventoryUtils.findMatchingSlot((item, s) -> shouldGap ? item.getItem() == Items.ENCHANTED_GOLDEN_APPLE : item.has(DataComponents.CONSUMABLE) && food.value().contains(item.getItem()));
-
-            if (slot == -1) {
-                return;
-            }
-
-            InventoryUtils.swapSlot(dedicatedSlot.get());
-            InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
-
-            if (MC.player.getMainHandItem().isEmpty()) {
-                return;
-            }
-
             if (MC.player.getMainHandItem().has(DataComponents.CONSUMABLE) && (shouldGap || food.value().contains(MC.player.getMainHandItem().getItem()))) {
+                hasHadFor++;
+            } else {
+                hasHadFor = 0;
+
+                int slot = InventoryUtils.findMatchingSlot((item, s) -> shouldGap ? item.getItem() == Items.ENCHANTED_GOLDEN_APPLE : item.has(DataComponents.CONSUMABLE) && food.value().contains(item.getItem()));
+
+                if (slot == -1) {
+                    return;
+                }
+
+                InventoryUtils.swapSlot(dedicatedSlot.get());
+                InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
+            }
+
+
+
+            if (hasHadFor >= 3 && MC.player.getMainHandItem().has(DataComponents.CONSUMABLE) && (shouldGap || food.value().contains(MC.player.getMainHandItem().getItem()))) {
                 useKeyDown = true;
                 MC.options.keyUse.setDown(true);
             }

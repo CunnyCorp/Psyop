@@ -7,7 +7,7 @@ public class RoleType {
     public String description;
     public ImColorW color;
 
-    public RoleFeatures features;
+    public RoleFeatures features = new RoleFeatures();
 
     public RoleType(String name, String description, ImColorW color) {
         this.name = name;

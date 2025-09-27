@@ -3,6 +3,7 @@ package monster.psyop.client;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.framework.AnActualRat;
 import monster.psyop.client.framework.events.EventHandler;
+import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.framework.gui.utility.ColoredText;
 import monster.psyop.client.framework.gui.views.client.ConfigView;
@@ -13,6 +14,7 @@ import monster.psyop.client.framework.gui.views.features.ClientLogView;
 import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
+import monster.psyop.client.impl.modules.combat.TriggerBot;
 import monster.psyop.client.impl.modules.hud.*;
 import monster.psyop.client.impl.modules.combat.AntiKb;
 import monster.psyop.client.impl.modules.combat.AttackBurst;
@@ -127,6 +129,8 @@ public class Psyop implements ModInitializer {
 
         INSTANCE = this;
 
+        FriendManager.init();
+
         new StringUtils();
 
         MC = Minecraft.getInstance();
@@ -199,6 +203,7 @@ public class Psyop implements ModInitializer {
         new SpinBot().load();
         new ElytraPause().load();
         new SillyBot().load();
+        new LagbackDetector().load();
 
         new AutoEat().load();
         new NoMiss().load();
@@ -210,6 +215,7 @@ public class Psyop implements ModInitializer {
         new Rotation().load();
         new TestModule().load();
         new UseControl().load();
+        new Friends().load();
 
         if (Dependencies.LITEMATICA.isLoaded()) {
             if (Dependencies.BARITONE.isLoaded()) {
@@ -225,6 +231,7 @@ public class Psyop implements ModInitializer {
         new AntiKb().load();
         new AttackBurst().load();
         new KillAura().load();
+        new TriggerBot().load();
 
         new BlockLights().load();
         new Chams().load();

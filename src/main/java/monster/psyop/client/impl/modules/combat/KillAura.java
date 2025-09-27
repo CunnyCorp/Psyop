@@ -2,13 +2,16 @@ package monster.psyop.client.impl.modules.combat;
 
 import imgui.ImGui;
 import imgui.ImVec2;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
+import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.modules.hud.HUD;
+import monster.psyop.client.impl.modules.misc.Friends;
 import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.gui.GradientUtils;
@@ -155,7 +158,7 @@ public class KillAura extends HUD {
                 "Automatically hits entities around the player.");
     }
 
-    @EventListener
+    @EventListener(inGame = false)
     public void onRender2D(On2DRender event) {
         if (!displayHUD.get()) {
             return;
@@ -309,6 +312,12 @@ public class KillAura extends HUD {
                 }
 
                 if (healthCheck.get() && (living.getHealth() <= 0 || living.getMaxHealth() <= 0)) {
+                    continue;
+                }
+            }
+
+            if (entity instanceof Player player) {
+                if (!FriendManager.canAttack(player)) {
                     continue;
                 }
             }
