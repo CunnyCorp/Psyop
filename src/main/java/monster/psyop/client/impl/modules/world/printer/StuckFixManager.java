@@ -99,7 +99,7 @@ public class StuckFixManager {
 
             PRINTER.savingGraceTimer--;
         } else if (PRINTER.wasSwimmingUp) {
-            if (MC.player.onGround()) {
+            if (MC.player.onGround() || !MC.player.isInLiquid()) {
                 MC.options.keyJump.setDown(false);
                 MC.options.keyUp.setDown(false);
                 PRINTER.wasSwimmingUp = false;
