@@ -63,14 +63,29 @@ public class ClientLevelMixin {
             if (Psyop.MODULES.isActive(Warp.class)) {
                 Warp module = Psyop.MODULES.get(Warp.class);
 
-                if (!MC.options.keyJump.isDown() || MC.player.onGround()) {
+                if (!MC.options.keyJump.isDown() || MC.player.onGround() || (!MC.player.isSprinting() && module.requireSprint.get())){
                     return;
                 }
 
-                for (int i = 0; i <= module.multiplier.get(); i++) {
+                for (int i = 0; i < (MC.player.getDeltaMovement().y > module.maxYUp.get() ? module.upMultiplier.get() : module.multiplier.get()); i++) {
                     if (!module.onlyAir.get() || !MC.player.onGround()) {
-                        MC.player.tick();
-                        MC.player.attackStrengthTicker--;
+                        boolean tickPlayer = false;
+
+                        if (module.goingUp.get() && MC.player.getDeltaMovement().y > 0) {
+                            tickPlayer = !(MC.player.getDeltaMovement().y > module.maxYUp.get());
+                        }
+
+                        if (module.goingDown.get() && MC.player.getDeltaMovement().y < 0) {
+                            tickPlayer = true;
+                        }
+
+                        if (tickPlayer) {
+                            MC.player.noJumpDelay = 0;
+                            if (MC.options.keyUp.isDown()) MC.options.keyJump.setDown(true);
+                            MC.player.setDeltaMovement(MC.player.getDeltaMovement().x * module.multiplierDiagonal.get(), MC.player.getDeltaMovement().y * module.multiplierVertical.get(), MC.player.getDeltaMovement().z * module.multiplierDiagonal.get());
+                            MC.player.tick();
+                            MC.player.attackStrengthTicker--;
+                        }
                     }
                 }
             }
@@ -78,7 +93,7 @@ public class ClientLevelMixin {
             if (Psyop.MODULES.isActive(PlayerTimer.class)) {
                 PlayerTimer module = Psyop.MODULES.get(PlayerTimer.class);
 
-                for (int i = 0; i <= module.multiplier.get(); i++) {
+                for (int i = 0; i < module.multiplier.get(); i++) {
                     MC.player.tick();
                     MC.player.attackStrengthTicker--;
                 }
