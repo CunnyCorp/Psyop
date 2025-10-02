@@ -29,6 +29,7 @@ public class Jumping extends Module {
     @EventListener
     public void onTick(OnTick.Pre event) {
         if (removeDelay.get()) {
+            assert MC.player != null;
             MC.player.noJumpDelay = 0;
         }
     }

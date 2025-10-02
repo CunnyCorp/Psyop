@@ -12,19 +12,18 @@ import monster.psyop.client.utility.TextUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 
-import static monster.psyop.client.Psyop.MC;
-
-public class Warp extends Module {
+public class GrimBunnyHop extends Module {
     public IntSetting multiplier = new IntSetting.Builder()
             .name("multiplier")
             .description("How many extra ticks to run.")
             .defaultTo(80)
             .range(1, 100)
             .addTo(coreGroup);
-    public BoolSetting onlyAir = new BoolSetting.Builder()
-            .name("only-air")
-            .description("Only ticks if off the ground.")
-            .defaultTo(true)
+    public IntSetting groundMultiplier = new IntSetting.Builder()
+            .name("ground-multiplier")
+            .description("How many extra ticks to run.")
+            .defaultTo(3)
+            .range(1, 100)
             .addTo(coreGroup);
     public BoolSetting goingUp = new BoolSetting.Builder()
             .name("going-up")
@@ -79,13 +78,21 @@ public class Warp extends Module {
             .defaultTo(9)
             .range(1, 90)
             .addTo(coreGroup);
+    public IntSetting jumpPause = new IntSetting.Builder()
+            .name("jump-pause")
+            .description("Pauses movement for this many ticks.")
+            .defaultTo(120)
+            .range(9, 1200)
+            .addTo(coreGroup);
 
+
+    public int phantom = 0;
     private int ticks = 0;
     private boolean forwardPressed = false;
     private boolean jumpPressed = false;
 
-    public Warp() {
-        super(Categories.MOVEMENT, "warp", "Lets you warp by pressing the jump key.");
+    public GrimBunnyHop() {
+        super(Categories.MOVEMENT, "grim-bunny-hop", "Lets you bunny hop, on the most bypassable anticheat!");
     }
 
     @EventListener
@@ -102,11 +109,15 @@ public class Warp extends Module {
 
     @Override
     public void update() {
+        if (++phantom > jumpPause.get()) {
+            phantom = 0;
+        }
+
         if (sprint.get()) {
             Psyop.MODULES.get(Sprint.class).update();
         }
 
-        if (MC.options.keyUp.isDown()) MC.options.keyJump.setDown(true);
+        MC.options.keyJump.setDown(MC.options.keyUp.isDown() || MC.options.keyLeft.isDown() || MC.options.keyDown.isDown() || MC.options.keyRight.isDown());
 
         if (!waitForGround.get() || MC.player.onGround()) {
             ticks--;

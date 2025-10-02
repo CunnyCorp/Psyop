@@ -46,3 +46,6 @@ accessible field net/minecraft/world/entity/LivingEntity noJumpDelay I
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyProgress F
 
 accessible field net/minecraft/world/entity/LivingEntity attackStrengthTicker I
+
+accessible method net/minecraft/client/renderer/LevelRenderer renderEntity (Lnet/minecraft/world/entity/Entity;DDDFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V
+accessible method net/minecraft/client/renderer/GameRenderer getFov (Lnet/minecraft/client/Camera;FZ)F

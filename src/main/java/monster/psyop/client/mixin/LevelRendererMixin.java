@@ -1,21 +1,33 @@
 package monster.psyop.client.mixin;
 
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
+import com.mojang.blaze3d.vertex.PoseStack;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.render.BlockLights;
 import monster.psyop.client.impl.modules.render.Chams;
+import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static monster.psyop.client.Psyop.MC;
 
 @Mixin(value = LevelRenderer.class, priority = 749)
 public class LevelRendererMixin {
@@ -41,7 +53,7 @@ public class LevelRendererMixin {
 
         if (Psyop.MODULES.isActive(Chams.class)) {
             Chams module = Psyop.MODULES.get(Chams.class);
-            if (module.glowEntities.value().contains(lastGlowingEntityType)) {
+            if (!module.toggleGlow.get() && module.glowEntities.value().contains(lastGlowingEntityType)) {
                 float[] glowColor = module.glowEntities.colorMap.getOrDefault(lastGlowingEntityType, module.entityGlowColor.get());
                 instance.setColor((int) (glowColor[0] * 255), (int) (glowColor[1] * 255), (int) (glowColor[2] * 255), (int) (glowColor[3] * 255));
                 return;
@@ -58,7 +70,7 @@ public class LevelRendererMixin {
 
         if (Psyop.MODULES.isActive(Chams.class)) {
             Chams module = Psyop.MODULES.get(Chams.class);
-            if (module.glowEntities.value().contains(entity.getType())) {
+            if (!module.toggleGlow.get() && module.glowEntities.value().contains(entity.getType())) {
                 return true;
             }
         }
@@ -99,4 +111,5 @@ public class LevelRendererMixin {
 
         return instance.emissiveRendering(blockGetter, blockPos);
     }
+
 }

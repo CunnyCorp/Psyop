@@ -22,6 +22,11 @@ public class Chams extends Module {
             .name("glow-color")
             .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.6f})
             .addTo(entityGroup);
+    public BoolSetting toggleGlow = new BoolSetting.Builder()
+            .name("toggle-glow")
+            .description("Toggles glow off.")
+            .defaultTo(true)
+            .addTo(entityGroup);
     public GroupedSettings blockEntityGroup = addGroup(new GroupedSettings("block-entities", "Modifies how block entities are rendered in the world."));
     public BlockEntityColorListSetting glowBlockEntities = new BlockEntityColorListSetting.Builder()
             .name("glow")

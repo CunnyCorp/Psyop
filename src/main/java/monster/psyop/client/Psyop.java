@@ -36,7 +36,6 @@ import monster.psyop.client.utility.*;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.RandomSource;
-import org.lwjgl.opengl.GL11;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,7 +196,7 @@ public class Psyop implements ModInitializer {
         new Jumping().load();
         new Phase().load();
         new Sneak().load();
-        new Warp().load();
+        new GrimBunnyHop().load();
         new PlayerTimer().load();
         new Sprint().load();
         new SpinBot().load();

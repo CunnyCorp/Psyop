@@ -122,3 +122,5 @@ BuildClient.ps1
 ai/PogModulesView.java
 /ai
 Prep.txt
+/srcdump/
+srcdump/MapRenderer.java
