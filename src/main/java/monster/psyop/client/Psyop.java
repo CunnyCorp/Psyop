@@ -14,11 +14,8 @@ import monster.psyop.client.framework.gui.views.features.ClientLogView;
 import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
-import monster.psyop.client.impl.modules.combat.TriggerBot;
+import monster.psyop.client.impl.modules.combat.*;
 import monster.psyop.client.impl.modules.hud.*;
-import monster.psyop.client.impl.modules.combat.AntiKb;
-import monster.psyop.client.impl.modules.combat.AttackBurst;
-import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.misc.*;
 import monster.psyop.client.impl.modules.movement.*;
@@ -215,6 +212,7 @@ public class Psyop implements ModInitializer {
         new TestModule().load();
         new UseControl().load();
         new Friends().load();
+        new AutoElytraSwap().load();
 
         if (Dependencies.LITEMATICA.isLoaded()) {
             if (Dependencies.BARITONE.isLoaded()) {
