@@ -8,6 +8,7 @@ import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnTick;
+import monster.psyop.client.utility.DimensionCheck;
 import monster.psyop.client.utility.gui.GradientUtils;
 
 import java.awt.*;
@@ -72,9 +73,21 @@ public class PositionHUD extends HUD {
         if (MC.player != null) {
             position = Math.round(MC.player.getX()) + ", " +
                     Math.round(MC.player.getY()) + ", " +
-                    Math.round(MC.player.getZ()) + " - (" +
-                    Math.round(MC.player.getX() / 8) + ", " +
-                    Math.round(MC.player.getZ() / 8) + ")";
+                    Math.round(MC.player.getZ());
+
+            try {
+                if (DimensionCheck.NETHER.check.call()) {
+                    position += " - (" +
+                            Math.round(MC.player.getX() * 8) + ", " +
+                            Math.round(MC.player.getZ() * 8) + ")";
+                } else if (DimensionCheck.OW.check.call()) {
+                    position += " - (" +
+                            Math.round(MC.player.getX() / 8) + ", " +
+                            Math.round(MC.player.getZ() / 8) + ")";
+                }
+            } catch (Exception ignored) {
+            }
+
         }
 
         ImVec2 textSize = new ImVec2();
