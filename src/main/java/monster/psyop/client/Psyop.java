@@ -178,6 +178,7 @@ public class Psyop implements ModInitializer {
         new ArrayHUD().load();
         new PositionHUD().load();
         new NotificationHUD().load();
+        new PlayerRadarHUD().load();
 
         // Modules
 

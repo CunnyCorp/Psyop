@@ -214,7 +214,6 @@ public class Gui extends RenderProxy {
 
         if (!MC.mouseHandler.isMouseGrabbed() && MC.screen == null) MC.mouseHandler.grabMouse();
     }
-
     public void drawBackground(float x, float y, float width, float height) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
         drawList.addRectFilled(x, y, width, height, new ImColorW(new Color(71, 69, 69, 182)).packed(), 4f, ImDrawFlags.RoundCornersAll);
