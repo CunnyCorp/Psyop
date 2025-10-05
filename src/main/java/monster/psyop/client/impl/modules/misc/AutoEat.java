@@ -1,19 +1,13 @@
 package monster.psyop.client.impl.modules.misc;
 
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
-import monster.psyop.client.impl.events.game.OnTick;
-import monster.psyop.client.impl.modules.world.printer.PrinterUtils;
 import monster.psyop.client.utility.InventoryUtils;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AutoEat extends Module {
@@ -72,7 +66,6 @@ public class AutoEat extends Module {
                 InventoryUtils.swapSlot(dedicatedSlot.get());
                 InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
             }
-
 
 
             if (hasHadFor >= 3 && MC.player.getMainHandItem().has(DataComponents.CONSUMABLE) && (shouldGap || food.value().contains(MC.player.getMainHandItem().getItem()))) {

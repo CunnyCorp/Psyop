@@ -4,7 +4,6 @@ import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
-import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;

@@ -1,14 +1,10 @@
 package monster.psyop.client.impl.modules.movement;
 
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BlockListSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.impl.events.game.OnTick;
-import monster.psyop.client.impl.modules.world.printer.PrinterUtils;
 import monster.psyop.client.utility.CollectionUtils;
 import monster.psyop.client.utility.RotationUtils;
 import monster.psyop.client.utility.blocks.BlockUtils;
@@ -47,7 +43,6 @@ public class SillyBot extends Module {
                     .defaultTo(3f)
                     .range(0.5f, 6)
                     .addTo(coreGroup);
-
 
 
     private final BlockPos.MutableBlockPos nextGoal = new BlockPos.MutableBlockPos();

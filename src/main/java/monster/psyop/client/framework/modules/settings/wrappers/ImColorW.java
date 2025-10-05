@@ -36,7 +36,35 @@ public class ImColorW {
         if (color.length >= 4) this.color[3] = color[3];
     }
 
+    public ImColorW(int bgColor) {
+        if ((bgColor & 0xFF000000) == 0) {
+            bgColor |= 0xFF000000;
+        }
+
+        int a = (bgColor >> 24) & 0xFF;
+        int r = (bgColor >> 16) & 0xFF;
+        int g = (bgColor >> 8) & 0xFF;
+        int b = bgColor & 0xFF;
+
+        this.color[0] = r / 255f;
+        this.color[1] = g / 255f;
+        this.color[2] = b / 255f;
+        this.color[3] = a / 255f;
+    }
+
     public int packed() {
         return ImColor.rgba(color[0], color[1], color[2], color[3]);
+    }
+
+    public int toInt() {
+        int a = (int) (color[3] * 255);
+        int r = (int) (color[0] * 255);
+        int g = (int) (color[1] * 255);
+        int b = (int) (color[2] * 255);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    public float[] getColor() {
+        return color.clone();
     }
 }

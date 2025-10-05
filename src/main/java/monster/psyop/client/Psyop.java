@@ -15,8 +15,8 @@ import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.impl.modules.combat.*;
-import monster.psyop.client.impl.modules.hud.*;
 import monster.psyop.client.impl.modules.exploits.*;
+import monster.psyop.client.impl.modules.hud.*;
 import monster.psyop.client.impl.modules.misc.*;
 import monster.psyop.client.impl.modules.movement.*;
 import monster.psyop.client.impl.modules.render.*;
@@ -179,6 +179,7 @@ public class Psyop implements ModInitializer {
         new PositionHUD().load();
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
+        //new MapHUD().load();
 
         // Modules
 

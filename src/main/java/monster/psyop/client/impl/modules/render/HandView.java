@@ -1,13 +1,11 @@
 package monster.psyop.client.impl.modules.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
-import monster.psyop.client.impl.events.game.OnTick;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemUseAnimation;

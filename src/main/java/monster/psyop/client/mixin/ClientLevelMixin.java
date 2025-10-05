@@ -1,8 +1,8 @@
 package monster.psyop.client.mixin;
 
 import monster.psyop.client.Psyop;
-import monster.psyop.client.impl.modules.movement.PlayerTimer;
 import monster.psyop.client.impl.modules.movement.GrimBunnyHop;
+import monster.psyop.client.impl.modules.movement.PlayerTimer;
 import monster.psyop.client.impl.modules.render.Chams;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -63,11 +63,12 @@ public class ClientLevelMixin {
             if (Psyop.MODULES.isActive(GrimBunnyHop.class)) {
                 GrimBunnyHop module = Psyop.MODULES.get(GrimBunnyHop.class);
 
-                if (!MC.options.keyJump.isDown() || MC.player.onGround() || (!MC.player.isSprinting() && module.requireSprint.get())){
+                if (!MC.options.keyJump.isDown() || MC.player.onGround() || (!MC.player.isSprinting() && module.requireSprint.get())) {
                     return;
                 }
 
-                for (int i = 0; i < (MC.player.getDeltaMovement().y > module.maxYUp.get() ? module.upMultiplier.get() : (MC.player.onGround() ? module.groundMultiplier.get() : module.multiplier.get())); i++) {{
+                for (int i = 0; i < (MC.player.getDeltaMovement().y > module.maxYUp.get() ? module.upMultiplier.get() : (MC.player.onGround() ? module.groundMultiplier.get() : module.multiplier.get())); i++) {
+                    {
                         boolean tickPlayer = false;
 
                         if (module.goingUp.get() && MC.player.getDeltaMovement().y > 0) {

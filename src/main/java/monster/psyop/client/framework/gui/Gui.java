@@ -1,6 +1,9 @@
 package monster.psyop.client.framework.gui;
 
-import imgui.*;
+import imgui.ImDrawList;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.ImVec2;
 import imgui.flag.ImDrawFlags;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
@@ -214,6 +217,7 @@ public class Gui extends RenderProxy {
 
         if (!MC.mouseHandler.isMouseGrabbed() && MC.screen == null) MC.mouseHandler.grabMouse();
     }
+
     public void drawBackground(float x, float y, float width, float height) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
         drawList.addRectFilled(x, y, width, height, new ImColorW(new Color(71, 69, 69, 182)).packed(), 4f, ImDrawFlags.RoundCornersAll);
@@ -224,21 +228,21 @@ public class Gui extends RenderProxy {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
         drawList.addRectFilled(x, y, width, height, color.packed(), 0f, ImDrawFlags.None);
 
-            switch (outline) {
-                case 1: // Full outline
-                    drawList.addRect(x, y, width, height, color2.packed(), 0f, ImDrawFlags.None);
-                    break;
-                case 2: // Top outline only
-                    drawList.addLine(x, y, width, y, color2.packed(), 0f);
-                    break;
-                case 3: // Bottom outline only
-                    drawList.addLine(x, height, width, height, color2.packed(), 0f);
-                    break;
-                case 4: // Left and right outlines
-                    drawList.addLine(x, y, x, height, color2.packed(), 0f);
-                    drawList.addLine(width, y, width, height, color2.packed(), 0f);
-                    break;
-            }
+        switch (outline) {
+            case 1: // Full outline
+                drawList.addRect(x, y, width, height, color2.packed(), 0f, ImDrawFlags.None);
+                break;
+            case 2: // Top outline only
+                drawList.addLine(x, y, width, y, color2.packed(), 0f);
+                break;
+            case 3: // Bottom outline only
+                drawList.addLine(x, height, width, height, color2.packed(), 0f);
+                break;
+            case 4: // Left and right outlines
+                drawList.addLine(x, y, x, height, color2.packed(), 0f);
+                drawList.addLine(width, y, width, height, color2.packed(), 0f);
+                break;
+        }
     }
 
     public void drawString(String text, float x, float y, float minWidth, boolean withBackground) {

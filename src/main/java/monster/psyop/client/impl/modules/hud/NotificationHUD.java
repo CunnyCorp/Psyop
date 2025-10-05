@@ -158,14 +158,14 @@ public class NotificationHUD extends HUD {
 
         for (int i = 0; i < segments; i++) {
             float segmentY = y + i * segmentHeight;
-            float waveFactor = (wavePhase + (float)i / segments) % 1.0f;
+            float waveFactor = (wavePhase + (float) i / segments) % 1.0f;
 
-            float brightness = 0.8f + 0.2f * (float)Math.sin(waveFactor * Math.PI * 2);
+            float brightness = 0.8f + 0.2f * (float) Math.sin(waveFactor * Math.PI * 2);
 
             Color waveColor = new Color(
-                    Math.min(255, (int)(baseColor.getRed() * brightness)),
-                    Math.min(255, (int)(baseColor.getGreen() * brightness)),
-                    Math.min(255, (int)(baseColor.getBlue() * brightness)),
+                    Math.min(255, (int) (baseColor.getRed() * brightness)),
+                    Math.min(255, (int) (baseColor.getGreen() * brightness)),
+                    Math.min(255, (int) (baseColor.getBlue() * brightness)),
                     baseColor.getAlpha()
             );
 
@@ -179,7 +179,7 @@ public class NotificationHUD extends HUD {
                 color.getRed(),
                 color.getGreen(),
                 color.getBlue(),
-                (int)(color.getAlpha() * alpha)
+                (int) (color.getAlpha() * alpha)
         );
     }
 }

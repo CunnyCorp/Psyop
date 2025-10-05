@@ -5,7 +5,6 @@ import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
 import monster.psyop.client.config.Config;
-import monster.psyop.client.config.modules.settings.ListSettingConfig;
 import monster.psyop.client.config.modules.settings.StringListSettingConfig;
 import monster.psyop.client.framework.modules.settings.Setting;
 

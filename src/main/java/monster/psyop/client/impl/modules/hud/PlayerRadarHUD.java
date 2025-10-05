@@ -4,23 +4,48 @@ import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
+import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
+import monster.psyop.client.framework.modules.settings.types.StringSetting;
 import monster.psyop.client.impl.events.On2DRender;
 import net.minecraft.client.player.AbstractClientPlayer;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlayerRadarHUD extends HUD {
-
     public final ColorSetting textColor =
             new ColorSetting.Builder()
                     .name("text-color")
                     .defaultTo(new float[]{1f, 1f, 1f, 1f})
                     .addTo(coreGroup);
+    public final ColorSetting highHealth =
+            new ColorSetting.Builder()
+                    .name("high-health")
+                    .defaultTo(new float[]{0.0f, 0.0f, 1.0f, 1.0f })
+                    .addTo(coreGroup);
+    public final ColorSetting mediumHealth =
+            new ColorSetting.Builder()
+                    .name("medium-health")
+                    .defaultTo(new float[]{1.0f, 1.0f, 0.0f, 1.0f})
+                    .addTo(coreGroup);
+    public final ColorSetting lowHealth =
+            new ColorSetting.Builder()
+                    .name("low-health")
+                    .defaultTo(new float[]{1.0f, 0.0f, 0.0f, 1.0f})
+                    .addTo(coreGroup);
+    public final StringSetting hpText =
+            new StringSetting.Builder()
+                    .name("hp-text")
+                    .defaultTo("<3")
+                    .addTo(coreGroup);
+    public final BoolSetting autoHide =
+            new BoolSetting.Builder()
+                    .name("auto-hide")
+                    .defaultTo(true)
+                    .addTo(coreGroup);
+
+
 
     public PlayerRadarHUD() {
         super("player-radar", "Shows nearby players with distance and health.");
@@ -33,9 +58,9 @@ public class PlayerRadarHUD extends HUD {
         List<AbstractClientPlayer> players = Psyop.MC.level.players().stream()
                 .filter(p -> p != Psyop.MC.player)
                 .sorted(Comparator.comparingDouble(p -> p.distanceTo(Psyop.MC.player)))
-                .collect(Collectors.toList());
+                .toList();
 
-        if (players.isEmpty()) return;
+        if (autoHide.get() && players.isEmpty()) return;
 
         ImGui.begin("Player Radar", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.AlwaysAutoResize);
 
@@ -64,7 +89,7 @@ public class PlayerRadarHUD extends HUD {
                 ImGui.sameLine();
                 ImGui.textColored(
                         healthColor[0], healthColor[1], healthColor[2], healthColor[3],
-                        "<3"
+                        hpText.value().get()
                 );
             } else {
                 ImGui.textColored(
@@ -77,19 +102,13 @@ public class PlayerRadarHUD extends HUD {
         ImGui.end();
     }
 
-    /**
-     * Returns color based on health value:
-     * - Red for low health (0-6)
-     * - Yellow for medium health (7-14)
-     * - Green for high health (15-20)
-     */
     private float[] getHealthColor(float health) {
         if (health <= 6) {
-            return new float[]{1.0f, 0.0f, 0.0f, 1.0f}; // Red
+            return lowHealth.get();
         } else if (health <= 14) {
-            return new float[]{1.0f, 1.0f, 0.0f, 1.0f}; // Yellow
+            return mediumHealth.get();
         } else {
-            return new float[]{0.0f, 1.0f, 0.0f, 1.0f}; // Green
+            return highHealth.get();
         }
     }
 }

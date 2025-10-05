@@ -3,8 +3,6 @@ package monster.psyop.client.framework.gui;
 import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
-import monster.psyop.client.Psyop;
-import monster.psyop.client.impl.events.On2DRender;
 
 import static monster.psyop.client.Psyop.MC;
 

@@ -54,13 +54,13 @@ public class GradientUtils {
                                      float waveSpeed, float waveDensity) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
-        int segments = Math.max(2, (int)(height * waveDensity));
+        int segments = Math.max(2, (int) (height * waveDensity));
         float segmentHeight = height / segments;
 
         for (int i = 0; i < segments; i++) {
             float segmentY = y + (i * segmentHeight);
 
-            float wavePosition = (float)i / segments;
+            float wavePosition = (float) i / segments;
             float waveOffset = (animationPhase * waveSpeed + wavePosition) % 1f;
 
             Color segmentColor = getMultiGradientColor(gradientColors, waveOffset, alpha);
@@ -84,13 +84,13 @@ public class GradientUtils {
                                                float waveSpeed, float waveDensity) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
-        int segments = Math.max(2, (int)(width * waveDensity));
+        int segments = Math.max(2, (int) (width * waveDensity));
         float segmentWidth = width / segments;
 
         for (int i = 0; i < segments; i++) {
             float segmentX = x + (i * segmentWidth);
 
-            float wavePosition = (float)i / segments;
+            float wavePosition = (float) i / segments;
             float waveOffset = (animationPhase * waveSpeed + wavePosition) % 1f;
 
             Color segmentColor = getMultiGradientColor(gradientColors, waveOffset, alpha);
@@ -112,34 +112,34 @@ public class GradientUtils {
     /**
      * Draws a radial wave gradient tile (wave flows from center outward)
      *
-     * @param centerX Center X position of the tile
-     * @param centerY Center Y position of the tile
-     * @param radius Radius of the circular tile
+     * @param centerX        Center X position of the tile
+     * @param centerY        Center Y position of the tile
+     * @param radius         Radius of the circular tile
      * @param gradientColors Array of colors to use in the gradient wave
-     * @param alpha Alpha transparency value
-     * @param waveSpeed Speed of the wave animation (higher = faster)
-     * @param waveDensity Density of color segments in the wave (higher = more segments)
+     * @param alpha          Alpha transparency value
+     * @param waveSpeed      Speed of the wave animation (higher = faster)
+     * @param waveDensity    Density of color segments in the wave (higher = more segments)
      */
     public void drawRadialWaveGradientTile(float centerX, float centerY, float radius,
                                            Color[] gradientColors, int alpha,
                                            float waveSpeed, float waveDensity) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
-        int segments = Math.max(8, (int)(radius * waveDensity * 2));
+        int segments = Math.max(8, (int) (radius * waveDensity * 2));
 
         for (int i = 0; i < segments; i++) {
             float angle1 = (float) (2 * Math.PI * i / segments);
             float angle2 = (float) (2 * Math.PI * (i + 1) / segments);
 
-            float wavePosition = (float)i / segments;
+            float wavePosition = (float) i / segments;
             float waveOffset = (animationPhase * waveSpeed + wavePosition) % 1f;
 
             Color segmentColor = getMultiGradientColor(gradientColors, waveOffset, alpha);
 
             drawList.addTriangleFilled(
                     centerX, centerY,
-                    centerX + (float)Math.cos(angle1) * radius, centerY + (float)Math.sin(angle1) * radius,
-                    centerX + (float)Math.cos(angle2) * radius, centerY + (float)Math.sin(angle2) * radius,
+                    centerX + (float) Math.cos(angle1) * radius, centerY + (float) Math.sin(angle1) * radius,
+                    centerX + (float) Math.cos(angle2) * radius, centerY + (float) Math.sin(angle2) * radius,
                     new ImColorW(segmentColor).packed()
             );
         }

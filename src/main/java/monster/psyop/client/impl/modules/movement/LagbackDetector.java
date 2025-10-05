@@ -2,16 +2,13 @@ package monster.psyop.client.impl.modules.movement;
 
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
-import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.TextUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
-import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 
 public class LagbackDetector extends Module {
     public BoolSetting waitForGround = new BoolSetting.Builder()

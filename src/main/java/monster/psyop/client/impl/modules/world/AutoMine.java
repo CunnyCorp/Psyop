@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static monster.psyop.client.Psyop.MC;
-
 public class AutoMine extends Module {
     public final BoolSetting ignoreWhitelist =
             new BoolSetting.Builder()

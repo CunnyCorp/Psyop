@@ -8,13 +8,11 @@ import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.StringListSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundDeleteChatPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.network.protocol.game.ServerboundChatPacket;
 
-import java.awt.*;
 import java.util.List;
 
 public class BetterChat extends Module {
