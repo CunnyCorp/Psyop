@@ -27,6 +27,7 @@ import monster.psyop.client.impl.modules.world.BreakDelay;
 import monster.psyop.client.impl.modules.world.FastBreak;
 import monster.psyop.client.impl.modules.world.SignFucker;
 import monster.psyop.client.impl.modules.world.printer.Printer;
+import monster.psyop.client.impl.modules.world.printer.SkyRefill;
 import monster.psyop.client.plugins.AddonManager;
 import monster.psyop.client.plugins.JavaAddon;
 import monster.psyop.client.utility.*;
@@ -179,7 +180,6 @@ public class Psyop implements ModInitializer {
         new PositionHUD().load();
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
-        //new MapHUD().load();
 
         // Modules
 
@@ -219,6 +219,7 @@ public class Psyop implements ModInitializer {
         if (Dependencies.LITEMATICA.isLoaded()) {
             if (Dependencies.BARITONE.isLoaded()) {
                 new Printer().load();
+                new SkyRefill().load();
             }
         }
 
