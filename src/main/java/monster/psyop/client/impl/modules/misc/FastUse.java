@@ -1,12 +1,9 @@
 package monster.psyop.client.impl.modules.misc;
 
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
-import monster.psyop.client.framework.modules.settings.types.BlockListSetting;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
-import monster.psyop.client.impl.events.game.OnTick;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 
@@ -42,7 +39,6 @@ public class FastUse extends Module {
             if (useWhitelist.get() && !useItems.value().contains(stack.getItem())) {
                 return;
             }
-
 
 
             if (!blocks.get() && stack.getUseAnimation() == ItemUseAnimation.BLOCK) {

@@ -1,13 +1,11 @@
 package monster.psyop.client.impl.modules.movement;
 
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.WorldUtils;
 import net.minecraft.core.component.DataComponents;

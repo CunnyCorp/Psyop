@@ -21,7 +21,7 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
     private final ImString textFilter = new ImString();
     public final Map<T, float[]> colorMap = new HashMap<>();
     private boolean showSuggestions = false;
-    private final float childHeightRatio = 0.5f; // Configurable height ratio
+    private final float childHeightRatio = 0.3f;
 
     public ObjectColorListSetting(Builder<S, T> builder) {
         super(builder);
@@ -34,14 +34,11 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
 
     @Override
     public void render() {
-        // Header with toggle
         ImGui.pushID(name);
 
-        // Collapsible header
         if (ImGui.collapsingHeader(label() + "##" + name)) {
             ImGui.indent(10);
 
-            // Visibility toggle
             boolean isHidden = Config.get().isHidden(this);
             if (ImGui.checkbox("Hide##" + name, isHidden)) {
                 Config.get().hide(this, !isHidden);
@@ -50,15 +47,11 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
             if (!isHidden) {
                 ImGui.spacing();
 
-                // Filter input with clear button
                 ImGui.text("Filter:");
                 ImGui.sameLine();
                 float filterWidth = ImGui.getContentRegionAvail().x - 60;
                 ImGui.setNextItemWidth(filterWidth);
-                String hint = getSuggestions().stream().findFirst().map(this::itemToString).orElse("");
-                if (ImGui.inputTextWithHint("##filter_" + name, "Type to filter...", textFilter, ImGuiInputTextFlags.CallbackResize)) {
-                    // Filter text changed
-                }
+                ImGui.inputTextWithHint("##filter_" + name, "Type to filter...", textFilter, ImGuiInputTextFlags.CallbackResize);
 
                 ImGui.sameLine();
                 if (ImGui.button("Clear##" + name)) {
@@ -67,7 +60,6 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
 
                 ImGui.spacing();
 
-                // Table with items
                 float tableHeight = (ImGui.getWindowHeight() - ImGui.getCursorPosY() - 100) * childHeightRatio;
                 if (ImGui.beginChild(name + "_table_child", 0, tableHeight, true, ImGuiWindowFlags.HorizontalScrollbar)) {
                     if (ImGui.beginTable(name + "_table", 4,
@@ -76,7 +68,6 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
                                     ImGuiTableFlags.SizingStretchSame |
                                     ImGuiTableFlags.ScrollY)) {
 
-                        // Table headers
                         ImGui.tableSetupColumn("Item", ImGuiTableColumnFlags.WidthStretch);
                         ImGui.tableSetupColumn("Color", ImGuiTableColumnFlags.WidthFixed, 100);
                         ImGui.tableSetupColumn("Actions", ImGuiTableColumnFlags.WidthFixed, 80);
@@ -93,12 +84,10 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
                                 ImGui.tableNextRow();
                                 ImGui.tableNextColumn();
 
-                                // Item name
                                 ImGui.text(entryStr);
 
                                 ImGui.tableNextColumn();
 
-                                // Color editor
                                 colorMap.putIfAbsent(entry, new float[]{0f, 0.4f, 0.2f, 1f});
                                 ImGui.setNextItemWidth(-1);
                                 ImGui.colorEdit4("##color_" + i + "_" + name, colorMap.get(entry),
@@ -108,7 +97,6 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
 
                                 ImGui.tableNextColumn();
 
-                                // Remove button
                                 if (ImGui.button("Remove##" + i + "_" + name)) {
                                     removeEntry = entry;
                                 }
@@ -128,11 +116,9 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
 
                 ImGui.spacing();
 
-                // Suggestions section
                 ImGui.text("Add new item:");
 
                 if (getSuggestions() != null && !getSuggestions().isEmpty()) {
-                    // Show suggestions dropdown
                     if (ImGui.button("Show Suggestions##" + name)) {
                         showSuggestions = !showSuggestions;
                     }
@@ -157,7 +143,6 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
                                     }
                                 }
 
-                                // Tooltip with more info if available
                                 if (ImGui.isItemHovered()) {
                                     ImGui.beginTooltip();
                                     ImGui.text("Click to add: " + nameStr);
@@ -169,7 +154,6 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
                         ImGui.endChild();
                     }
                 } else {
-                    // Manual input option
                     ImGui.inputText("Item name", textFilter, ImGuiInputTextFlags.CallbackResize);
                     ImGui.sameLine();
                     if (ImGui.button("Add") && !textFilter.isEmpty()) {

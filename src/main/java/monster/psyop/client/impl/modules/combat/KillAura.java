@@ -2,7 +2,6 @@ package monster.psyop.client.impl.modules.combat;
 
 import imgui.ImGui;
 import imgui.ImVec2;
-import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.Categories;
@@ -11,7 +10,6 @@ import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.modules.hud.HUD;
-import monster.psyop.client.impl.modules.misc.Friends;
 import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.gui.GradientUtils;
@@ -181,7 +179,6 @@ public class KillAura extends HUD {
                 targetingName = EntityType.getKey(target.getType()).getPath();
             }
         }
-
 
 
         ImVec2 textSize = new ImVec2();

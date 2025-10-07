@@ -7,10 +7,8 @@ import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.InventoryUtils;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
-
-import static monster.psyop.client.Psyop.MC;
+import net.minecraft.world.item.Items;
 
 public class AutoElytraSwap extends Module {
     private final IntSetting range =
@@ -20,7 +18,6 @@ public class AutoElytraSwap extends Module {
                     .defaultTo(8)
                     .range(1, 20)
                     .addTo(coreGroup);
-
     private final IntSetting hotbarSlot =
             new IntSetting.Builder()
                     .name("hotbar-slot")
@@ -28,7 +25,6 @@ public class AutoElytraSwap extends Module {
                     .defaultTo(6)
                     .range(1, 9)
                     .addTo(coreGroup);
-
     private final IntSetting delay =
             new IntSetting.Builder()
                     .name("delay")
@@ -37,8 +33,8 @@ public class AutoElytraSwap extends Module {
                     .range(1, 20)
                     .addTo(coreGroup);
 
-    private static final int CHEST_SLOT_INDEX = 6; // chest armor slot
-    private int tickCounter = 0; // to track delay
+    private static final int CHEST_SLOT_INDEX = 6;
+    private int tickCounter = 0;
 
     public AutoElytraSwap() {
         super(Categories.COMBAT, "auto-elytra-swap", "Swaps elytra and chestplate depending on nearby players.");
@@ -48,7 +44,6 @@ public class AutoElytraSwap extends Module {
     public void onTick(OnTick.Pre event) {
         if (MC.player == null || MC.level == null) return;
 
-        // delay handling
         if (tickCounter++ < delay.get()) return;
         tickCounter = 0;
 
@@ -68,13 +63,11 @@ public class AutoElytraSwap extends Module {
                     InventoryUtils.pickup(chestplateSlot);
                     InventoryUtils.placeItem(CHEST_SLOT_INDEX);
 
-                    // put elytra into preferred hotbar slot
-                    int slotIndex = hotbarSlot.get() - 1; // convert 1-9 to 0-8
+                    int slotIndex = hotbarSlot.get() - 1;
                     int invSlot = InventoryUtils.getHotbarOffset() + slotIndex;
                     if (MC.player.getInventory().getItem(slotIndex).isEmpty()) {
                         InventoryUtils.placeItem(invSlot);
                     } else {
-                        // fallback: normal empty slot search
                         moveToAnyEmptySlot();
                     }
                 }
@@ -86,7 +79,6 @@ public class AutoElytraSwap extends Module {
                     InventoryUtils.pickup(elytraSlot);
                     InventoryUtils.placeItem(CHEST_SLOT_INDEX);
 
-                    // put chestplate into preferred hotbar slot
                     int slotIndex = hotbarSlot.get() - 1;
                     int invSlot = InventoryUtils.getHotbarOffset() + slotIndex;
                     if (MC.player.getInventory().getItem(slotIndex).isEmpty()) {
@@ -100,14 +92,12 @@ public class AutoElytraSwap extends Module {
     }
 
     private void moveToAnyEmptySlot() {
-        // hotbar first
         int emptySlot = InventoryUtils.findEmptySlotInHotbar(0);
         if (emptySlot != -1) {
             InventoryUtils.placeItem(InventoryUtils.getHotbarOffset() + emptySlot);
             return;
         }
 
-        // then main inventory
         for (int i = InventoryUtils.getInventoryOffset(); i < MC.player.containerMenu.slots.size(); i++) {
             if (MC.player.containerMenu.getSlot(i).getItem().isEmpty()) {
                 InventoryUtils.placeItem(i);

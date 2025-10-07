@@ -4,7 +4,6 @@ import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
-import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
@@ -27,6 +26,7 @@ import net.minecraft.world.level.material.MapColor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -259,13 +259,6 @@ public class Printer extends Module {
                     .description("Items to check for.")
                     .defaultTo(new ArrayList<>())
                     .addTo(autoReturnGrouped);
-    public final IntSetting processWait =
-            new IntSetting.Builder()
-                    .name("process-wait")
-                    .description("How long to wait between setting the goal.")
-                    .defaultTo(1)
-                    .range(1, 1200)
-                    .addTo(autoReturnGrouped);
     public final FloatSetting homeDistance =
             new FloatSetting.Builder()
                     .name("home-distance")
@@ -332,7 +325,6 @@ public class Printer extends Module {
     private final VanillaMove trueVanillaMove = new VanillaMove();
     private BlockPos lastBlockPos;
     private int sameAsLastBlock = 0;
-    private int sameAsLastTimer = 0;
     public int lastSwapTimer = 0;
 
     public Printer() {
@@ -363,7 +355,6 @@ public class Printer extends Module {
         sleepJob = false;
         sleepAttemptTimer = 0;
         sameAsLastBlock = 0;
-        sameAsLastTimer = 0;
         sleepReturnTo = null;
 
         lastBlockPos = BlockPos.ZERO;
@@ -475,11 +466,8 @@ public class Printer extends Module {
                 sameAsLastBlock = 0;
             }
 
-            if (lastSwapTimer == swapTimer) {
-                sameAsLastTimer++;
-            } else {
+            if (lastSwapTimer != swapTimer) {
                 lastSwapTimer = swapTimer;
-                sameAsLastTimer = 0;
             }
         }
 
@@ -575,6 +563,7 @@ public class Printer extends Module {
 
                         anchorToSort.clear();
 
+                        anchoredBlocks.sort(Comparator.comparingDouble(value -> value[0]));
                         anchoredBlocks.sort(BlockUtils.CLOSEST_XZ_COMPARATOR);
 
                         int maxAnchoredBlocks = 0;

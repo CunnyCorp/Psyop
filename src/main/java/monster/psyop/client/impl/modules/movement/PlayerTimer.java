@@ -1,10 +1,8 @@
 package monster.psyop.client.impl.modules.movement;
 
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.impl.events.game.OnTick;
 
 public class PlayerTimer extends Module {
     public IntSetting multiplier = new IntSetting.Builder()

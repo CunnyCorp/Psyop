@@ -5,7 +5,6 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
-import monster.psyop.client.impl.events.game.OnTick;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Input;
