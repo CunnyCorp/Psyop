@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.lang.annotation.Target;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -179,6 +180,7 @@ public class Psyop implements ModInitializer {
         new PositionHUD().load();
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
+        new TargetHUD().load();
 
         // Modules
 
