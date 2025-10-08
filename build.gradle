@@ -24,6 +24,11 @@ repositories {
     }
 
     maven {
+        name = "meteor-maven"
+        url = "https://maven.meteordev.org"
+    }
+
+    maven {
         name = "Meteor Dev Releases"
         url = "https://maven.meteordev.org/releases"
     }
@@ -53,6 +58,10 @@ dependencies {
     shadow "io.github.spair:imgui-java-natives-windows-ft:${project.imgui_version}"
     shadow "io.github.spair:imgui-java-natives-linux-ft:${project.imgui_version}"
     shadow "io.github.spair:imgui-java-natives-macos-ft:${project.imgui_version}"
+
+    // Discord RPC
+    shadow "meteordevelopment:discord-ipc:1.1"
+    shadow "com.google.code.gson:gson:2.8.9"
 }
 
 loom {
@@ -99,4 +108,3 @@ remapJar {
     dependsOn shadowJar
     inputFile.set(shadowJar.archiveFile)
 }
-

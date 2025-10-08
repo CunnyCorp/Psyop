@@ -217,6 +217,7 @@ public class Psyop implements ModInitializer {
         new UseControl().load();
         new Friends().load();
         new AutoElytraSwap().load();
+        new DiscordRPC().load();
 
         if (Dependencies.LITEMATICA.isLoaded()) {
             if (Dependencies.BARITONE.isLoaded()) {
