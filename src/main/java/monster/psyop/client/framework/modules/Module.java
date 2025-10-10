@@ -35,7 +35,7 @@ public class Module {
     public final ImBoolean active = new ImBoolean(false);
     public final Category category;
     public final String name;
-    protected final List<Dependency> dependencies = new ArrayList<>();
+    public final List<Dependency> dependencies = new ArrayList<>();
     private final Runnable onEnabled;
     private final Runnable onDisabled;
     @Getter

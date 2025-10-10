@@ -11,7 +11,7 @@ import monster.psyop.client.framework.modules.settings.Setting;
 import java.util.List;
 
 public class StringListSetting extends Setting<StringListSetting, List<ImString>> {
-    private final ImString txt = new ImString();
+    private final ImString txt = new ImString(256);
 
     public StringListSetting(SettingBuilder<StringListSetting, Builder, List<ImString>> builder) {
         super(builder);
@@ -68,7 +68,8 @@ public class StringListSetting extends Setting<StringListSetting, List<ImString>
             }
 
             value().add(new ImString(txt.get()));
-            txt.set("", true);
+            // Avoid resizing the backing buffer in the same frame as inputText to prevent crashes
+            txt.set("");
         }
     }
 

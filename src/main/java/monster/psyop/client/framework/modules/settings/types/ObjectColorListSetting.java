@@ -21,7 +21,7 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
     private final ImString textFilter = new ImString();
     public final Map<T, float[]> colorMap = new HashMap<>();
     private boolean showSuggestions = false;
-    private final float childHeightRatio = 0.3f;
+    private final float childHeightRatio = 0.7f;
 
     public ObjectColorListSetting(Builder<S, T> builder) {
         super(builder);

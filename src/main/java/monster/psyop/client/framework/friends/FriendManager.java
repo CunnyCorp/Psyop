@@ -45,10 +45,16 @@ public class FriendManager {
     }
 
     public static boolean canAttack(Player player) {
-        if (roles.containsKey(player.getUUID().toString()) || roles.containsKey(player.getName().getString())) {
-            return roles.get(player.getUUID().toString()).roleType.features.shouldAttack;
+        String uuidKey = player.getUUID().toString();
+        String nameKey = player.getName().getString();
+        if (roles.containsKey(uuidKey)) {
+            PlayerRole pr = roles.get(uuidKey);
+            return pr.roleType == null || pr.roleType.features == null || pr.roleType.features.shouldAttack;
         }
-
+        if (roles.containsKey(nameKey)) {
+            PlayerRole pr = roles.get(nameKey);
+            return pr.roleType == null || pr.roleType.features == null || pr.roleType.features.shouldAttack;
+        }
         return true;
     }
 }

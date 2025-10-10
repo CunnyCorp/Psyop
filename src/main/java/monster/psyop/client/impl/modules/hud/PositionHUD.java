@@ -103,8 +103,7 @@ public class PositionHUD extends HUD {
         Color[] waveColors = {
                 GradientUtils.getColorFromSetting(upperColor),
                 GradientUtils.getColorFromSetting(middleColor),
-                GradientUtils.getColorFromSetting(lowerColor),
-                GradientUtils.getColorFromSetting(middleColor)
+                GradientUtils.getColorFromSetting(lowerColor)
         };
 
         gradientUtils.drawHorizontalWaveGradientTile(

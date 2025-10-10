@@ -130,6 +130,7 @@ public class DiscordRPC extends Module {
             t.printStackTrace();
         }
     }
+
     private void doUpdate() {
         try {
             try {
@@ -152,7 +153,8 @@ public class DiscordRPC extends Module {
                 } else if (MC != null && MC.getUser() != null) {
                     username = MC.getUser().getName();
                 }
-            } catch (Throwable t) {}
+            } catch (Throwable t) {
+            }
 
             String detailsText = details.value().get()
                     .replace("{username}", username)
@@ -181,5 +183,6 @@ public class DiscordRPC extends Module {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 }

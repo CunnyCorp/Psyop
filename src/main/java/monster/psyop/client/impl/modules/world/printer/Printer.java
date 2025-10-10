@@ -2,13 +2,20 @@ package monster.psyop.client.impl.modules.world.printer;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
+import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.modules.settings.wrappers.ImBlockPos;
+import monster.psyop.client.framework.rendering.PsyopRenderTypes;
+import monster.psyop.client.framework.rendering.Render3DUtil;
+import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.world.printer.movesets.AdvancedMove;
 import monster.psyop.client.impl.modules.world.printer.movesets.BaritoneMove;
 import monster.psyop.client.impl.modules.world.printer.movesets.VanillaMove;
@@ -23,6 +30,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,6 +48,64 @@ public class Printer extends Module {
     public final List<Item> containedBlocks = new ArrayList<>();
     // Render
     final List<int[]> anchorToSort = new ArrayList<>();
+
+    // Fade-out effect for recently placed blocks
+    private static final class FadeEntry {
+        final BlockPos pos;
+        final long startMs;
+
+        FadeEntry(BlockPos pos, long startMs) {
+            this.pos = pos;
+            this.startMs = startMs;
+        }
+    }
+
+    private final List<FadeEntry> fading = new ArrayList<>();
+
+    // Rendering settings
+    private final GroupedSettings renderGroup = addGroup(new GroupedSettings("render", "Visual overlay for Printer"));
+    public final BoolSetting renderEnabled = new BoolSetting.Builder()
+            .name("enabled")
+            .description("Enable Printer rendering overlays")
+            .defaultTo(true)
+            .addTo(renderGroup);
+    public final BoolSetting renderAnchor = new BoolSetting.Builder()
+            .name("show-anchor")
+            .description("Draw anchor target (line and box)")
+            .defaultTo(true)
+            .addTo(renderGroup);
+    public final BoolSetting renderQueue = new BoolSetting.Builder()
+            .name("show-queue")
+            .description("Draw boxes for queued blocks to place")
+            .defaultTo(true)
+            .addTo(renderGroup);
+    public final IntSetting renderQueueLimit = new IntSetting.Builder()
+            .name("queue-limit")
+            .description("Max queued blocks to render for performance")
+            .defaultTo(200)
+            .range(10, 2000)
+            .addTo(renderGroup);
+    public final FloatSetting renderLineWidth = new FloatSetting.Builder()
+            .name("line-width")
+            .description("Line width for tracers")
+            .defaultTo(1.5f)
+            .range(0.5f, 6.0f)
+            .addTo(renderGroup);
+    public final ColorSetting anchorColor = new ColorSetting.Builder()
+            .name("anchor-color")
+            .defaultTo(new float[]{1.0f, 0.8f, 0.1f, 1.0f})
+            .addTo(renderGroup);
+    public final ColorSetting queueColor = new ColorSetting.Builder()
+            .name("queue-color")
+            .defaultTo(new float[]{0.2f, 0.6f, 1.0f, 0.8f})
+            .addTo(renderGroup);
+    public final IntSetting fadeDurationMs = new IntSetting.Builder()
+            .name("fade-ms")
+            .description("How long placed-block highlight lingers and shrinks (ms)")
+            .defaultTo(650)
+            .range(100, 4000)
+            .addTo(renderGroup);
+
     // Settings;
     public final IntSetting swapDelay =
             new IntSetting.Builder()
@@ -341,6 +408,7 @@ public class Printer extends Module {
 
         anchorToSort.clear();
         toSort.clear();
+        if (fading != null) fading.clear();
         anchoringTo.set(0, -999, 0);
         lastPlacedBlock.set(0, 0, 0);
         pauseTillRefilled = false;
@@ -609,6 +677,12 @@ public class Printer extends Module {
             PlacingManager.tryPlacingBlocks();
 
         } else placeTimer++;
+
+        // Track fade-out entries for placed blocks
+        if (!(lastPlacedBlock.getX() == 0 && lastPlacedBlock.getY() == 0 && lastPlacedBlock.getZ() == 0)) {
+            fading.add(new FadeEntry(lastPlacedBlock.immutable(), System.currentTimeMillis()));
+            lastPlacedBlock.set(0, 0, 0);
+        }
     }
 
     public boolean passesChecks() {
@@ -637,5 +711,91 @@ public class Printer extends Module {
         trueVanillaMove.tick(pos);
     }
 
+    @EventListener
+    public void onRender3D(OnRender event) {
+        if (!renderEnabled.get()) return;
+        if (MC.level == null || MC.player == null) return;
+
+        // Prepare renderer
+        RenderSystem.lineWidth(renderLineWidth.get());
+        var buffers = MC.renderBuffers().bufferSource();
+        VertexConsumer lineVc = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
+        VertexConsumer quadVc = buffers.getBuffer(PsyopRenderTypes.seeThroughQuads());
+        PoseStack ps = new PoseStack();
+        PoseStack.Pose pose = ps.last();
+
+        Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
+        double camX = cam.x();
+        double camY = cam.y();
+        double camZ = cam.z();
+
+        // Draw anchor target
+        if (renderAnchor.get() && anchor.get()) {
+            BlockPos ap = anchoringTo;
+            if (ap != null && ap.getY() != -999) {
+                float[] ac = anchorColor.get();
+                // Tracer from eyes to center of anchor
+                Vec3 eye = MC.player.getEyePosition();
+                float sx = (float) (eye.x - camX);
+                float sy = (float) (eye.y - camY);
+                float sz = (float) (eye.z - camZ);
+                float tx = (float) ((ap.getX() + 0.5) - camX);
+                float ty = (float) ((ap.getY() + 0.5) - camY);
+                float tz = (float) ((ap.getZ() + 0.5) - camZ);
+                Render3DUtil.drawTracer(lineVc, pose, sx, sy, sz, tx, ty, tz, ac[0], ac[1], ac[2], ac[3]);
+
+                // Box around anchor block
+                AABB bb = new AABB(ap);
+                AABB rel = bb.move(-camX, -camY, -camZ);
+                Render3DUtil.drawBoxEdges(lineVc, pose, rel, ac[0], ac[1], ac[2], ac[3]);
+                Render3DUtil.drawBoxFaces(quadVc, pose, rel, ac[0], ac[1], ac[2], ac[3] * 0.15f);
+            }
+        }
+
+        // Draw queued blocks to place
+        if (renderQueue.get()) {
+            float[] qc = queueColor.get();
+            int count = 0;
+            for (int[] posVec : toSort) {
+                if (count++ >= renderQueueLimit.get()) break;
+                BlockPos p = new BlockPos(posVec[0], posVec[1], posVec[2]);
+                AABB bb = new AABB(p);
+                AABB rel = bb.move(-camX, -camY, -camZ);
+                Render3DUtil.drawBoxEdges(lineVc, pose, rel, qc[0], qc[1], qc[2], qc[3]);
+            }
+
+            // Fading/shrinking highlights for recently placed blocks
+            long now = System.currentTimeMillis();
+            for (int i = fading.size() - 1; i >= 0; i--) {
+                FadeEntry fe = fading.get(i);
+                float t = (float) ((now - fe.startMs) / (double) fadeDurationMs.get());
+                if (t >= 1.0f) {
+                    fading.remove(i);
+                    continue;
+                }
+                float scale = 1.0f - t; // 1 -> 0 over duration
+                // Keep a minimum visual height so it doesn't disappear instantly
+                float minH = 0.05f;
+                float h = Math.max(minH, scale);
+
+                BlockPos bp = fe.pos;
+                float minX = (float) (bp.getX() - camX);
+                float minY = (float) (bp.getY() - camY);
+                float minZ = (float) (bp.getZ() - camZ);
+                float maxX = minX + 1.0f;
+                float maxY = minY + h; // shrink top toward bottom
+                float maxZ = minZ + 1.0f;
+
+                float aEdge = qc[3] * (1.0f - t);
+                float aFace = aEdge * 0.25f;
+
+                Render3DUtil.drawBoxEdges(lineVc, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aEdge);
+                Render3DUtil.drawBoxFaces(quadVc, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aFace);
+            }
+        }
+
+        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
+        buffers.endBatch(PsyopRenderTypes.seeThroughQuads());
+    }
 
 }

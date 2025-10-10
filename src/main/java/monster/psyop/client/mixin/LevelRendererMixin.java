@@ -1,11 +1,17 @@
 package monster.psyop.client.mixin;
 
+import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 import monster.psyop.client.Psyop;
+import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.render.BlockLights;
 import monster.psyop.client.impl.modules.render.Chams;
+import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -16,9 +22,23 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(value = LevelRenderer.class, priority = 749)
 public class LevelRendererMixin {
+    @org.spongepowered.asm.mixin.injection.Inject(method = "renderEntities", at = @At("TAIL"))
+    private void psyop$renderEntities(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Camera camera, DeltaTracker deltaTracker, List<Entity> list, CallbackInfo ci) {
+        GlStateManager._depthMask(false);
+        GlStateManager._disableDepthTest();
+
+        Psyop.EVENT_HANDLER.call(OnRender.get());
+
+        GlStateManager._enableDepthTest();
+        GlStateManager._depthMask(true);
+    }
+
     @Unique
     private EntityType<?> lastGlowingEntityType;
     @Unique
@@ -39,6 +59,7 @@ public class LevelRendererMixin {
             }
         }
 
+
         if (Psyop.MODULES.isActive(Chams.class)) {
             Chams module = Psyop.MODULES.get(Chams.class);
             if (!module.toggleGlow.get() && module.glowEntities.value().contains(lastGlowingEntityType)) {
@@ -55,6 +76,7 @@ public class LevelRendererMixin {
     public boolean shouldEntityAppearGlowing0(Minecraft instance, Entity entity) {
         lastGlowingEntityType = entity.getType();
         lastGlowingEntity = entity;
+
 
         if (Psyop.MODULES.isActive(Chams.class)) {
             Chams module = Psyop.MODULES.get(Chams.class);

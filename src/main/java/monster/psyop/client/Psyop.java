@@ -14,6 +14,7 @@ import monster.psyop.client.framework.gui.views.features.ClientLogView;
 import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
+import monster.psyop.client.impl.eggs.EggLoader;
 import monster.psyop.client.impl.modules.combat.*;
 import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.hud.*;
@@ -22,10 +23,7 @@ import monster.psyop.client.impl.modules.movement.*;
 import monster.psyop.client.impl.modules.render.*;
 import monster.psyop.client.impl.modules.silly.HappyHands;
 import monster.psyop.client.impl.modules.silly.OiledUp;
-import monster.psyop.client.impl.modules.world.AutoMine;
-import monster.psyop.client.impl.modules.world.BreakDelay;
-import monster.psyop.client.impl.modules.world.FastBreak;
-import monster.psyop.client.impl.modules.world.SignFucker;
+import monster.psyop.client.impl.modules.world.*;
 import monster.psyop.client.impl.modules.world.printer.Printer;
 import monster.psyop.client.impl.modules.world.printer.SkyRefill;
 import monster.psyop.client.plugins.AddonManager;
@@ -38,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.lang.annotation.Target;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -179,9 +176,9 @@ public class Psyop implements ModInitializer {
         new ArmorHUD().load();
         new ArrayHUD().load();
         new PositionHUD().load();
+        new TargetHUD().load();
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
-        new TargetHUD().load();
 
         // Modules
 
@@ -229,6 +226,7 @@ public class Psyop implements ModInitializer {
         new AutoMine().load();
         new BreakDelay().load();
         new FastBreak().load();
+        new Scaffold().load();
         new SignFucker().load();
 
         new AntiKb().load();
@@ -242,9 +240,14 @@ public class Psyop implements ModInitializer {
         new HideArmor().load();
         new ItemView().load();
         new WorldView().load();
+        new ESP().load();
+        new StorageESP().load();
+        new Ripples().load();
 
         new HappyHands().load();
         new OiledUp().load();
+
+        EggLoader.loadEggs();
 
         EVENT_HANDLER.add(new LatencyUtils());
 

@@ -8,7 +8,10 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
+import monster.psyop.client.framework.rendering.PsyopRenderTypes;
+import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.On2DRender;
+import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.hud.HUD;
 import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
@@ -21,6 +24,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -331,5 +338,73 @@ public class KillAura extends HUD {
         }
 
         return MC.player.level().getEntities(MC.player, new AABB(MC.player.getX() + 9, MC.player.getY() + 9, MC.player.getZ() + 9, MC.player.getX() - 9, MC.player.getY() - 9, MC.player.getZ() - 9));
+    }
+
+    @EventListener
+    public void onRender3D(OnRender event) {
+        if (MC == null || MC.level == null || MC.player == null) return;
+        if (target == null || !target.isAlive()) return;
+
+        RenderSystem.lineWidth(2.0f);
+        var buffers = MC.renderBuffers().bufferSource();
+        VertexConsumer lines = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
+        PoseStack poseStack = new PoseStack();
+        PoseStack.Pose pose = poseStack.last();
+
+        Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
+        double camX = cam.x();
+        double camY = cam.y();
+        double camZ = cam.z();
+
+        AABB bb = target.getBoundingBox();
+        float cX = (float) (((bb.minX + bb.maxX) * 0.5) - camX);
+        float cZ = (float) (((bb.minZ + bb.maxZ) * 0.5) - camZ);
+        float minY = (float) (bb.minY - camY);
+        float maxY = (float) (bb.maxY - camY);
+
+        float rx = (float) ((bb.maxX - bb.minX) * 0.5);
+        float rz = (float) ((bb.maxZ - bb.minZ) * 0.5);
+
+        double t = System.currentTimeMillis() / 1000.0;
+        float speed = 1.5f;
+        float angleOffset = (float) (t * speed * Math.PI * 2.0);
+
+        float[] gc = glowColor.get();
+        float r = gc[0];
+        float g = gc[1];
+        float b = gc[2];
+        float a = 0.95f;
+
+        int segments = 64;
+
+        drawRing(lines, pose, cX, minY + 0.02f, cZ, rx, rz, angleOffset + 0.0f, segments, r, g, b, a);
+        float midYBase = (minY + maxY) * 0.5f;
+        float midYOsc = (float) (Math.sin(t * 2.0) * 0.15f);
+        drawRing(lines, pose, cX, midYBase + midYOsc, cZ, rx * 0.95f, rz * 0.95f, angleOffset + 0.8f, segments, r, g, b, a);
+        drawRing(lines, pose, cX, maxY - 0.02f, cZ, rx, rz, angleOffset + 1.6f, segments, r, g, b, a);
+
+        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
+    }
+
+    private void drawRing(VertexConsumer vc, PoseStack.Pose pose,
+                          float cX, float cY, float cZ,
+                          float rx, float rz,
+                          float angleOffset,
+                          int segments,
+                          float r, float g, float b, float a) {
+        if (rx <= 0.0001f || rz <= 0.0001f) return;
+        float twoPi = (float) (Math.PI * 2.0);
+        float prevX = 0f, prevY = 0f, prevZ = 0f;
+        for (int i = 0; i <= segments; i++) {
+            float t = (float) i / (float) segments;
+            float ang = t * twoPi + angleOffset;
+            float x = cX + (float) Math.cos(ang) * rx;
+            float z = cZ + (float) Math.sin(ang) * rz;
+            float y = cY;
+            if (i > 0) {
+                Render3DUtil.addLine(vc, pose, prevX, prevY, prevZ, x, y, z, r, g, b, a);
+            }
+            prevX = x; prevY = y; prevZ = z;
+        }
     }
 }

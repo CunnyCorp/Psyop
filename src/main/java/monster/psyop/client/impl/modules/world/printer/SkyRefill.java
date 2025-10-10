@@ -1,7 +1,6 @@
 package monster.psyop.client.impl.modules.world.printer;
 
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
 import monster.psyop.client.utility.InventoryUtils;

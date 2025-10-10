@@ -17,4 +17,9 @@ public class CollectionUtils {
         if (list.isEmpty()) return null;
         return list.get(RANDOM.nextInt(list.size()));
     }
+
+    public static <T> T random(T[] array) {
+        if (array == null || array.length == 0) return null;
+        return array[RANDOM.nextInt(array.length)];
+    }
 }

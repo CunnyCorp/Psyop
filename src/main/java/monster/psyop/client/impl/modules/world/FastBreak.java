@@ -12,15 +12,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 
 public class FastBreak extends Module {
-    public FloatSetting breakMultiplier =new FloatSetting.Builder()
+    public FloatSetting breakMultiplier = new FloatSetting.Builder()
             .name("break-multiplier")
             .defaultTo(2.5f)
             .range(0.1f, 10f)
-            .addTo(coreGroup);
-    public FloatSetting breakAddition = new FloatSetting.Builder()
-            .name("break-addition")
-            .defaultTo(0.0f)
-            .range(0.0f, 10f)
             .addTo(coreGroup);
     public BoolSetting instant = new BoolSetting.Builder()
             .name("instant")
@@ -34,7 +29,7 @@ public class FastBreak extends Module {
 
     @EventListener
     public void onTick(OnTick.Post event) {
-        MC.gameMode.destroyProgress += breakAddition.get();
+
     }
 
     @EventListener

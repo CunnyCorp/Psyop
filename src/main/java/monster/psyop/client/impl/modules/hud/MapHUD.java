@@ -55,14 +55,25 @@ public class MapHUD extends HUD {
                     .range(1, 10)
                     .defaultTo(5)
                     .addTo(coreGroup);
+
+    // Map image and texture handle
     public BufferedImage image;
     public static int textureId = 0;
 
     private final GradientUtils gradientUtils = new GradientUtils(0.5f);
 
+    // Caching/state
+    private static final int SIZE = 128;
+    private static final int RADIUS = SIZE / 2; // 64
+    private int lastBlockX = Integer.MIN_VALUE;
+    private int lastBlockZ = Integer.MIN_VALUE;
+    private boolean initialized = false;
+    private boolean dirty = false;
+    private final int[][] colorCache = new int[SIZE][SIZE];
+
     public MapHUD() {
         super("map", "Shows a cute lil minimap.");
-        image = new BufferedImage(128, 128, BufferedImage.TYPE_4BYTE_ABGR);
+        image = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_4BYTE_ABGR);
     }
 
     public void uploadMapImage(BufferedImage image) {
@@ -108,25 +119,116 @@ public class MapHUD extends HUD {
         }
     }
 
+    private int sampleColor(int worldX, int worldZ, int playerY) {
+        try {
+            if (MC.level == null) return 0x00000000;
+            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+            pos.set(worldX, 0, worldZ);
+            int currentHeight = MC.player.level().getHeight(Heightmap.Types.MOTION_BLOCKING, pos);
+            pos.setY(currentHeight);
+            int baseColor = 0x808080;
+            try {
+                baseColor = MC.level.getBlockState(pos).getMapColor(MC.level, pos).col;
+            } catch (Exception ignored) {
+            }
+
+            pos.set(worldX, 0, worldZ - 1);
+            int northHeight = MC.player.level().getHeight(Heightmap.Types.MOTION_BLOCKING, pos);
+            int heightDiff = currentHeight - northHeight;
+            int shaded = applyHeightGradient(baseColor, heightDiff);
+
+            int rel = currentHeight - playerY; // positive = above player
+            float relFactor = Math.max(-16f, Math.min(16f, rel)) / 16f; // clamp
+            float brightAdj = 1.0f + (relFactor * 0.20f); // up to +/-20%
+
+            int r = (shaded >> 16) & 0xFF;
+            int g = (shaded >> 8) & 0xFF;
+            int b = shaded & 0xFF;
+            r = (int) Math.max(0, Math.min(255, r * brightAdj));
+            g = (int) Math.max(0, Math.min(255, g * brightAdj));
+            b = (int) Math.max(0, Math.min(255, b * brightAdj));
+
+            return (r << 16) | (g << 8) | b;
+        } catch (Throwable t) {
+            return 0x000000;
+        }
+    }
+
+    private void initializeCache(int centerX, int centerZ, int playerY) {
+        for (int dx = -RADIUS; dx < RADIUS; dx++) {
+            for (int dz = -RADIUS; dz < RADIUS; dz++) {
+                int color = sampleColor(centerX + dx, centerZ + dz, playerY);
+                int px = dx + RADIUS;
+                int pz = dz + RADIUS;
+                colorCache[px][pz] = color | 0xFF000000;
+                image.setRGB(px, pz, colorCache[px][pz]);
+            }
+        }
+        initialized = true;
+        dirty = true;
+    }
+
+    private void shiftAndUpdate(int newCenterX, int newCenterZ, int playerY) {
+        int dx = newCenterX - lastBlockX;
+        int dz = newCenterZ - lastBlockZ;
+        if (dx == 0 && dz == 0) return;
+
+        // Shift existing cache within bounds
+        int[][] tmp = new int[SIZE][SIZE];
+        for (int x = 0; x < SIZE; x++) {
+            for (int z = 0; z < SIZE; z++) {
+                int nx = x - dx;
+                int nz = z - dz;
+                if (nx >= 0 && nx < SIZE && nz >= 0 && nz < SIZE) {
+                    tmp[x][z] = colorCache[nx][nz];
+                } else {
+                    tmp[x][z] = 0; // mark as empty; will fill
+                }
+            }
+        }
+        // Copy back
+        for (int x = 0; x < SIZE; x++) {
+            System.arraycopy(tmp[x], 0, colorCache[x], 0, SIZE);
+        }
+
+        // Fill new columns/rows exposed by movement
+        for (int x = -RADIUS; x < RADIUS; x++) {
+            for (int z = -RADIUS; z < RADIUS; z++) {
+                int px = x + RADIUS;
+                int pz = z + RADIUS;
+                if (colorCache[px][pz] == 0) { // needs recompute
+                    int worldX = newCenterX + x;
+                    int worldZ = newCenterZ + z;
+                    int color = sampleColor(worldX, worldZ, playerY) | 0xFF000000;
+                    colorCache[px][pz] = color;
+                }
+                image.setRGB(px, pz, colorCache[px][pz]);
+            }
+        }
+        dirty = true;
+    }
 
     @EventListener
     public void onTickPre(OnTick.Pre event) {
-        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        for (int x = -64; x < 64; x++) {
-            for (int z = -64; z < 64; z++) {
-                mutableBlockPos.set(MC.player.getX() + x, 0, MC.player.getZ() + z);
-                int currentHeight = MC.player.level().getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos);
-                mutableBlockPos.setY(currentHeight);
-                int baseColor = MC.level.getBlockState(mutableBlockPos).getMapColor(MC.level, mutableBlockPos).col;
-                mutableBlockPos.set(MC.player.getX() + x, 0, MC.player.getZ() + z - 1);
-                int northHeight = MC.player.level().getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos);
-                int heightDiff = currentHeight - northHeight;
-                int gradientColor = applyHeightGradient(baseColor, heightDiff);
-                image.setRGB(x + 64, z + 64, gradientColor | 0xFF000000);
-            }
+        if (MC == null || MC.player == null || MC.level == null) return;
+
+        int blockX = (int) Math.floor(MC.player.getX());
+        int blockZ = (int) Math.floor(MC.player.getZ());
+        int playerY = (int) Math.floor(MC.player.getY());
+
+        if (!initialized || lastBlockX == Integer.MIN_VALUE) {
+            initializeCache(blockX, blockZ, playerY);
+        } else if (blockX != lastBlockX || blockZ != lastBlockZ) {
+            shiftAndUpdate(blockX, blockZ, playerY);
         }
 
-        uploadMapImage(image);
+        lastBlockX = blockX;
+        lastBlockZ = blockZ;
+
+        if (dirty) {
+            uploadMapImage(image);
+            dirty = false;
+        }
         gradientUtils.updateAnimation();
     }
 
@@ -154,25 +256,46 @@ public class MapHUD extends HUD {
 
     @EventListener
     public void render(On2DRender event) {
-        if (textureId == -1) return;
+        if (textureId == 0) return; // 0 is invalid texture
 
         ImDrawList drawList = ImGui.getBackgroundDrawList();
+        // Background panel
         drawList.addRectFilled(
                 xPos.get() - 2, yPos.get() - 2,
-                xPos.get() + 130, yPos.get() + 130,
+                xPos.get() + SIZE + 2, yPos.get() + SIZE + 2,
                 0x80000000
         );
 
+        // Map image
         drawList.addImage(
                 textureId,
                 xPos.get(), yPos.get(),
-                xPos.get() + 128, yPos.get() + 128,
+                xPos.get() + SIZE, yPos.get() + SIZE,
                 0, 0, 1, 1
         );
 
+        // Player direction indicator (triangle at center)
+        if (MC != null && MC.player != null) {
+            float cx = xPos.get() + SIZE / 2.0f;
+            float cy = yPos.get() + SIZE / 2.0f;
+            float yawRad = (float) Math.toRadians(-MC.player.getYRot());
+            float len = 5.0f;
+            float back = 3.0f;
+            float x1 = cx + (float) Math.cos(yawRad) * len;
+            float y1 = cy + (float) Math.sin(yawRad) * len;
+            float x2 = cx + (float) Math.cos(yawRad + 2.5f) * back;
+            float y2 = cy + (float) Math.sin(yawRad + 2.5f) * back;
+            float x3 = cx + (float) Math.cos(yawRad - 2.5f) * back;
+            float y3 = cy + (float) Math.sin(yawRad - 2.5f) * back;
+            int col = 0xFFFFFFFF;
+            drawList.addTriangleFilled(x1, y1, x2, y2, x3, y3, col);
+            drawList.addTriangle(x1, y1, x2, y2, x3, y3, 0xFF000000);
+        }
+
+        // Border
         drawList.addRect(
                 xPos.get() - 1, yPos.get() - 1,
-                xPos.get() + 129, yPos.get() + 129,
+                xPos.get() + SIZE + 1, yPos.get() + SIZE + 1,
                 0xFFFFFFFF
         );
     }

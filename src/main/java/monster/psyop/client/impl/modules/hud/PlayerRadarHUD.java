@@ -22,7 +22,7 @@ public class PlayerRadarHUD extends HUD {
     public final ColorSetting highHealth =
             new ColorSetting.Builder()
                     .name("high-health")
-                    .defaultTo(new float[]{0.0f, 0.0f, 1.0f, 1.0f })
+                    .defaultTo(new float[]{0.0f, 0.0f, 1.0f, 1.0f})
                     .addTo(coreGroup);
     public final ColorSetting mediumHealth =
             new ColorSetting.Builder()
@@ -44,7 +44,6 @@ public class PlayerRadarHUD extends HUD {
                     .name("auto-hide")
                     .defaultTo(true)
                     .addTo(coreGroup);
-
 
 
     public PlayerRadarHUD() {
