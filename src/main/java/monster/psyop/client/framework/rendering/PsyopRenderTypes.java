@@ -10,25 +10,20 @@ import java.util.OptionalDouble;
 import java.util.function.Supplier;
 
 public final class PsyopRenderTypes {
-    public static RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.DEBUG_FILLED_SNIPPET}).withLocation("pipeline/debug_quads").withCull(false).withDepthWrite(false).build());
-
-
-
-    // Lazily create to avoid class init order issues with RenderSystem/MC bootstrap
+    public static final RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withDepthWrite(false).build());
+    public static final RenderPipeline LINES = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.LINES_SNIPPET).withLocation("pipeline/lines").withCull(false).withDepthWrite(false).build());
     private static final Supplier<RenderType> SEE_THROUGH_LINES_SUPPLIER = Suppliers.memoize(() ->
             RenderType.create(
                     "psyop_see_through_lines",
-                    1536,
-                    RenderPipelines.LINES,
+                    1536, LINES,
                     RenderType.CompositeState.builder()
                             .setTextureState(RenderStateShard.NO_TEXTURE)
                             .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
                             .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-                            .setOutputState(RenderStateShard.OUTLINE_TARGET) // outline buffer has no depth -> see-through
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
                             .createCompositeState(false)
             )
     );
-
     private static final Supplier<RenderType> SEE_THROUGH_QUADS_SUPPLIER = Suppliers.memoize(() ->
             RenderType.create(
                     "psyop_see_through_quads",
