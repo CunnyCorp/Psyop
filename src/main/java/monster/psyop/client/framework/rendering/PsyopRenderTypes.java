@@ -1,6 +1,7 @@
 package monster.psyop.client.framework.rendering;
 
 import com.google.common.base.Suppliers;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
@@ -8,14 +9,10 @@ import net.minecraft.client.renderer.RenderType;
 import java.util.OptionalDouble;
 import java.util.function.Supplier;
 
-/**
- * Custom RenderTypes for Psyop client.
- * Provides RenderTypes that render to the OUTLINE_TARGET (no depth),
- * guaranteeing visibility through walls.
- */
 public final class PsyopRenderTypes {
-    private PsyopRenderTypes() {
-    }
+    public static RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.DEBUG_FILLED_SNIPPET}).withLocation("pipeline/debug_quads").withCull(false).withDepthWrite(false).build());
+
+
 
     // Lazily create to avoid class init order issues with RenderSystem/MC bootstrap
     private static final Supplier<RenderType> SEE_THROUGH_LINES_SUPPLIER = Suppliers.memoize(() ->
@@ -26,9 +23,9 @@ public final class PsyopRenderTypes {
                     RenderType.CompositeState.builder()
                             .setTextureState(RenderStateShard.NO_TEXTURE)
                             .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
-                            .setLayeringState(RenderStateShard.NO_LAYERING)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
                             .setOutputState(RenderStateShard.OUTLINE_TARGET) // outline buffer has no depth -> see-through
-                            .createCompositeState(true)
+                            .createCompositeState(false)
             )
     );
 
@@ -36,12 +33,12 @@ public final class PsyopRenderTypes {
             RenderType.create(
                     "psyop_see_through_quads",
                     1536,
-                    RenderPipelines.DEBUG_QUADS,
+                    QUADS,
                     RenderType.CompositeState.builder()
                             .setTextureState(RenderStateShard.NO_TEXTURE)
-                            .setLayeringState(RenderStateShard.NO_LAYERING)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
                             .setOutputState(RenderStateShard.OUTLINE_TARGET)
-                            .createCompositeState(true)
+                            .createCompositeState(false)
             )
     );
 
