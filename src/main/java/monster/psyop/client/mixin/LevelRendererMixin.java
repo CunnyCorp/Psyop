@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -28,7 +29,7 @@ import java.util.List;
 
 @Mixin(value = LevelRenderer.class, priority = 749)
 public class LevelRendererMixin {
-    @org.spongepowered.asm.mixin.injection.Inject(method = "renderEntities", at = @At("TAIL"))
+    @Inject(method = "renderEntities", at = @At("TAIL"))
     private void psyop$renderEntities(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Camera camera, DeltaTracker deltaTracker, List<Entity> list, CallbackInfo ci) {
         GlStateManager._depthMask(false);
         GlStateManager._disableDepthTest();

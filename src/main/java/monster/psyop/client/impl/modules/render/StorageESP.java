@@ -19,10 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class StorageESP extends Module {
     public GroupedSettings targets = addGroup(new GroupedSettings("targets", "Which storage blocks to draw boxes around"));
@@ -165,12 +162,8 @@ public class StorageESP extends Module {
                     ArrayDeque<BlockPos> dq = new ArrayDeque<>();
                     dq.add(pos);
 
-                    int minBX = pos.getX();
-                    int minBY = pos.getY();
-                    int minBZ = pos.getZ();
-                    int maxBX = pos.getX() + 1;
-                    int maxBY = pos.getY() + 1;
-                    int maxBZ = pos.getZ() + 1;
+                    Set<BlockPos> group = new HashSet<>();
+                    group.add(pos);
 
                     while (!dq.isEmpty()) {
                         BlockPos p = dq.pollFirst();
@@ -189,133 +182,180 @@ public class StorageESP extends Module {
                             if (skipped.contains(np)) continue;
                             BlockEntity nbe = MC.level.getBlockEntity(np);
                             if (nbe == null) continue;
-                            if (isNotTarget(nbe)) continue;
+                            if (nbe.getType() != be.getType()) continue;
                             skipped.add(np);
                             dq.add(np);
-                            if (np.getX() < minBX) minBX = np.getX();
-                            if (np.getY() < minBY) minBY = np.getY();
-                            if (np.getZ() < minBZ) minBZ = np.getZ();
-                            if (np.getX() + 1 > maxBX) maxBX = np.getX() + 1;
-                            if (np.getY() + 1 > maxBY) maxBY = np.getY() + 1;
-                            if (np.getZ() + 1 > maxBZ) maxBZ = np.getZ() + 1;
+                            group.add(np);
                         }
+                    }
+
+                    List<int[]> prisms = new ArrayList<>();
+                    Set<BlockPos> remaining = new HashSet<>(group);
+                    while (!remaining.isEmpty()) {
+                        BlockPos start = remaining.iterator().next();
+                        int x0 = start.getX();
+                        int y0 = start.getY();
+                        int z0 = start.getZ();
+
+                        int x1 = x0;
+                        while (remaining.contains(new BlockPos(x1 + 1, y0, z0))) x1++;
+
+                        int z1 = z0;
+                        outerZ:
+                        while (true) {
+                            int nz = z1 + 1;
+                            for (int x = x0; x <= x1; x++) {
+                                if (!remaining.contains(new BlockPos(x, y0, nz))) {
+                                    break outerZ;
+                                }
+                            }
+                            z1 = nz;
+                        }
+
+                        int y1 = y0;
+                        outerY:
+                        while (true) {
+                            int ny = y1 + 1;
+                            for (int x = x0; x <= x1; x++) {
+                                for (int z = z0; z <= z1; z++) {
+                                    if (!remaining.contains(new BlockPos(x, ny, z))) {
+                                        break outerY;
+                                    }
+                                }
+                            }
+                            y1 = ny;
+                        }
+
+                        for (int y = y0; y <= y1; y++) {
+                            for (int x = x0; x <= x1; x++) {
+                                for (int z = z0; z <= z1; z++) {
+                                    remaining.remove(new BlockPos(x, y, z));
+                                }
+                            }
+                        }
+
+                        prisms.add(new int[]{x0, y0, z0, x1 + 1, y1 + 1, z1 + 1});
                     }
 
                     float[] c = colorFor(be);
 
-                    double minX = minBX - camX;
-                    double minY = minBY - camY;
-                    double minZ = minBZ - camZ;
-                    double maxX = maxBX - camX;
-                    double maxY = maxBY - camY;
-                    double maxZ = maxBZ - camZ;
+                    for (int[] b : prisms) {
+                        double minX = b[0] - camX;
+                        double minY = b[1] - camY;
+                        double minZ = b[2] - camZ;
+                        double maxX = b[3] - camX;
+                        double maxY = b[4] - camY;
+                        double maxZ = b[5] - camZ;
 
-                    float pad = padding.get();
-                    if (pad != 0.0f) {
-                        minX -= pad;
-                        minY -= pad;
-                        minZ -= pad;
-                        maxX += pad;
-                        maxY += pad;
-                        maxZ += pad;
-                    }
-
-                    if (mode2D.get()) {
-                        var leftV = MC.gameRenderer.getMainCamera().getLeftVector();
-                        var upV = MC.gameRenderer.getMainCamera().getUpVector();
-                        float cPX = (float) ((minX + maxX) * 0.5);
-                        float cPY = (float) ((minY + maxY) * 0.5);
-                        float cPZ = (float) ((minZ + maxZ) * 0.5);
-                        float halfW = (float) (Math.max(maxX - minX, maxZ - minZ) * 0.5);
-                        float halfH = (float) ((maxY - minY) * 0.5);
-                        float rX = -leftV.x();
-                        float rY = -leftV.y();
-                        float rZ = -leftV.z();
-                        float uX = upV.x();
-                        float uY = upV.y();
-                        float uZ = upV.z();
-
-                        if (quads != null && filled.get()) {
-                            float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
-                            Render3DUtil.drawBillboardQuadFaces(
-                                    quads, pose,
-                                    cPX, cPY, cPZ,
-                                    rX, rY, rZ,
-                                    uX, uY, uZ,
-                                    halfW, halfH,
-                                    c[0], c[1], c[2], a);
+                        float pad = padding.get();
+                        if (pad != 0.0f) {
+                            minX -= pad;
+                            minY -= pad;
+                            minZ -= pad;
+                            maxX += pad;
+                            maxY += pad;
+                            maxZ += pad;
                         }
-                        if (quads != null) {
-                            Render3DUtil.drawBillboardCornerQuads(
-                                    quads, pose,
-                                    cPX, cPY, cPZ,
-                                    rX, rY, rZ,
-                                    uX, uY, uZ,
-                                    halfW, halfH,
-                                    0.33f, 0.02f,
-                                    c[0], c[1], c[2], c[3]);
-                        }
-                        if (glow.get() && quads != null) {
-                            int steps = Math.max(1, glowSteps.get());
-                            float width = glowWidth.get();
-                            float baseA = glowAlpha.get();
-                            float pulseSpeed = glowPulseSpeed.get();
-                            float pulse = 1.0f;
-                            if (pulseSpeed > 0.0f) {
-                                double tPulse = System.currentTimeMillis() / 1000.0 * pulseSpeed;
-                                pulse = 0.75f + (float) (Math.sin(tPulse * Math.PI * 2.0) * 0.25f);
+                        // Nudge south (+Z) face slightly to avoid a tiny visual gap due to precision/culling
+                        maxZ += 0.001;
+
+                        if (mode2D.get()) {
+                            var leftV = MC.gameRenderer.getMainCamera().getLeftVector();
+                            var upV = MC.gameRenderer.getMainCamera().getUpVector();
+                            float cPX = (float) ((minX + maxX) * 0.5);
+                            float cPY = (float) ((minY + maxY) * 0.5);
+                            float cPZ = (float) ((minZ + maxZ) * 0.5);
+                            float halfW = (float) (Math.max(maxX - minX, maxZ - minZ) * 0.5);
+                            float halfH = (float) ((maxY - minY) * 0.5);
+                            float rX = -leftV.x();
+                            float rY = -leftV.y();
+                            float rZ = -leftV.z();
+                            float uX = upV.x();
+                            float uY = upV.y();
+                            float uZ = upV.z();
+
+                            if (quads != null && filled.get()) {
+                                float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
+                                Render3DUtil.drawBillboardQuadFaces(
+                                        quads, pose,
+                                        cPX, cPY, cPZ,
+                                        rX, rY, rZ,
+                                        uX, uY, uZ,
+                                        halfW, halfH,
+                                        c[0], c[1], c[2], a);
                             }
-                            for (int i = 1; i <= steps; i++) {
-                                float f = (float) i / (float) steps;
-                                float expand = f * width;
-                                float a = baseA * (1.0f - f) * pulse;
-                                if (a <= 0.001f) continue;
+                            if (quads != null) {
                                 Render3DUtil.drawBillboardCornerQuads(
                                         quads, pose,
                                         cPX, cPY, cPZ,
                                         rX, rY, rZ,
                                         uX, uY, uZ,
-                                        halfW + expand, halfH + expand,
+                                        halfW, halfH,
                                         0.33f, 0.02f,
+                                        c[0], c[1], c[2], c[3]);
+                            }
+                            if (glow.get() && quads != null) {
+                                int steps = Math.max(1, glowSteps.get());
+                                float width = glowWidth.get();
+                                float baseA = glowAlpha.get();
+                                float pulseSpeed = glowPulseSpeed.get();
+                                float pulse = 1.0f;
+                                if (pulseSpeed > 0.0f) {
+                                    double tPulse = System.currentTimeMillis() / 1000.0 * pulseSpeed;
+                                    pulse = 0.75f + (float) (Math.sin(tPulse * Math.PI * 2.0) * 0.25f);
+                                }
+                                for (int i = 1; i <= steps; i++) {
+                                    float f = (float) i / (float) steps;
+                                    float expand = f * width;
+                                    float a = baseA * (1.0f - f) * pulse;
+                                    if (a <= 0.001f) continue;
+                                    Render3DUtil.drawBillboardCornerQuads(
+                                            quads, pose,
+                                            cPX, cPY, cPZ,
+                                            rX, rY, rZ,
+                                            uX, uY, uZ,
+                                            halfW + expand, halfH + expand,
+                                            0.33f, 0.02f,
+                                            c[0], c[1], c[2], a);
+                                }
+                            }
+                        } else {
+                            if (quads != null && filled.get()) {
+                                float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
+                                Render3DUtil.drawBoxFaces(quads, pose,
+                                        (float) minX, (float) minY, (float) minZ,
+                                        (float) maxX, (float) maxY, (float) maxZ,
                                         c[0], c[1], c[2], a);
                             }
-                        }
-                    } else {
-                        if (quads != null && filled.get()) {
-                            float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
-                            Render3DUtil.drawBoxFaces(quads, pose,
-                                    (float) minX, (float) minY, (float) minZ,
-                                    (float) maxX, (float) maxY, (float) maxZ,
-                                    c[0], c[1], c[2], a);
-                        }
 
-                        if (lines != null) {
-                            Render3DUtil.drawBoxEdges(lines, pose,
-                                    (float) minX, (float) minY, (float) minZ,
-                                    (float) maxX, (float) maxY, (float) maxZ,
-                                    c[0], c[1], c[2], c[3]);
-                        }
-
-                        if (glow.get() && quads != null) {
-                            int steps = Math.max(1, glowSteps.get());
-                            float width = glowWidth.get();
-                            float baseA = glowAlpha.get();
-                            float pulseSpeed = glowPulseSpeed.get();
-                            float pulse = 1.0f;
-                            if (pulseSpeed > 0.0f) {
-                                double tPulse = System.currentTimeMillis() / 1000.0 * pulseSpeed;
-                                pulse = 0.75f + (float) (Math.sin(tPulse * Math.PI * 2.0) * 0.25f);
+                            if (lines != null) {
+                                Render3DUtil.drawBoxEdges(lines, pose,
+                                        (float) minX, (float) minY, (float) minZ,
+                                        (float) maxX, (float) maxY, (float) maxZ,
+                                        c[0], c[1], c[2], c[3]);
                             }
-                            for (int i = 1; i <= steps; i++) {
-                                float f = (float) i / (float) steps;
-                                float expand = f * width;
-                                float a = baseA * (1.0f - f) * pulse;
-                                if (a <= 0.001f) continue;
-                                Render3DUtil.drawBoxFaces(
-                                        quads, pose,
-                                        (float) (minX - expand), (float) (minY - expand), (float) (minZ - expand),
-                                        (float) (maxX + expand), (float) (maxY + expand), (float) (maxZ + expand),
-                                        c[0], c[1], c[2], a);
+
+                            if (glow.get() && quads != null) {
+                                int steps = Math.max(1, glowSteps.get());
+                                float width = glowWidth.get();
+                                float baseA = glowAlpha.get();
+                                float pulseSpeed = glowPulseSpeed.get();
+                                float pulse = 1.0f;
+                                if (pulseSpeed > 0.0f) {
+                                    double tPulse = System.currentTimeMillis() / 1000.0 * pulseSpeed;
+                                    pulse = 0.75f + (float) (Math.sin(tPulse * Math.PI * 2.0) * 0.25f);
+                                }
+                                for (int i = 1; i <= steps; i++) {
+                                    float f = (float) i / (float) steps;
+                                    float expand = f * width;
+                                    float a = baseA * (1.0f - f) * pulse;
+                                    if (a <= 0.001f) continue;
+                                    Render3DUtil.drawBoxFaces(
+                                            quads, pose,
+                                            (float) (minX - expand), (float) (minY - expand), (float) (minZ - expand),
+                                            (float) (maxX + expand), (float) (maxY + expand), (float) (maxZ + expand),
+                                            c[0], c[1], c[2], a);
+                                }
                             }
                         }
                     }
