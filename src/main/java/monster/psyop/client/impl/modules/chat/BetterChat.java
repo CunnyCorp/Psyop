@@ -7,11 +7,9 @@ import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.StringListSetting;
+import monster.psyop.client.framework.modules.settings.types.StringSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
-import net.minecraft.network.protocol.game.ClientboundDeleteChatPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
-import net.minecraft.network.protocol.game.ServerboundChatPacket;
+import net.minecraft.network.protocol.game.*;
 
 import java.util.List;
 
@@ -47,6 +45,20 @@ public class BetterChat extends Module {
                     .description("Words to prevent other players from saying.")
                     .defaultTo(List.of(new ImString("nigger")))
                     .addTo(filterGroup);
+
+    public final GroupedSettings suffixGroup = addGroup(new GroupedSettings("suffix", "Adds a suffix to your messages"));
+    public final BoolSetting suffix =
+            new BoolSetting.Builder()
+                    .name("suffix")
+                    .description("Enable a suffix at the end of your messages.")
+                    .defaultTo(false)
+                    .addTo(suffixGroup);
+    public final StringSetting suffixText =
+            new StringSetting.Builder()
+                    .name("suffix-text")
+                    .description("The text to add to the end of your messages.")
+                    .defaultTo("psyop")
+                    .addTo(suffixGroup);
 
     public BetterChat() {
         super(Categories.CHAT, "better-chat", "Improves and modifies in-game chat in various ways.");
@@ -92,16 +104,28 @@ public class BetterChat extends Module {
 
     @EventListener
     public void onPacketSend(OnPacket.Send event) {
-        if (selfFilter.get() && event.packet() instanceof ServerboundChatPacket packet) {
-            String msg = packet.message();
+        if (event.packet() instanceof ServerboundChatPacket packet) {
+            String originalMsg = packet.message();
+            if (originalMsg.startsWith("/")) return; // Ignore commands
 
-            for (ImString str : selfFilterText.value()) {
-                if (msg.contains(str.get())) {
-                    msg = msg.replaceAll(str.get(), "*".repeat(str.get().length()));
+            String modifiedMsg = originalMsg;
+
+            if (selfFilter.get()) {
+                for (ImString str : selfFilterText.value()) {
+                    if (modifiedMsg.contains(str.get())) {
+                        modifiedMsg = modifiedMsg.replace(str.get(), "*".repeat(str.get().length()));
+                    }
                 }
             }
 
-            event.packet(new ServerboundChatPacket(msg, packet.timeStamp(), packet.salt(), packet.signature(), packet.lastSeenMessages()));
+            if (suffix.get()) {
+                modifiedMsg = modifiedMsg + " | " + suffixText.value().get();
+            }
+
+            if (!modifiedMsg.equals(originalMsg)) {
+                // Replace the original chat packet with a command packet to bypass signing issues.
+                event.packet(new ServerboundChatCommandPacket("say " + modifiedMsg));
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.impl.eggs.EggLoader;
+import monster.psyop.client.impl.modules.chat.BetterChat;
 import monster.psyop.client.impl.modules.combat.*;
 import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.hud.*;
@@ -172,7 +173,10 @@ public class Psyop implements ModInitializer {
         new BookEditorView().load();
         new TrollingView().load();
 
-        // Hud
+        // Chat
+        new BetterChat().load();
+
+        // HUD
         new ArmorHUD().load();
         new ArrayHUD().load();
         new PositionHUD().load();
@@ -180,8 +184,13 @@ public class Psyop implements ModInitializer {
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
 
-        // Modules
+        // Combat
+        new AntiKb().load();
+        new AttackBurst().load();
+        new KillAura().load();
+        new TriggerBot().load();
 
+        // Exploits
         new FastSwap().load();
         new InstantClose().load();
         new QueueBypass().load();
@@ -189,19 +198,7 @@ public class Psyop implements ModInitializer {
         new LoginFuckery().load();
         new HoldPackets().load();
 
-        new AntiPush().load();
-        new AutoWalk().load();
-        new Jumping().load();
-        new Phase().load();
-        new Sneak().load();
-        new GrimBunnyHop().load();
-        new PlayerTimer().load();
-        new Sprint().load();
-        new SpinBot().load();
-        new ElytraPause().load();
-        new SillyBot().load();
-        new LagbackDetector().load();
-
+        // Misc
         new AutoEat().load();
         new NoMiss().load();
         new FastUse().load();
@@ -215,25 +212,23 @@ public class Psyop implements ModInitializer {
         new Friends().load();
         new AutoElytraSwap().load();
         new DiscordRPC().load();
+        new EffectSpoof().load();
 
-        if (Dependencies.LITEMATICA.isLoaded()) {
-            if (Dependencies.BARITONE.isLoaded()) {
-                new Printer().load();
-                new SkyRefill().load();
-            }
-        }
+        // Movement
+        new AntiPush().load();
+        new AutoWalk().load();
+        new Jumping().load();
+        new Phase().load();
+        new Sneak().load();
+        new GrimBunnyHop().load();
+        new PlayerTimer().load();
+        new Sprint().load();
+        new SpinBot().load();
+        new ElytraPause().load();
+        new SillyBot().load();
+        new LagbackDetector().load();
 
-        new AutoMine().load();
-        new BreakDelay().load();
-        new FastBreak().load();
-        new Scaffold().load();
-        new SignFucker().load();
-
-        new AntiKb().load();
-        new AttackBurst().load();
-        new KillAura().load();
-        new TriggerBot().load();
-
+        // Render
         new BlockLights().load();
         new Chams().load();
         new HandView().load();
@@ -243,9 +238,24 @@ public class Psyop implements ModInitializer {
         new ESP().load();
         new StorageESP().load();
         new Ripples().load();
+        new BetterTab().load();
 
+        // Silly
         new HappyHands().load();
         new OiledUp().load();
+
+        // World
+        if (Dependencies.LITEMATICA.isLoaded()) {
+            if (Dependencies.BARITONE.isLoaded()) {
+                new Printer().load();
+                new SkyRefill().load();
+            }
+        }
+        new AutoMine().load();
+        new BreakDelay().load();
+        new FastBreak().load();
+        new Scaffold().load();
+        new SignFucker().load();
 
         EggLoader.loadEggs();
 
