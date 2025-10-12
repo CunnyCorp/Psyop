@@ -56,6 +56,10 @@ public class ImColorW {
         return ImColor.rgba(color[0], color[1], color[2], color[3]);
     }
 
+    public static int packed(float[] color) {
+        return ImColor.rgba(color[0], color[1], color[2], color[3]);
+    }
+
     public int toInt() {
         int a = (int) (color[3] * 255);
         int r = (int) (color[0] * 255);

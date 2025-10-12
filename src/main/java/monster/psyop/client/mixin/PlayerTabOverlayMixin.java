@@ -1,7 +1,10 @@
 package monster.psyop.client.mixin;
 
 import monster.psyop.client.Psyop;
+import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.modules.render.BetterTab;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -9,8 +12,10 @@ import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Color;
@@ -50,7 +55,26 @@ public class PlayerTabOverlayMixin {
         ci.cancel();
     }
 
-    // Helper: build a MutableComponent with per-character color interpolation between two Colors
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;getBackgroundColor(I)I"))
+    public int getBackgroundColor(Options instance, int i) {
+        if (Psyop.MODULES.isActive(BetterTab.class)) {
+            return ImColorW.packed(Psyop.MODULES.get(BetterTab.class).customColor.get());
+        }
+
+        return instance.getBackgroundColor(i);
+    }
+
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"))
+    public void getBackgroundColor(GuiGraphics instance, int i, int j, int k, int l, int m) {
+        if (Psyop.MODULES.isActive(BetterTab.class)) {
+            instance.fill(i, j, k, l, ImColorW.packed(Psyop.MODULES.get(BetterTab.class).customColor2.get()));
+            return;
+        }
+
+        instance.fill(i, j, k, l, m);
+    }
+
+    @Unique
     private MutableComponent gradientText(String text, Color start, Color end) {
         MutableComponent comp = Component.empty();
         if (text == null || text.isEmpty()) return comp;

@@ -678,7 +678,6 @@ public class Printer extends Module {
 
         } else placeTimer++;
 
-        // Track fade-out entries for placed blocks
         if (!(lastPlacedBlock.getX() == 0 && lastPlacedBlock.getY() == 0 && lastPlacedBlock.getZ() == 0)) {
             fading.add(new FadeEntry(lastPlacedBlock.immutable(), System.currentTimeMillis()));
             lastPlacedBlock.set(0, 0, 0);
@@ -716,7 +715,6 @@ public class Printer extends Module {
         if (!renderEnabled.get()) return;
         if (MC.level == null || MC.player == null) return;
 
-        // Prepare renderer
         RenderSystem.lineWidth(renderLineWidth.get());
         var buffers = MC.renderBuffers().bufferSource();
         VertexConsumer lineVc = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
@@ -729,22 +727,15 @@ public class Printer extends Module {
         double camY = cam.y();
         double camZ = cam.z();
 
-        // Draw anchor target
         if (renderAnchor.get() && anchor.get()) {
             BlockPos ap = anchoringTo;
             if (ap != null && ap.getY() != -999) {
                 float[] ac = anchorColor.get();
-                // Tracer from eyes to center of anchor
-                Vec3 eye = MC.player.getEyePosition();
-                float sx = (float) (eye.x - camX);
-                float sy = (float) (eye.y - camY);
-                float sz = (float) (eye.z - camZ);
                 float tx = (float) ((ap.getX() + 0.5) - camX);
                 float ty = (float) ((ap.getY() + 0.5) - camY);
                 float tz = (float) ((ap.getZ() + 0.5) - camZ);
-                Render3DUtil.drawTracer(lineVc, pose, sx, sy, sz, tx, ty, tz, ac[0], ac[1], ac[2], ac[3]);
+                Render3DUtil.drawTracer(lineVc, pose, tx, ty, tz, ac[0], ac[1], ac[2], ac[3]);
 
-                // Box around anchor block
                 AABB bb = new AABB(ap);
                 AABB rel = bb.move(-camX, -camY, -camZ);
                 Render3DUtil.drawBoxEdges(lineVc, pose, rel, ac[0], ac[1], ac[2], ac[3]);
@@ -752,7 +743,6 @@ public class Printer extends Module {
             }
         }
 
-        // Draw queued blocks to place
         if (renderQueue.get()) {
             float[] qc = queueColor.get();
             int count = 0;
@@ -764,7 +754,6 @@ public class Printer extends Module {
                 Render3DUtil.drawBoxEdges(lineVc, pose, rel, qc[0], qc[1], qc[2], qc[3]);
             }
 
-            // Fading/shrinking highlights for recently placed blocks
             long now = System.currentTimeMillis();
             for (int i = fading.size() - 1; i >= 0; i--) {
                 FadeEntry fe = fading.get(i);
@@ -773,8 +762,7 @@ public class Printer extends Module {
                     fading.remove(i);
                     continue;
                 }
-                float scale = 1.0f - t; // 1 -> 0 over duration
-                // Keep a minimum visual height so it doesn't disappear instantly
+                float scale = 1.0f - t;
                 float minH = 0.05f;
                 float h = Math.max(minH, scale);
 
@@ -783,7 +771,7 @@ public class Printer extends Module {
                 float minY = (float) (bp.getY() - camY);
                 float minZ = (float) (bp.getZ() - camZ);
                 float maxX = minX + 1.0f;
-                float maxY = minY + h; // shrink top toward bottom
+                float maxY = minY + h;
                 float maxZ = minZ + 1.0f;
 
                 float aEdge = qc[3] * (1.0f - t);

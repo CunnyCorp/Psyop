@@ -55,6 +55,11 @@ public class ESP extends Module {
             .description("Render 2D billboarded rectangles instead of 3D boxes")
             .defaultTo(false)
             .addTo(style);
+    public BoolSetting pin = new BoolSetting.Builder()
+            .name("pin")
+            .description("Render a cross at entities predicted position.")
+            .defaultTo(false)
+            .addTo(style);
     public ColorSetting color = new ColorSetting.Builder()
             .name("color")
             .defaultTo(new float[]{0.0f, 1.0f, 0.0f, 1.0f})
@@ -189,7 +194,7 @@ public class ESP extends Module {
 
         RenderSystem.lineWidth(lineWidth.get());
         var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer lines = hideLines.get() ? null : buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
+        VertexConsumer lines = hideLines.get() && !pin.get() ? null : buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
         boolean needQuads = mode2D.get() || filled.get() || glow.get();
         VertexConsumer quads = needQuads ? buffers.getBuffer(PsyopRenderTypes.seeThroughQuads()) : null;
         PoseStack poseStack = new PoseStack();
@@ -364,6 +369,11 @@ public class ESP extends Module {
                                 maxX + expand, maxY + expand, maxZ + expand,
                                 c[0], c[1], c[2], a);
                     }
+                }
+
+                if (lines != null && pin.get()) {
+                    float[] col = colorFor(e);
+                    Render3DUtil.drawCrossRel(lines, pose, e.position(), 3.5f, col[0], col[1], col[2], col[3]);
                 }
             }
         }

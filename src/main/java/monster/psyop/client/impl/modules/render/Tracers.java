@@ -66,15 +66,6 @@ public class Tracers extends Module {
             .defaultTo(1.5f)
             .range(0.5f, 6.0f)
             .addTo(style);
-    public BoolSetting rainbow = new BoolSetting.Builder()
-            .name("rainbow")
-            .defaultTo(false)
-            .addTo(style);
-    public FloatSetting rainbowSpeed = new FloatSetting.Builder()
-            .name("rainbow-speed")
-            .defaultTo(0.2f) // cycles per second
-            .range(0.01f, 5.0f)
-            .addTo(style);
 
     public Tracers() {
         super(Categories.RENDER, "tracers", "Draws lines from your camera to entities.");
@@ -112,16 +103,11 @@ public class Tracers extends Module {
             double ty = (bb.minY + bb.maxY) * 0.5;
             double tz = (bb.minZ + bb.maxZ) * 0.5;
 
-            Vec3 look = mc.player.getViewVector(1.0f);
-            float x0 = (float) (look.x * 0.1);
-            float y0 = (float) (look.y * 0.1);
-            float z0 = (float) (look.z * 0.1);
-
             float x1 = (float) (tx - camX);
             float y1 = (float) (ty - camY);
             float z1 = (float) (tz - camZ);
 
-            Render3DUtil.drawTracer(lines, pose, x0, y0, z0, x1, y1, z1, c[0], c[1], c[2], c[3]);
+            Render3DUtil.drawTracer(lines, pose, x1, y1, z1, c[0], c[1], c[2], c[3]);
         }
 
         buffers.endBatch(PsyopRenderTypes.seeThroughLines());
@@ -157,12 +143,7 @@ public class Tracers extends Module {
                 base = friendColor.get();
             }
         }
-        if (rainbow.get()) {
-            float hue = (float) ((System.currentTimeMillis() / 1000.0) * rainbowSpeed.get());
-            hue = hue - (float) Math.floor(hue);
-            float[] rgb = Render3DUtil.hsbToRgb(hue, 0.8f, 1.0f);
-            return new float[]{rgb[0], rgb[1], rgb[2], base[3]};
-        }
+
         return base;
     }
 
