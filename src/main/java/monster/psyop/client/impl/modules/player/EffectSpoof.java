@@ -1,4 +1,4 @@
-package monster.psyop.client.impl.modules.misc;
+package monster.psyop.client.impl.modules.player;
 
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -57,7 +57,7 @@ public class EffectSpoof extends Module {
 
 
     public EffectSpoof() {
-        super(Categories.MISC, "effect-spoof", "Spoofs client-side potion effects.");
+        super(Categories.PLAYER, "effect-spoof", "Spoofs client-side potion effects.");
     }
 
     @Override

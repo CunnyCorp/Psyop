@@ -1,4 +1,4 @@
-package monster.psyop.client.impl.modules.misc;
+package monster.psyop.client.impl.modules.player;
 
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -28,7 +28,7 @@ public class FastUse extends Module {
             .addTo(coreGroup);
 
     public FastUse() {
-        super(Categories.MISC, "fast-use", "Removes the delay between using items.");
+        super(Categories.PLAYER, "fast-use", "Removes the delay between using items.");
     }
 
     @Override

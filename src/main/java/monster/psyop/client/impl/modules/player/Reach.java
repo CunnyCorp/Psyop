@@ -1,4 +1,4 @@
-package monster.psyop.client.impl.modules.misc;
+package monster.psyop.client.impl.modules.player;
 
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -22,7 +22,7 @@ public class Reach extends Module {
 
 
     public Reach() {
-        super(Categories.MISC, "reach", "Modify reach.");
+        super(Categories.PLAYER, "reach", "Modify reach.");
     }
 
 

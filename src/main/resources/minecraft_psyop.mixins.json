@@ -33,7 +33,6 @@
     "LocalPlayerMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
-    "MultiPlayerGameModeMixin",
     "TextFieldHelperMixin",
     "PlayerTabOverlayMixin"
   ],

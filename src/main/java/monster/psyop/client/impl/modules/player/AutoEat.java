@@ -1,4 +1,4 @@
-package monster.psyop.client.impl.modules.misc;
+package monster.psyop.client.impl.modules.player;
 
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -44,7 +44,7 @@ public class AutoEat extends Module {
     private int hasHadFor = 0;
 
     public AutoEat() {
-        super(Categories.MISC, "auto-eat", "Automatically eats food when you are hungry.");
+        super(Categories.PLAYER, "auto-eat", "Automatically eats food when you are hungry.");
     }
 
     @Override

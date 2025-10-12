@@ -21,6 +21,7 @@ import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.hud.*;
 import monster.psyop.client.impl.modules.misc.*;
 import monster.psyop.client.impl.modules.movement.*;
+import monster.psyop.client.impl.modules.player.*;
 import monster.psyop.client.impl.modules.render.*;
 import monster.psyop.client.impl.modules.silly.HappyHands;
 import monster.psyop.client.impl.modules.silly.OiledUp;
@@ -213,6 +214,7 @@ public class Psyop implements ModInitializer {
         new AutoElytraSwap().load();
         new DiscordRPC().load();
         new EffectSpoof().load();
+        new AutoTool().load();
 
         // Movement
         new AntiPush().load();
