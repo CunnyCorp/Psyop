@@ -11,6 +11,7 @@ import monster.psyop.client.framework.modules.settings.types.StringSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
 import net.minecraft.network.protocol.game.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BetterChat extends Module {
@@ -31,7 +32,7 @@ public class BetterChat extends Module {
             new StringListSetting.Builder()
                     .name("self-filter-text")
                     .description("Words to prevent you from saying.")
-                    .defaultTo(List.of(new ImString("nigger")))
+                    .defaultTo(new ArrayList<>(List.of(new ImString("nigger"))))
                     .addTo(filterGroup);
     public final BoolSetting filter =
             new BoolSetting.Builder()
@@ -43,7 +44,7 @@ public class BetterChat extends Module {
             new StringListSetting.Builder()
                     .name("filter-text")
                     .description("Words to prevent other players from saying.")
-                    .defaultTo(List.of(new ImString("nigger")))
+                    .defaultTo(new ArrayList<>(List.of(new ImString("nigger"))))
                     .addTo(filterGroup);
 
     public final GroupedSettings suffixGroup = addGroup(new GroupedSettings("suffix", "Adds a suffix to your messages"));

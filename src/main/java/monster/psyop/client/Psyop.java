@@ -241,6 +241,7 @@ public class Psyop implements ModInitializer {
         new StorageESP().load();
         new Ripples().load();
         new BetterTab().load();
+        new Trail().load();
 
         // Silly
         new HappyHands().load();

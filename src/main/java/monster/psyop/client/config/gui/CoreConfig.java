@@ -5,7 +5,7 @@ import imgui.type.ImInt;
 import imgui.type.ImString;
 
 public class CoreConfig {
-    public ImInt guiBind = new ImInt(56);
+    public ImInt guiBind = new ImInt(57);
     public ImBoolean moduleCatSnap = new ImBoolean(false);
     public ImBoolean chatFeedback = new ImBoolean(false);
     public ImString textCaseStyle = new ImString("original");
