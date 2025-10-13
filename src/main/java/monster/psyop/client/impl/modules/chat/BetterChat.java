@@ -58,7 +58,7 @@ public class BetterChat extends Module {
             new StringSetting.Builder()
                     .name("suffix-text")
                     .description("The text to add to the end of your messages.")
-                    .defaultTo("psyop")
+                    .defaultTo("`psyop")
                     .addTo(suffixGroup);
 
     public BetterChat() {
@@ -107,7 +107,7 @@ public class BetterChat extends Module {
     public void onPacketSend(OnPacket.Send event) {
         if (event.packet() instanceof ServerboundChatPacket packet) {
             String originalMsg = packet.message();
-            if (originalMsg.startsWith("/")) return; // Ignore commands
+            if (originalMsg.startsWith("/")) return;
 
             String modifiedMsg = originalMsg;
 
@@ -124,7 +124,6 @@ public class BetterChat extends Module {
             }
 
             if (!modifiedMsg.equals(originalMsg)) {
-                // Replace the original chat packet with a command packet to bypass signing issues.
                 event.packet(new ServerboundChatCommandPacket("say " + modifiedMsg));
             }
         }

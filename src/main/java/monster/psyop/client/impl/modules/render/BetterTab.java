@@ -5,12 +5,50 @@ import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
+import monster.psyop.client.framework.modules.settings.types.IntSetting;
 
 public class BetterTab extends Module {
     public BoolSetting customTab = new BoolSetting.Builder()
             .name("custom-tab")
             .description("Toggles the custom player tab overlay.")
             .defaultTo(true)
+            .addTo(coreGroup);
+    public BoolSetting ping = new BoolSetting.Builder()
+            .name("ping")
+            .description("Allows you to see the ping of players in the player tab overlay.")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    public ColorSetting pingColor = new ColorSetting.Builder()
+            .name("ping-color")
+            .description("The color for ping numbers.")
+            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 1.0f})
+            .addTo(coreGroup);
+    public IntSetting xOffset = new IntSetting.Builder()
+            .name("x-offset")
+            .description("what to offset the ping by.")
+            .defaultTo(-20)
+            .range(-120, 120)
+            .addTo(coreGroup);
+    public IntSetting yOffset = new IntSetting.Builder()
+            .name("y-offset")
+            .description("what to offset the ping by.")
+            .defaultTo(2)
+            .range(-120, 120)
+            .addTo(coreGroup);
+    public ColorSetting defaultColor = new ColorSetting.Builder()
+            .name("default-color")
+            .description("The color for everyone else.")
+            .defaultTo(new float[]{1.0f, 0.5f, 1.0f, 1.0f})
+            .addTo(coreGroup);
+    public ColorSetting friendColor = new ColorSetting.Builder()
+            .name("friend-color")
+            .description("The color for friends.")
+            .defaultTo(new float[]{1.0f, 0.3f, 1.0f, 1.0f})
+            .addTo(coreGroup);
+    public ColorSetting selfColor = new ColorSetting.Builder()
+            .name("self-color")
+            .description("The color for yourself.")
+            .defaultTo(new float[]{1.0f, 0.23f, 1.0f, 1.0f})
             .addTo(coreGroup);
     public ColorSetting customColor = new ColorSetting.Builder()
             .name("custom-color")

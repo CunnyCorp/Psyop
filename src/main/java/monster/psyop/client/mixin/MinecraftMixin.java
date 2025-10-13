@@ -4,6 +4,8 @@ import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnScreen;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.impl.modules.misc.NoMiss;
+import monster.psyop.client.impl.modules.player.AutoEat;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -51,7 +53,9 @@ public class MinecraftMixin {
         }
     }
 
-    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;updateDisplay(Lcom/mojang/blaze3d/TracyFrameCapture;)V", shift = At.Shift.BEFORE))
+    @Inject(
+            method = "runTick",
+            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;updateDisplay(Lcom/mojang/blaze3d/TracyFrameCapture;)V", shift = At.Shift.BEFORE))
     public void runTickTail(boolean bl, CallbackInfo ci) {
         if (Psyop.GUI != null) {
             Psyop.GUI.renderFrame();
@@ -82,5 +86,26 @@ public class MinecraftMixin {
         }
 
         return instance.isDestroying();
+    }
+
+    @Inject(
+            method = "handleKeybinds",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;releaseUsingItem(Lnet/minecraft/world/entity/player/Player;)V"),
+            cancellable = true)
+    public void handleKeybinds(CallbackInfo ci) {
+        if (Psyop.MODULES.isActive(AutoEat.class) && Psyop.MODULES.get(AutoEat.class).inUse()) {
+            ci.cancel();
+        }
+    }
+
+    @Redirect(
+            method = "handleKeybinds",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z"))
+    public boolean handleKeybinds2(KeyMapping instance) {
+        if (Psyop.MODULES.isActive(AutoEat.class) && Psyop.MODULES.get(AutoEat.class).inUse() && instance == Psyop.MC.options.keyUse) {
+            return true;
+        }
+
+        return instance.isDown();
     }
 }

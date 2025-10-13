@@ -6,6 +6,7 @@ import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
 import monster.psyop.client.utility.InventoryUtils;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 
 import java.util.List;
@@ -67,14 +68,13 @@ public class AutoEat extends Module {
                 InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
             }
 
-
-            if (hasHadFor >= 3 && MC.player.getMainHandItem().has(DataComponents.CONSUMABLE) && (shouldGap || food.value().contains(MC.player.getMainHandItem().getItem()))) {
+            if (hasHadFor >= 3 && MC.player.getMainHandItem().has(DataComponents.CONSUMABLE) && (shouldGap || food.value().contains(MC.player.getMainHandItem().getItem())) && !useKeyDown) {
                 useKeyDown = true;
-                MC.options.keyUse.setDown(true);
+                assert MC.gameMode != null;
+                MC.gameMode.useItem(MC.player, InteractionHand.MAIN_HAND);
             }
         } else if (useKeyDown) {
             useKeyDown = false;
-            MC.options.keyUse.setDown(false);
         }
     }
 

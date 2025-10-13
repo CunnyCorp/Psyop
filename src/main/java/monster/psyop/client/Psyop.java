@@ -11,6 +11,7 @@ import monster.psyop.client.framework.gui.views.client.ModuleConfigView;
 import monster.psyop.client.framework.gui.views.client.ModulesView;
 import monster.psyop.client.framework.gui.views.features.BookEditorView;
 import monster.psyop.client.framework.gui.views.features.ClientLogView;
+import monster.psyop.client.framework.gui.views.features.FriendsView;
 import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
@@ -171,6 +172,7 @@ public class Psyop implements ModInitializer {
         new ModulesView().load();
         new ModuleConfigView().load();
         new ClientLogView().load();
+        new FriendsView().load();
         new BookEditorView().load();
         new TrollingView().load();
 
@@ -242,6 +244,7 @@ public class Psyop implements ModInitializer {
         new Ripples().load();
         new BetterTab().load();
         new Trail().load();
+        new ParticleEngine().load();
 
         // Silly
         new HappyHands().load();

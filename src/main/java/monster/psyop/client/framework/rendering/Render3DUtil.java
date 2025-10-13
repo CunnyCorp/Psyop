@@ -239,10 +239,7 @@ public final class Render3DUtil {
                                float x3, float y3, float z3,
                                float nx, float ny, float nz,
                                float r, float g, float b, float a) {
-        vc.addVertex(pose, x0, y0, z0).setColor(r, g, b, a).setNormal(pose, nx, ny, nz);
-        vc.addVertex(pose, x1, y1, z1).setColor(r, g, b, a).setNormal(pose, nx, ny, nz);
-        vc.addVertex(pose, x2, y2, z2).setColor(r, g, b, a).setNormal(pose, nx, ny, nz);
-        vc.addVertex(pose, x3, y3, z3).setColor(r, g, b, a).setNormal(pose, nx, ny, nz);
+        addQuadVarying(vc, pose, x0, y0, z0, r, g, b, a, x1, y1, z1, r, g, b, a, x2, y2, z2, r, g, b, a, x3, y3, z3, r, g, b, a, nx, ny, nz);
     }
 
     public static void addLine(VertexConsumer vc, PoseStack.Pose pose,
@@ -398,6 +395,30 @@ public final class Render3DUtil {
         drawCircleEdgesXY(vc, pose, cx, cy, cz, radius, segments, r, g, b, a);
         drawCircleEdgesXZ(vc, pose, cx, cy, cz, radius, segments, r, g, b, a);
         drawCircleEdgesYZ(vc, pose, cx, cy, cz, radius, segments, r, g, b, a);
+    }
+
+    public static void drawHeartEdgesXY(VertexConsumer vc, PoseStack.Pose pose,
+                                        float cx, float cy, float cz,
+                                        float size, int segments,
+                                        float r, float g, float b, float a) {
+        int seg = Math.max(16, segments);
+        float scale = size / 16f;
+
+        float t0 = 0f;
+        float x0 = (float) (Math.pow(Math.sin(t0), 3) * 16.0) * scale + cx;
+        float y0 = (float) ((13.0 * Math.cos(t0)) - (5.0 * Math.cos(2.0 * t0)) - (2.0 * Math.cos(3.0 * t0)) - Math.cos(4.0 * t0)) * scale + cy;
+        float z0 = cz;
+
+        for (int i = 1; i <= seg; i++) {
+            float t = (float) (i * (2 * Math.PI / seg));
+            float x = (float) (Math.pow(Math.sin(t), 3) * 16.0) * scale + cx;
+            float y = (float) ((13.0 * Math.cos(t)) - (5.0 * Math.cos(2.0 * t)) - (2.0 * Math.cos(3.0 * t)) - Math.cos(4.0 * t)) * scale + cy;
+            float z = cz;
+            addLine(vc, pose, x0, y0, z0, x, y, z, r, g, b, a);
+            x0 = x;
+            y0 = y;
+            z0 = z;
+        }
     }
 
     public static void drawSphereRel(VertexConsumer vc, PoseStack.Pose pose,

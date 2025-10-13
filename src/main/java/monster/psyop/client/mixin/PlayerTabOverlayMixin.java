@@ -1,6 +1,8 @@
 package monster.psyop.client.mixin;
 
+import com.mojang.realmsclient.dto.PlayerInfo;
 import monster.psyop.client.Psyop;
+import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.modules.render.BetterTab;
 import net.minecraft.client.Options;
@@ -19,6 +21,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Color;
+import java.util.List;
+
+import static monster.psyop.client.Psyop.MC;
 
 /**
  * Replaces the server name part of the tab header with "psyop" and draws it with a blue->purple gradient.
@@ -55,6 +60,31 @@ public class PlayerTabOverlayMixin {
         ci.cancel();
     }
 
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)V"))
+    public void drawString(GuiGraphics instance, net.minecraft.client.gui.Font font, Component component, int i, int j, int k) {
+        if (Psyop.MODULES.isActive(BetterTab.class)) {
+            BetterTab module = Psyop.MODULES.get(BetterTab.class);
+
+            if (component.getString().equals(MC.player.getScoreboardName())) {
+                MutableComponent customComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.packed(module.selfColor.get())).withBold(true));
+                instance.drawString(font, customComponent, i, j, k);
+                return;
+            }
+
+            if (FriendManager.roles.containsKey(component.getString())) {
+                MutableComponent friendComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.packed(Psyop.MODULES.get(BetterTab.class).friendColor.get())).withBold(true));
+                instance.drawString(font, friendComponent, i, j, k);
+                return;
+            }
+
+            MutableComponent customComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.packed(module.defaultColor.get())));
+            instance.drawString(font, customComponent, i, j, k);
+            return;
+        }
+
+        instance.drawString(font, component, i, j, k);
+    }
+
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;getBackgroundColor(I)I"))
     public int getBackgroundColor(Options instance, int i) {
         if (Psyop.MODULES.isActive(BetterTab.class)) {
@@ -72,6 +102,28 @@ public class PlayerTabOverlayMixin {
         }
 
         instance.fill(i, j, k, l, m);
+    }
+
+    @Inject(method = "renderPingIcon", at = @At("HEAD"), cancellable = true)
+    public void renderPingIcon(GuiGraphics guiGraphics, int i, int j, int k, net.minecraft.client.multiplayer.PlayerInfo playerInfo, CallbackInfo ci) {
+        if (Psyop.MODULES.isActive(BetterTab.class)) {
+            BetterTab module = Psyop.MODULES.get(BetterTab.class);
+            if (module.ping.get()) {
+                MutableComponent latencyComponent = Component.literal(playerInfo.getLatency() + "").withStyle(Style.EMPTY.withBold(true).withColor(ImColorW.packed(module.pingColor.get())));
+
+                int baseX = j + i + module.xOffset.get();
+                int baseY = k + module.yOffset.get();
+
+                float scale = 0.6f;
+                guiGraphics.pose().pushMatrix();
+                guiGraphics.pose().translate(baseX, baseY);
+                guiGraphics.pose().scale(scale, scale);
+                guiGraphics.drawString(MC.font, latencyComponent, 0, 0, -1);
+                guiGraphics.pose().popMatrix();
+
+                ci.cancel();
+            }
+        }
     }
 
     @Unique
