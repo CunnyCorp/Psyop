@@ -30,12 +30,13 @@
     "KeyboardHandlerMixin",
     "LevelRendererMixin",
     "LightTextureMixin",
+    "LivingEntityRendererMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
-    "TextFieldHelperMixin",
-    "PlayerTabOverlayMixin"
+    "PlayerTabOverlayMixin",
+    "TextFieldHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

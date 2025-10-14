@@ -3,10 +3,7 @@ package monster.psyop.client.impl.modules.render;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
-import monster.psyop.client.framework.modules.settings.types.BlockEntityColorListSetting;
-import monster.psyop.client.framework.modules.settings.types.BoolSetting;
-import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import monster.psyop.client.framework.modules.settings.types.EntityColorListSetting;
+import monster.psyop.client.framework.modules.settings.types.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -26,6 +23,10 @@ public class Chams extends Module {
             .name("toggle-glow")
             .description("Toggles glow off.")
             .defaultTo(true)
+            .addTo(entityGroup);
+    public EntityListSetting walls = new EntityListSetting.Builder()
+            .name("walls")
+            .defaultTo(List.of(EntityType.PLAYER))
             .addTo(entityGroup);
     public GroupedSettings blockEntityGroup = addGroup(new GroupedSettings("block-entities", "Modifies how block entities are rendered in the world."));
     public BlockEntityColorListSetting glowBlockEntities = new BlockEntityColorListSetting.Builder()
