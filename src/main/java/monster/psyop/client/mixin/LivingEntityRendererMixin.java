@@ -30,9 +30,9 @@ public abstract class LivingEntityRendererMixin {
     @Redirect(method = "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource;getBuffer(Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"))
     public VertexConsumer redirectGetBuffer(MultiBufferSource instance, RenderType renderType) {
         if (Psyop.MODULES.isActive(Chams.class)) {
-            Chams chams = Psyop.MODULES.get(Chams.class);
+            Chams module = Psyop.MODULES.get(Chams.class);
 
-            if (chams.walls.value().contains(renderState.entityType)) {
+            if (module.walls.value().contains(renderState.entityType)) {
                 return instance.getBuffer(PsyopRenderTypes.entityTranslucent(((PlayerRenderState) renderState).skin.texture(), true));
             }
         }

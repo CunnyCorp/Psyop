@@ -7,7 +7,7 @@ public class PageSettings extends BookSubSettings {
 
     @Override
     public String getDefaultText() {
-        return "Uooohhh !!!! SO CUTE !!! SO FUNNY !!!";
+        return "I'm running psyop.monster!";
     }
 
     @Override

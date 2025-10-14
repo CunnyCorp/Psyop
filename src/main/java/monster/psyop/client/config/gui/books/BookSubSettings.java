@@ -8,7 +8,7 @@ public class BookSubSettings extends RandomizationSettings {
 
     @Override
     public String getDefaultText() {
-        return "Cunny Client!";
+        return "psyop.monster";
     }
 
     @Override

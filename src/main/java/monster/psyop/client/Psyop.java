@@ -1,7 +1,6 @@
 package monster.psyop.client;
 
 import monster.psyop.client.config.Config;
-import monster.psyop.client.framework.AnActualRat;
 import monster.psyop.client.framework.events.EventHandler;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.gui.Gui;
@@ -60,25 +59,12 @@ public class Psyop implements ModInitializer {
     public static Thread RENDERING_THREAD;
 
     public static void postInit() {
-        /*RENDERING_THREAD = new Thread(() -> {
-            GUI = new Gui();
-            GUI.launch();
-
-            GUI.run();
-        });
-
-        RENDERING_THREAD.setName("749 Rendering");
-        RENDERING_THREAD.start();
-         */
-
         GUI = new Gui();
         GUI.launch();
 
         PacketUtils.load();
 
         McDataCache.init();
-
-        AnActualRat.actuallyJustRatYourself();
 
         WorldUtils.load();
     }
