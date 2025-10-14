@@ -228,6 +228,7 @@ public class Psyop implements ModInitializer {
         new HandView().load();
         new HideArmor().load();
         new HitTrack().load();
+        new ItemESP().load();
         new ItemView().load();
         new WorldView().load();
         new StorageESP().load();
