@@ -1,5 +1,6 @@
 package monster.psyop.client.impl.modules.combat;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import imgui.ImGui;
 import imgui.ImVec2;
 import monster.psyop.client.framework.events.EventListener;
@@ -8,7 +9,6 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnRender;
@@ -25,9 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -92,6 +89,18 @@ public class KillAura extends HUD {
                     .name("glow-color")
                     .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
                     .addTo(coreGroup);
+    public FloatSetting circleRadius = new FloatSetting.Builder()
+            .name("circle-radius")
+            .defaultTo(0.5f).range(0.1f, 1.5f)
+            .addTo(coreGroup);
+    public FloatSetting gyroSpeed = new FloatSetting.Builder()
+            .name("gyro-speed")
+            .defaultTo(0.015f).range(0.0f, 2.0f)
+            .addTo(coreGroup);
+    public BoolSetting pretty = new BoolSetting.Builder()
+            .name("pretty")
+            .defaultTo(false)
+            .addTo(coreGroup);
     public final GroupedSettings switchGroup = addGroup(new GroupedSettings("auto-switch", "Automatically switch to weapons."));
     public final BoolSetting autoSwitch =
             new BoolSetting.Builder()
@@ -155,6 +164,10 @@ public class KillAura extends HUD {
     private final GradientUtils gradientUtils = new GradientUtils(0.5f);
     private int delay = 0;
     public Entity target = null;
+    public float r = 0;
+    public boolean goUp = true;
+    public float circleAnimationPos = 0f;
+    public boolean goingDown = false;
 
     public KillAura() {
         super(
@@ -232,8 +245,36 @@ public class KillAura extends HUD {
 
         delay--;
 
+        if (goingDown) {
+            circleAnimationPos -= gyroSpeed.get();
+            if (circleAnimationPos <= 0) {
+                goingDown = false;
+            }
+        } else {
+            circleAnimationPos += gyroSpeed.get();
+
+            if (circleAnimationPos >= (target != null ? target.getBbHeight() : 1)) {
+                goingDown = true;
+            }
+        }
+
+        if (pretty.get()) {
+            if (goUp) r += 0.01f;
+            else r -= 0.01f;
+
+            if (r >= 1.0f) {
+                goUp = false;
+            } else if (r <= 0.0f) {
+                goUp = true;
+            }
+        }
+
         if (target != null) {
             if (!target.isAlive()) {
+                target = null;
+            }
+
+            if (target.distanceTo(MC.player) > MC.player.entityInteractionRange()) {
                 target = null;
             }
         }
@@ -345,66 +386,28 @@ public class KillAura extends HUD {
         if (MC == null || MC.level == null || MC.player == null) return;
         if (target == null || !target.isAlive()) return;
 
-        RenderSystem.lineWidth(2.0f);
-        var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer lines = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
-        PoseStack poseStack = new PoseStack();
-        PoseStack.Pose pose = poseStack.last();
+        PoseStack.Pose pose = event.poseStack.last();
+
 
         Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
         double camX = cam.x();
         double camY = cam.y();
         double camZ = cam.z();
 
-        AABB bb = target.getBoundingBox();
-        float cX = (float) (((bb.minX + bb.maxX) * 0.5) - camX);
-        float cZ = (float) (((bb.minZ + bb.maxZ) * 0.5) - camZ);
-        float minY = (float) (bb.minY - camY);
-        float maxY = (float) (bb.maxY - camY);
+        float cx = (float) (target.position().x - camX);
+        float cy = (float) ((target.position().y + circleAnimationPos) - camY);
+        float cz = (float) (target.position().z - camZ);
 
-        float rx = (float) ((bb.maxX - bb.minX) * 0.5);
-        float rz = (float) ((bb.maxZ - bb.minZ) * 0.5);
+        float[] c;
 
-        double t = System.currentTimeMillis() / 1000.0;
-        float speed = 1.5f;
-        float angleOffset = (float) (t * speed * Math.PI * 2.0);
-
-        float[] gc = glowColor.get();
-        float r = gc[0];
-        float g = gc[1];
-        float b = gc[2];
-        float a = 0.95f;
-
-        int segments = 64;
-
-        drawRing(lines, pose, cX, minY + 0.02f, cZ, rx, rz, angleOffset + 0.0f, segments, r, g, b, a);
-        float midYBase = (minY + maxY) * 0.5f;
-        float midYOsc = (float) (Math.sin(t * 2.0) * 0.15f);
-        drawRing(lines, pose, cX, midYBase + midYOsc, cZ, rx * 0.95f, rz * 0.95f, angleOffset + 0.8f, segments, r, g, b, a);
-        drawRing(lines, pose, cX, maxY - 0.02f, cZ, rx, rz, angleOffset + 1.6f, segments, r, g, b, a);
-
-        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
-    }
-
-    private void drawRing(VertexConsumer vc, PoseStack.Pose pose,
-                          float cX, float cY, float cZ,
-                          float rx, float rz,
-                          float angleOffset,
-                          int segments,
-                          float r, float g, float b, float a) {
-        if (rx <= 0.0001f || rz <= 0.0001f) return;
-        float twoPi = (float) (Math.PI * 2.0);
-        float prevX = 0f, prevY = 0f, prevZ = 0f;
-        for (int i = 0; i <= segments; i++) {
-            float t = (float) i / (float) segments;
-            float ang = t * twoPi + angleOffset;
-            float x = cX + (float) Math.cos(ang) * rx;
-            float z = cZ + (float) Math.sin(ang) * rz;
-            float y = cY;
-            if (i > 0) {
-                Render3DUtil.addLine(vc, pose, prevX, prevY, prevZ, x, y, z, r, g, b, a);
-            }
-            prevX = x; prevY = y; prevZ = z;
+        if (pretty.get()) {
+            c = new float[]{r, 1.0f, 1.0f, 1.0f};
+        } else {
+            c = glowColor.get();
         }
+
+        Render3DUtil.drawCircleEdgesXZ(event.quads, pose, cx, cy, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
+        Render3DUtil.drawCircleEdgesXZ(event.quads, pose, cx, cy - 0.1f, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
+
     }
 }

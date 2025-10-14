@@ -12,9 +12,6 @@ import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnPacket;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 
 public class TargetHUD extends HUD {
 
@@ -49,20 +46,15 @@ public class TargetHUD extends HUD {
     public void onPacketSend(OnPacket.Send event) {
         if (event.packet() instanceof ServerboundInteractPacket packet) {
             if (packet.action.getType() == ServerboundInteractPacket.ActionType.ATTACK) {
-                if (Psyop.MC.hitResult != null && Psyop.MC.hitResult.getType() == HitResult.Type.ENTITY) {
-                    EntityHitResult entityHitResult = (EntityHitResult) Psyop.MC.hitResult;
-                    Entity entity = entityHitResult.getEntity();
-                    if (entity instanceof AbstractClientPlayer && entity != Psyop.MC.player) {
-                        this.target = (AbstractClientPlayer) entity;
-                        this.lastHitTime = System.currentTimeMillis();
-                    }
+                if (MC.level.getEntity(packet.entityId) instanceof AbstractClientPlayer) {
+                    this.target = (AbstractClientPlayer) MC.level.getEntity(packet.entityId);
+                    this.lastHitTime = System.currentTimeMillis();
                 }
             }
         }
     }
 
     @EventListener
-    @SuppressWarnings("unused")
     public void render(On2DRender event) {
         if (Psyop.MC.level == null || Psyop.MC.player == null) {
             target = null;

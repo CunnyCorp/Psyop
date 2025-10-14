@@ -1,6 +1,5 @@
 package monster.psyop.client.mixin;
 
-import com.mojang.realmsclient.dto.PlayerInfo;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
@@ -20,8 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.awt.Color;
-import java.util.List;
+import java.awt.*;
 
 import static monster.psyop.client.Psyop.MC;
 
@@ -32,7 +30,9 @@ import static monster.psyop.client.Psyop.MC;
 public class PlayerTabOverlayMixin {
 
     // shadow the private header field so we can set it directly
-    @Shadow @Nullable private Component header;
+    @Shadow
+    @Nullable
+    private Component header;
 
     @Inject(method = "setHeader", at = @At("HEAD"), cancellable = true)
     private void onSetHeader(@Nullable Component newHeader, CallbackInfo ci) {

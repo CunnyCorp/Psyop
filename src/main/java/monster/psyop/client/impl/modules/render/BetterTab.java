@@ -4,7 +4,6 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 
 public class BetterTab extends Module {
@@ -53,12 +52,12 @@ public class BetterTab extends Module {
     public ColorSetting customColor = new ColorSetting.Builder()
             .name("custom-color")
             .description("The color of the player tab overlay background.")
-            .defaultTo(new float[]{1.0f, 0.0f, 1.0f,0.12f})
+            .defaultTo(new float[]{1.0f, 0.0f, 1.0f, 0.12f})
             .addTo(coreGroup);
     public ColorSetting customColor2 = new ColorSetting.Builder()
             .name("custom-color-2")
             .description("The second color of the player tab overlay background.")
-            .defaultTo(new float[]{1.0f, 0.0f, 1.0f,0.16f})
+            .defaultTo(new float[]{1.0f, 0.0f, 1.0f, 0.16f})
             .addTo(coreGroup);
 
     public BetterTab() {

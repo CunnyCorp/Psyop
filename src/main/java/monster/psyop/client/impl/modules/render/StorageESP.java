@@ -2,7 +2,6 @@ package monster.psyop.client.impl.modules.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -11,7 +10,6 @@ import monster.psyop.client.framework.modules.settings.types.BlockEntityColorLis
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import net.minecraft.core.BlockPos;
@@ -132,12 +130,7 @@ public class StorageESP extends Module {
         if (MC == null || MC.level == null || MC.player == null) return;
 
         RenderSystem.lineWidth(lineWidth.get());
-        var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer lines = hideLines.get() ? null : buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
-        boolean needQuads = mode2D.get() || filled.get() || glow.get();
-        VertexConsumer quads = needQuads ? buffers.getBuffer(PsyopRenderTypes.seeThroughQuads()) : null;
-        PoseStack poseStack = new PoseStack();
-        PoseStack.Pose pose = poseStack.last();
+        PoseStack.Pose pose = event.poseStack.last();
 
         Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
         double camX = cam.x();
@@ -256,8 +249,7 @@ public class StorageESP extends Module {
                             maxY += pad;
                             maxZ += pad;
                         }
-                        // Nudge south (+Z) face slightly to avoid a tiny visual gap due to precision/culling
-                        maxZ += 0.001;
+
 
                         if (mode2D.get()) {
                             var leftV = MC.gameRenderer.getMainCamera().getLeftVector();
@@ -274,27 +266,27 @@ public class StorageESP extends Module {
                             float uY = upV.y();
                             float uZ = upV.z();
 
-                            if (quads != null && filled.get()) {
+                            if (filled.get()) {
                                 float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
                                 Render3DUtil.drawBillboardQuadFaces(
-                                        quads, pose,
+                                        event.quads, pose,
                                         cPX, cPY, cPZ,
                                         rX, rY, rZ,
                                         uX, uY, uZ,
                                         halfW, halfH,
                                         c[0], c[1], c[2], a);
                             }
-                            if (quads != null) {
-                                Render3DUtil.drawBillboardCornerQuads(
-                                        quads, pose,
-                                        cPX, cPY, cPZ,
-                                        rX, rY, rZ,
-                                        uX, uY, uZ,
-                                        halfW, halfH,
-                                        0.33f, 0.02f,
-                                        c[0], c[1], c[2], c[3]);
-                            }
-                            if (glow.get() && quads != null) {
+
+                            Render3DUtil.drawBillboardCornerQuads(
+                                    event.quads, pose,
+                                    cPX, cPY, cPZ,
+                                    rX, rY, rZ,
+                                    uX, uY, uZ,
+                                    halfW, halfH,
+                                    0.33f, 0.02f,
+                                    c[0], c[1], c[2], c[3]);
+
+                            if (glow.get()) {
                                 int steps = Math.max(1, glowSteps.get());
                                 float width = glowWidth.get();
                                 float baseA = glowAlpha.get();
@@ -310,7 +302,7 @@ public class StorageESP extends Module {
                                     float a = baseA * (1.0f - f) * pulse;
                                     if (a <= 0.001f) continue;
                                     Render3DUtil.drawBillboardCornerQuads(
-                                            quads, pose,
+                                            event.quads, pose,
                                             cPX, cPY, cPZ,
                                             rX, rY, rZ,
                                             uX, uY, uZ,
@@ -320,22 +312,20 @@ public class StorageESP extends Module {
                                 }
                             }
                         } else {
-                            if (quads != null && filled.get()) {
+                            if (filled.get()) {
                                 float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
-                                Render3DUtil.drawBoxFaces(quads, pose,
+                                Render3DUtil.drawBoxFaces(event.quads, pose,
                                         (float) minX, (float) minY, (float) minZ,
                                         (float) maxX, (float) maxY, (float) maxZ,
                                         c[0], c[1], c[2], a);
                             }
 
-                            if (lines != null) {
-                                Render3DUtil.drawBoxEdges(lines, pose,
-                                        (float) minX, (float) minY, (float) minZ,
-                                        (float) maxX, (float) maxY, (float) maxZ,
-                                        c[0], c[1], c[2], c[3]);
-                            }
+                            Render3DUtil.drawBoxEdges(event.lines, pose,
+                                    (float) minX, (float) minY, (float) minZ,
+                                    (float) maxX, (float) maxY, (float) maxZ,
+                                    c[0], c[1], c[2], c[3]);
 
-                            if (glow.get() && quads != null) {
+                            if (glow.get()) {
                                 int steps = Math.max(1, glowSteps.get());
                                 float width = glowWidth.get();
                                 float baseA = glowAlpha.get();
@@ -351,7 +341,7 @@ public class StorageESP extends Module {
                                     float a = baseA * (1.0f - f) * pulse;
                                     if (a <= 0.001f) continue;
                                     Render3DUtil.drawBoxFaces(
-                                            quads, pose,
+                                            event.quads, pose,
                                             (float) (minX - expand), (float) (minY - expand), (float) (minZ - expand),
                                             (float) (maxX + expand), (float) (maxY + expand), (float) (maxZ + expand),
                                             c[0], c[1], c[2], a);
@@ -362,8 +352,5 @@ public class StorageESP extends Module {
                 }
             }
         }
-
-        if (quads != null) buffers.endBatch(PsyopRenderTypes.seeThroughQuads());
-        if (lines != null) buffers.endBatch(PsyopRenderTypes.seeThroughLines());
     }
 }

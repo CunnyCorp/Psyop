@@ -12,7 +12,6 @@ import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.events.game.OnTick;
@@ -202,10 +201,7 @@ public class Ripples extends Module {
     public void onRender3D(OnRender event) {
         if (MC == null || MC.level == null || MC.player == null) return;
         RenderSystem.lineWidth(lineWidth.get());
-        var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer lines = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
-        PoseStack poseStack = new PoseStack();
-        PoseStack.Pose pose = poseStack.last();
+        PoseStack.Pose pose = event.poseStack.last();
 
         Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
         double camX = cam.x();
@@ -230,7 +226,7 @@ public class Ripples extends Module {
                 float cy = (float) (tp.pos.y - camY) + 0.05f;
                 float cz = (float) (tp.pos.z - camZ);
 
-                drawCircle(lines, pose, cx, cy, cz, baseRadius, circleSegments.get(), c[0], c[1], c[2], c[3] * ageMul);
+                drawCircle(event.quads, pose, cx, cy, cz, baseRadius, circleSegments.get(), c[0], c[1], c[2], c[3] * ageMul);
 
                 if (glow.get()) {
                     int steps = Math.max(1, glowSteps.get());
@@ -247,13 +243,11 @@ public class Ripples extends Module {
                         float r = baseRadius + f * width;
                         float a = baseA * (1.0f - f) * pulse;
                         if (a <= 0.001f) continue;
-                        drawCircle(lines, pose, cx, cy, cz, r, circleSegments.get(), c[0], c[1], c[2], a);
+                        drawCircle(event.quads, pose, cx, cy, cz, r, circleSegments.get(), c[0], c[1], c[2], a);
                     }
                 }
             }
         }
-
-        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
     }
 
     private float[] colorFor(UUID playerId, boolean isSelf) {

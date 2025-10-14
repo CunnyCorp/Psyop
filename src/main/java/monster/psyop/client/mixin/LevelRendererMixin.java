@@ -2,7 +2,9 @@ package monster.psyop.client.mixin;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.Psyop;
+import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.render.BlockLights;
@@ -34,7 +36,15 @@ public class LevelRendererMixin {
         GlStateManager._depthMask(false);
         GlStateManager._disableDepthTest();
 
-        Psyop.EVENT_HANDLER.call(OnRender.get());
+        var buffers = Psyop.MC.renderBuffers().bufferSource();
+        VertexConsumer lines = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
+        VertexConsumer quads = buffers.getBuffer(PsyopRenderTypes.seeThroughQuads());
+        PoseStack stack = new PoseStack();
+
+        Psyop.EVENT_HANDLER.call(OnRender.get(lines, quads, stack));
+
+        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
+        buffers.endBatch(PsyopRenderTypes.seeThroughQuads());
 
         GlStateManager._enableDepthTest();
         GlStateManager._depthMask(true);

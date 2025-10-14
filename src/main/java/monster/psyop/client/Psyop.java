@@ -17,6 +17,7 @@ import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.impl.eggs.EggLoader;
 import monster.psyop.client.impl.modules.chat.BetterChat;
+import monster.psyop.client.impl.modules.chat.Spammer;
 import monster.psyop.client.impl.modules.combat.*;
 import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.hud.*;
@@ -178,6 +179,7 @@ public class Psyop implements ModInitializer {
 
         // Chat
         new BetterChat().load();
+        new Spammer().load();
 
         // HUD
         new ArmorHUD().load();
@@ -234,12 +236,14 @@ public class Psyop implements ModInitializer {
 
         // Render
         new BlockLights().load();
+        new BoxESP().load();
         new Chams().load();
+        new SphereESP().load();
         new HandView().load();
         new HideArmor().load();
+        new HitTrack().load();
         new ItemView().load();
         new WorldView().load();
-        new ESP().load();
         new StorageESP().load();
         new Ripples().load();
         new BetterTab().load();

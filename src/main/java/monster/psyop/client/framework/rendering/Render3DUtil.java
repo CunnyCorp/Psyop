@@ -2,10 +2,12 @@ package monster.psyop.client.framework.rendering;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import monster.psyop.client.Psyop;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
 
 import java.awt.*;
 
@@ -50,7 +52,7 @@ public final class Render3DUtil {
                                   float x1, float y1, float z1,
                                   float r, float g, float b, float a) {
         Vec3 look = MC.player.getViewVector(0.0f);
-        float y0 = (float) (look.y * 0.15);
+        float y0 = (float) -(look.y * 0.15);
         addLine(vc, pose, 0, y0, 0, x1, y1, z1, r, g, b, a);
     }
 
@@ -147,19 +149,18 @@ public final class Render3DUtil {
 
         float lenW = halfW * f;
         float lenH = halfH * f;
-        float th = t;
 
-        addPlaneQuad.accept(new float[]{halfW - lenW, halfH - th}, new float[]{halfW, halfH});
-        addPlaneQuad.accept(new float[]{halfW - th, halfH - lenH}, new float[]{halfW, halfH});
+        addPlaneQuad.accept(new float[]{halfW - lenW, halfH - t}, new float[]{halfW, halfH});
+        addPlaneQuad.accept(new float[]{halfW - t, halfH - lenH}, new float[]{halfW, halfH});
 
-        addPlaneQuad.accept(new float[]{-halfW, halfH - th}, new float[]{-halfW + lenW, halfH});
-        addPlaneQuad.accept(new float[]{-halfW, halfH - lenH}, new float[]{-halfW + th, halfH});
+        addPlaneQuad.accept(new float[]{-halfW, halfH - t}, new float[]{-halfW + lenW, halfH});
+        addPlaneQuad.accept(new float[]{-halfW, halfH - lenH}, new float[]{-halfW + t, halfH});
 
-        addPlaneQuad.accept(new float[]{halfW - lenW, -halfH}, new float[]{halfW, -halfH + th});
-        addPlaneQuad.accept(new float[]{halfW - th, -halfH}, new float[]{halfW, -halfH + lenH});
+        addPlaneQuad.accept(new float[]{halfW - lenW, -halfH}, new float[]{halfW, -halfH + t});
+        addPlaneQuad.accept(new float[]{halfW - t, -halfH}, new float[]{halfW, -halfH + lenH});
 
-        addPlaneQuad.accept(new float[]{-halfW, -halfH}, new float[]{-halfW + lenW, -halfH + th});
-        addPlaneQuad.accept(new float[]{-halfW, -halfH}, new float[]{-halfW + th, -halfH + lenH});
+        addPlaneQuad.accept(new float[]{-halfW, -halfH}, new float[]{-halfW + lenW, -halfH + t});
+        addPlaneQuad.accept(new float[]{-halfW, -halfH}, new float[]{-halfW + t, -halfH + lenH});
     }
 
     public static void drawCornerBox(VertexConsumer vc, PoseStack.Pose pose,
@@ -168,12 +169,10 @@ public final class Render3DUtil {
                                      float fraction,
                                      float r, float g, float b, float a) {
         float fx = Math.max(0f, Math.min(0.5f, fraction));
-        float fy = fx;
-        float fz = fx;
         float dx = maxX - minX;
         float dy = maxY - minY;
         float dz = maxZ - minZ;
-        float lx = dx * fx, ly = dy * fy, lz = dz * fz;
+        float lx = dx * fx, ly = dy * fx, lz = dz * fx;
 
         addLine(vc, pose, minX, minY, minZ, minX + lx, minY, minZ, r, g, b, a);
         addLine(vc, pose, minX, minY, minZ, minX, minY, minZ + lz, r, g, b, a);
@@ -351,15 +350,28 @@ public final class Render3DUtil {
                                        float bxX, float bxY, float bxZ,
                                        float radius, int segments,
                                        float r, float g, float b, float a) {
-        int seg = Math.max(3, segments);
-        float prevX = cx + (float) Math.cos(0) * radius * axX + (float) Math.sin(0) * radius * bxX;
-        float prevY = cy + (float) Math.cos(0) * radius * axY + (float) Math.sin(0) * radius * bxY;
-        float prevZ = cz + (float) Math.cos(0) * radius * axZ + (float) Math.sin(0) * radius * bxZ;
+        int minAdaptive = Math.max(24, (int) Math.floor(Math.abs(radius) * 12.0));
+        int seg = Math.max(minAdaptive, segments);
+        float angleStep = (float) (2 * Math.PI / seg);
+        float cos = (float) Math.cos(angleStep);
+        float sin = (float) Math.sin(angleStep);
+
+        float ux = radius;
+        float uy = 0f;
+
+        float prevX = cx + ux * axX + uy * bxX;
+        float prevY = cy + ux * axY + uy * bxY;
+        float prevZ = cz + ux * axZ + uy * bxZ;
+
         for (int i = 1; i <= seg; i++) {
-            float t = (float) (i * (2 * Math.PI / seg));
-            float x = cx + (float) Math.cos(t) * radius * axX + (float) Math.sin(t) * radius * bxX;
-            float y = cy + (float) Math.cos(t) * radius * axY + (float) Math.sin(t) * radius * bxY;
-            float z = cz + (float) Math.cos(t) * radius * axZ + (float) Math.sin(t) * radius * bxZ;
+            float nx = ux * cos - uy * sin;
+            float ny = ux * sin + uy * cos;
+            ux = nx;
+            uy = ny;
+
+            float x = cx + ux * axX + uy * bxX;
+            float y = cy + ux * axY + uy * bxY;
+            float z = cz + ux * axZ + uy * bxZ;
             addLine(vc, pose, prevX, prevY, prevZ, x, y, z, r, g, b, a);
             prevX = x;
             prevY = y;
@@ -389,12 +401,88 @@ public final class Render3DUtil {
     }
 
     public static void drawSphere(VertexConsumer vc, PoseStack.Pose pose,
-                                              float cx, float cy, float cz,
-                                              float radius, int segments,
-                                              float r, float g, float b, float a) {
+                                  float cx, float cy, float cz,
+                                  float radius, int segments,
+                                  float r, float g, float b, float a) {
         drawCircleEdgesXY(vc, pose, cx, cy, cz, radius, segments, r, g, b, a);
         drawCircleEdgesXZ(vc, pose, cx, cy, cz, radius, segments, r, g, b, a);
         drawCircleEdgesYZ(vc, pose, cx, cy, cz, radius, segments, r, g, b, a);
+    }
+
+    public static void drawSphereFaces(VertexConsumer vc, PoseStack.Pose pose,
+                                       float cx, float cy, float cz,
+                                       float radius, int segments,
+                                       float r, float g, float b, float a) {
+        int slices = Math.max(16, segments);
+        int stacks = Math.max(8, segments / 2);
+        drawSphereFaces(vc, pose, cx, cy, cz, radius, stacks, slices, r, g, b, a);
+    }
+
+    public static void drawSphereFaces(VertexConsumer vc, PoseStack.Pose pose,
+                                       float cx, float cy, float cz,
+                                       float radius, int stacks, int slices,
+                                       float r, float g, float b, float a) {
+        int st = Math.max(3, stacks);
+        int sl = Math.max(8, slices);
+
+        for (int i = 0; i < st; i++) {
+            float v0 = i / (float) st;
+            float v1 = (i + 1) / (float) st;
+            float theta0 = v0 * (float) Math.PI;
+            float theta1 = v1 * (float) Math.PI;
+            float cosT0 = (float) Math.cos(theta0);
+            float sinT0 = (float) Math.sin(theta0);
+            float cosT1 = (float) Math.cos(theta1);
+            float sinT1 = (float) Math.sin(theta1);
+
+            for (int j = 0; j < sl; j++) {
+                float u0 = j / (float) sl;
+                float u1 = (j + 1) / (float) sl;
+                float phi0 = u0 * (float) (2 * Math.PI);
+                float phi1 = u1 * (float) (2 * Math.PI);
+                float cosP0 = (float) Math.cos(phi0);
+                float sinP0 = (float) Math.sin(phi0);
+                float cosP1 = (float) Math.cos(phi1);
+                float sinP1 = (float) Math.sin(phi1);
+
+                float x00 = cx + radius * sinT0 * cosP0;
+                float y00 = cy + radius * cosT0;
+                float z00 = cz + radius * sinT0 * sinP0;
+
+                float x01 = cx + radius * sinT0 * cosP1;
+                float y01 = cy + radius * cosT0;
+                float z01 = cz + radius * sinT0 * sinP1;
+
+                float x11 = cx + radius * sinT1 * cosP1;
+                float y11 = cy + radius * cosT1;
+                float z11 = cz + radius * sinT1 * sinP1;
+
+                float x10 = cx + radius * sinT1 * cosP0;
+                float y10 = cy + radius * cosT1;
+                float z10 = cz + radius * sinT1 * sinP0;
+
+                float mnx = (x00 - cx) + (x01 - cx) + (x11 - cx) + (x10 - cx);
+                float mny = (y00 - cy) + (y01 - cy) + (y11 - cy) + (y10 - cy);
+                float mnz = (z00 - cz) + (z01 - cz) + (z11 - cz) + (z10 - cz);
+                float len = (float) Math.sqrt(mnx * mnx + mny * mny + mnz * mnz);
+                if (len > 1e-6f) {
+                    mnx /= len;
+                    mny /= len;
+                    mnz /= len;
+                } else {
+                    mnx = 0f;
+                    mny = 1f;
+                    mnz = 0f;
+                }
+
+                addQuad(vc, pose, x00, y00, z00,
+                        x01, y01, z01,
+                        x11, y11, z11,
+                        x10, y10, z10,
+                        mnx, mny, mnz,
+                        r, g, b, a);
+            }
+        }
     }
 
     public static void drawHeartEdgesXY(VertexConsumer vc, PoseStack.Pose pose,
@@ -409,24 +497,17 @@ public final class Render3DUtil {
         float y0 = (float) ((13.0 * Math.cos(t0)) - (5.0 * Math.cos(2.0 * t0)) - (2.0 * Math.cos(3.0 * t0)) - Math.cos(4.0 * t0)) * scale + cy;
         float z0 = cz;
 
+        pose.rotate(new Quaternionf().rotateXYZ(Psyop.RANDOM.nextFloat() * 360, 0, Psyop.RANDOM.nextFloat() * 360));
+
         for (int i = 1; i <= seg; i++) {
             float t = (float) (i * (2 * Math.PI / seg));
             float x = (float) (Math.pow(Math.sin(t), 3) * 16.0) * scale + cx;
             float y = (float) ((13.0 * Math.cos(t)) - (5.0 * Math.cos(2.0 * t)) - (2.0 * Math.cos(3.0 * t)) - Math.cos(4.0 * t)) * scale + cy;
-            float z = cz;
-            addLine(vc, pose, x0, y0, z0, x, y, z, r, g, b, a);
+            addLine(vc, pose, x0, y0, z0, x, y, cz, r, g, b, a);
             x0 = x;
             y0 = y;
-            z0 = z;
+            z0 = cz;
         }
-    }
-
-    public static void drawSphereRel(VertexConsumer vc, PoseStack.Pose pose,
-                                              Vec3 pos,
-                                              float radius, int segments,
-                                              float r, float g, float b, float a) {
-        Vec3 camRel = getCameraRelPos(pos);
-        drawSphere(vc, pose, (float) camRel.x, (float) camRel.y, (float) camRel.z, radius, segments, r, g, b, a);
     }
 
     public static void drawAxis(VertexConsumer vc, PoseStack.Pose pose,
@@ -449,19 +530,17 @@ public final class Render3DUtil {
                                  float cx, float cy, float cz,
                                  float size,
                                  float r, float g, float b, float a) {
-        addLine(vc, pose, cx - size, cy, cz, cx + size, cy, cz, r, g, b, a);
-        addLine(vc, pose, cx, cy - size, cz, cx, cy + size, cz, r, g, b, a);
-        addLine(vc, pose, cx, cy, cz - size, cx, cy, cz + size, r, g, b, a);
+        drawAxis(vc, pose, cx, cy, cz, size, r, g, b, a);
     }
 
     public static void drawCrossRel(VertexConsumer vc, PoseStack.Pose pose,
-                                 Vec3 pos, float size,
-                                 float r, float g, float b, float a) {
+                                    Vec3 pos, float size,
+                                    float r, float g, float b, float a) {
         Vec3 camRel = getCameraRelPos(pos);
         drawCross(vc, pose, (float) camRel.x, (float) camRel.y, (float) camRel.z, size, r, g, b, a);
     }
 
     public static Vec3 getCameraRelPos(Vec3 vec3) {
-        return vec3.subtract(Minecraft.getInstance().gameRenderer.getMainCamera().getPosition());
+        return Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(vec3);
     }
 }

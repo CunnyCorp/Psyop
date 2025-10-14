@@ -56,30 +56,17 @@ public class FriendsView extends View {
             ImGui.text("Add Player:");
             ImGui.sameLine();
             ImGui.setNextItemWidth(ImGui.getWindowWidth() - 250);
-            ImGui.inputTextWithHint("##friend_add", "Enter player name or UUID...", newEntry, ImGuiInputTextFlags.CallbackResize);
+            ImGui.inputTextWithHint("##friend_add", "Enter player name...", newEntry, ImGuiInputTextFlags.CallbackResize);
+
             ImGui.sameLine();
 
-            String[] roleNames = roleNames();
-            if (FriendManager.roleTypes.isEmpty()) FriendManager.init();
-            if (addRoleIndex.get() >= roleNames.length) addRoleIndex.set(0);
-            ImGui.setNextItemWidth(110);
-            if (ImGui.beginCombo("##add_role", roleNames.length > 0 ? roleNames[addRoleIndex.get()] : "")) {
-                for (int i = 0; i < roleNames.length; i++) {
-                    boolean selected = addRoleIndex.get() == i;
-                    if (ImGui.selectable(roleNames[i], selected)) {
-                        addRoleIndex.set(i);
-                    }
-                    if (selected) ImGui.setItemDefaultFocus();
-                }
-                ImGui.endCombo();
-            }
-            ImGui.sameLine();
             if (ImGui.button("Add", 80, 0)) {
                 String key = newEntry.get().trim();
                 if (!key.isEmpty()) {
-                    String chosen = roleNames.length > 0 ? roleNames[addRoleIndex.get()] : "Friend";
-                    FriendManager.addRole(key, chosen);
-                    Psyop.log("Added {} as {}", key, chosen);
+                    FriendManager.addRole(key, "Friend");
+                    Friends module = Psyop.MODULES.get(Friends.class);
+                    module.players.value().add(new ImString(key));
+                    Psyop.log("Added {} as a Friend", key);
                     newEntry.set("");
                 }
             }
@@ -103,24 +90,6 @@ public class FriendsView extends View {
                 ImGui.pushID(index);
                 ImGui.text(playerKey);
                 ImGui.sameLine(ImGui.getWindowWidth() - 260);
-
-                int currentIndex = Math.max(0, indexOfRole(current.name));
-                ImInt tempIdx = new ImInt(currentIndex);
-                String currentLabel = roleNames.length > 0 && currentIndex < roleNames.length ? roleNames[currentIndex] : current.name;
-                ImGui.setNextItemWidth(140);
-                if (ImGui.beginCombo("##role_combo", currentLabel)) {
-                    for (int i = 0; i < roleNames.length; i++) {
-                        boolean selected = tempIdx.get() == i;
-                        if (ImGui.selectable(roleNames[i], selected)) {
-                            tempIdx.set(i);
-                            String newRole = roleNames[i];
-                            FriendManager.addRole(playerKey, newRole);
-                            Psyop.log("Updated {} role to {}", playerKey, newRole);
-                        }
-                        if (selected) ImGui.setItemDefaultFocus();
-                    }
-                    ImGui.endCombo();
-                }
 
                 ImGui.sameLine();
                 if (ImGui.button("Remove", 90, 0)) {
@@ -170,6 +139,10 @@ public class FriendsView extends View {
     @Override
     public void populateSettings(Config config) {
         this.settings = config.friendsManagerGui;
+        Friends friendsModule = Psyop.MODULES.get(Friends.class);
+        if (friendsModule != null) {
+            friendsModule.refreshFriends();
+        }
     }
 
     private static String[] roleNames() {

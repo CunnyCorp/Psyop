@@ -2,14 +2,12 @@ package monster.psyop.client.impl.modules.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class ESP extends Module {
+public class BoxESP extends Module {
     public GroupedSettings targets = addGroup(new GroupedSettings("targets", "Which entities to draw boxes around"));
     public BoolSetting players = new BoolSetting.Builder()
             .name("players")
@@ -138,7 +136,7 @@ public class ESP extends Module {
             .range(0.0f, 5.0f)
             .addTo(style);
 
-    public ESP() {
+    public BoxESP() {
         super(Categories.RENDER, "box-esp", "Draws 3D boxes around entities.");
     }
 
@@ -193,12 +191,7 @@ public class ESP extends Module {
         Iterable<Entity> entities = MC.level.entitiesForRendering();
 
         RenderSystem.lineWidth(lineWidth.get());
-        var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer lines = hideLines.get() && !pin.get() ? null : buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
-        boolean needQuads = mode2D.get() || filled.get() || glow.get();
-        VertexConsumer quads = needQuads ? buffers.getBuffer(PsyopRenderTypes.seeThroughQuads()) : null;
-        PoseStack poseStack = new PoseStack();
-        PoseStack.Pose pose = poseStack.last();
+        PoseStack.Pose pose = event.poseStack.last();
 
         Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
         double camX = cam.x();
@@ -218,7 +211,6 @@ public class ESP extends Module {
             float maxY = (float) (bb.maxY - camY);
             float maxZ = (float) (bb.maxZ - camZ);
 
-            // Apply configurable padding to the 3D bounds
             float pad = padding.get();
             if (pad != 0.0f) {
                 minX -= pad;
@@ -244,67 +236,59 @@ public class ESP extends Module {
                 float uY = upV.y();
                 float uZ = upV.z();
 
-                if (quads != null && filled.get()) {
+                if (filled.get()) {
                     float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
                     Render3DUtil.drawBillboardQuadFaces(
-                            quads, pose,
+                            event.quads, pose,
                             cPX, cPY, cPZ,
                             rX, rY, rZ,
                             uX, uY, uZ,
                             halfW, halfH,
                             c[0], c[1], c[2], a);
                 }
-                if (quads != null) {
-                    Render3DUtil.drawBillboardCornerQuads(
-                            quads, pose,
-                            cPX, cPY, cPZ,
-                            rX, rY, rZ,
-                            uX, uY, uZ,
-                            halfW, halfH,
-                            0.33f, 0.02f,
-                            c[0], c[1], c[2], c[3]);
-                }
+                Render3DUtil.drawBillboardCornerQuads(
+                        event.quads, pose,
+                        cPX, cPY, cPZ,
+                        rX, rY, rZ,
+                        uX, uY, uZ,
+                        halfW, halfH,
+                        0.33f, 0.02f,
+                        c[0], c[1], c[2], c[3]);
 
-                // 2D healthbar rendering
-                if (healthbar2D.get() && quads != null && e instanceof LivingEntity le) {
+                if (healthbar2D.get() && e instanceof LivingEntity le) {
                     float maxHp = le.getMaxHealth();
                     float curHp = le.getHealth();
                     if (maxHp > 0.0f) {
                         float ratio = Math.max(0.0f, Math.min(1.0f, curHp / maxHp));
 
-                        // Bar dimensions and placement: to the right of the box
                         float margin = 0.05f;
                         float barHalfW = 0.02f;
                         float barHalfH = halfH;
 
-                        // Right side center offset from cP
                         float offRight = halfW + margin + barHalfW;
                         float barCX = cPX + rX * offRight;
                         float barCY = cPY + rY * offRight;
                         float barCZ = cPZ + rZ * offRight;
 
-                        // Background (dark)
                         Render3DUtil.drawBillboardQuadFaces(
-                                quads, pose,
+                                event.quads, pose,
                                 barCX, barCY, barCZ,
                                 rX, rY, rZ,
                                 uX, uY, uZ,
                                 barHalfW, barHalfH,
                                 0.05f, 0.05f, 0.05f, 0.45f);
 
-                        // Foreground (filled portion from bottom to top)
                         float fillHalfH = barHalfH * ratio;
-                        float upOffset = -barHalfH + fillHalfH; // move to center of filled segment
+                        float upOffset = -barHalfH + fillHalfH;
                         float fillCX = barCX + uX * upOffset;
                         float fillCY = barCY + uY * upOffset;
                         float fillCZ = barCZ + uZ * upOffset;
 
-                        // Gradient from red (low) to green (high)
                         float g = ratio;
                         float r = 1.0f - ratio;
                         float b = 0.0f;
                         Render3DUtil.drawBillboardQuadFaces(
-                                quads, pose,
+                                event.quads, pose,
                                 fillCX, fillCY, fillCZ,
                                 rX, rY, rZ,
                                 uX, uY, uZ,
@@ -313,7 +297,7 @@ public class ESP extends Module {
                     }
                 }
 
-                if (glow.get() && quads != null) {
+                if (glow.get()) {
                     int steps = Math.max(1, glowSteps.get());
                     float width = glowWidth.get();
                     float baseA = glowAlpha.get();
@@ -329,7 +313,7 @@ public class ESP extends Module {
                         float a = baseA * (1.0f - f) * pulse;
                         if (a <= 0.001f) continue;
                         Render3DUtil.drawBillboardCornerQuads(
-                                quads, pose,
+                                event.quads, pose,
                                 cPX, cPY, cPZ,
                                 rX, rY, rZ,
                                 uX, uY, uZ,
@@ -339,16 +323,14 @@ public class ESP extends Module {
                     }
                 }
             } else {
-                if (quads != null && filled.get()) {
+                if (filled.get()) {
                     float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
-                    Render3DUtil.drawBoxFaces(quads, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], a);
+                    Render3DUtil.drawBoxFaces(event.quads, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], a);
                 }
 
-                if (lines != null) {
-                    Render3DUtil.drawBoxEdges(lines, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], c[3]);
-                }
+                Render3DUtil.drawBoxEdges(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], c[3]);
 
-                if (glow.get() && quads != null) {
+                if (glow.get()) {
                     int steps = Math.max(1, glowSteps.get());
                     float width = glowWidth.get();
                     float baseA = glowAlpha.get();
@@ -364,22 +346,19 @@ public class ESP extends Module {
                         float a = baseA * (1.0f - f) * pulse;
                         if (a <= 0.001f) continue;
                         Render3DUtil.drawBoxFaces(
-                                quads, pose,
+                                event.quads, pose,
                                 minX - expand, minY - expand, minZ - expand,
                                 maxX + expand, maxY + expand, maxZ + expand,
                                 c[0], c[1], c[2], a);
                     }
                 }
 
-                if (lines != null && pin.get()) {
+                if (pin.get()) {
                     float[] col = colorFor(e);
-                    Render3DUtil.drawCrossRel(lines, pose, e.position(), 3.5f, col[0], col[1], col[2], col[3]);
+                    Render3DUtil.drawCrossRel(event.lines, pose, e.position(), 0.3f, col[0], col[1], col[2], col[3]);
                 }
             }
         }
-
-        if (quads != null) buffers.endBatch(PsyopRenderTypes.seeThroughQuads());
-        if (lines != null) buffers.endBatch(PsyopRenderTypes.seeThroughLines());
     }
 
 }

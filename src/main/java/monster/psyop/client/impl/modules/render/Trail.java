@@ -5,11 +5,7 @@ import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.ShriekParticleOption;
-import net.minecraft.core.particles.SculkChargeParticleOptions;
+import net.minecraft.core.particles.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

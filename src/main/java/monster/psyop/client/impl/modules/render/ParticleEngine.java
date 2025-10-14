@@ -8,7 +8,6 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.events.game.OnTick;
@@ -70,16 +69,11 @@ public class ParticleEngine extends Module {
     public void onRender(OnRender event) {
         if (particles.isEmpty()) return;
 
-        var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer quads = buffers.getBuffer(PsyopRenderTypes.seeThroughQuads());
-        PoseStack poseStack = new PoseStack();
-        PoseStack.Pose pose = poseStack.last();
+        PoseStack.Pose pose = event.poseStack.last();
 
         for (Particle particle : particles) {
-            particle.render(quads, pose);
+            particle.render(event.quads, pose);
         }
-
-        buffers.endBatch(PsyopRenderTypes.seeThroughQuads());
     }
 
     public class Particle {
@@ -150,9 +144,9 @@ public class ParticleEngine extends Module {
             if (markForRemoval) {
                 return;
             }
-            
+
             if (shape == 0) {
-                Render3DUtil.drawSphere(vc, pose, x, y, z, size / 12, 24, rgba[0], rgba[1], rgba[2], rgba[3]);
+                Render3DUtil.drawSphere(vc, pose, x, y, z, size / 12, 64, rgba[0], rgba[1], rgba[2], rgba[3]);
             } else if (shape == 1) {
                 Render3DUtil.drawHeartEdgesXY(vc, pose, x, y, z, size / 12, 64, rgba[0], rgba[1], rgba[2], rgba[3]);
             }

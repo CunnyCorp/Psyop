@@ -1,8 +1,6 @@
 package monster.psyop.client.impl.modules.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.friends.FriendManager;
@@ -12,7 +10,6 @@ import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import net.minecraft.client.Minecraft;
@@ -76,15 +73,9 @@ public class Tracers extends Module {
         Minecraft mc = Psyop.MC;
         if (mc.level == null || mc.player == null) return;
 
-        // Use the same entity source as BoxESP (no frustum cull where possible)
         Iterable<Entity> entities = mc.level.entitiesForRendering();
 
-        // Prepare rendering state & buffer
-        RenderSystem.lineWidth(lineWidth.get());
-        var buffers = mc.renderBuffers().bufferSource();
-        VertexConsumer lines = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
-        PoseStack poseStack = new PoseStack();
-        PoseStack.Pose pose = poseStack.last();
+        PoseStack.Pose pose = event.poseStack.last();
 
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
         double camX = cam.x();
@@ -107,10 +98,8 @@ public class Tracers extends Module {
             float y1 = (float) (ty - camY);
             float z1 = (float) (tz - camZ);
 
-            Render3DUtil.drawTracer(lines, pose, x1, y1, z1, c[0], c[1], c[2], c[3]);
+            Render3DUtil.drawTracer(event.quads, pose, x1, y1, z1, c[0], c[1], c[2], c[3]);
         }
-
-        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
     }
 
 
