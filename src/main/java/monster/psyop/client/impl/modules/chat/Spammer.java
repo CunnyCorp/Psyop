@@ -1,18 +1,14 @@
 package monster.psyop.client.impl.modules.chat;
 
 import imgui.type.ImString;
-import monster.psyop.client.framework.events.EventListener;
-import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.StringListSetting;
-import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.CollectionUtils;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.StringUtils;
-import net.minecraft.client.player.AbstractClientPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,26 +48,15 @@ public class Spammer extends Module {
             return;
         }
 
-        String message = CollectionUtils.random(Objects.requireNonNull(messages.value()).toArray(new ImString[0])).get();
+        String message;
+
         if (random.get()) {
             message = StringUtils.randomText(messageLength.get());
+        } else {
+            message = CollectionUtils.random(Objects.requireNonNull(messages.value()).toArray(new ImString[0])).get();
         }
-
-        message = message.replaceAll("<player>", getPlayer().getName().getString());
 
         PacketUtils.command("say " + message);
         delayTimer = delay.get();
-    }
-
-    public AbstractClientPlayer getPlayer() {
-        AbstractClientPlayer player = ((AbstractClientPlayer) CollectionUtils.random(MC.player.connection.getListedOnlinePlayers().toArray()));
-
-        if (player.equals(MC.player)) {
-            return getPlayer();
-        } else if (!FriendManager.canAttack(player)) {
-            return getPlayer();
-        }
-
-        return player;
     }
 }
