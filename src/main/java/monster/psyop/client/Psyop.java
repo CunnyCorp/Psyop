@@ -239,6 +239,7 @@ public class Psyop implements ModInitializer {
         new BetterTab().load();
         new Trail().load();
         new ParticleEngine().load();
+        new PopESP().load();
 
         // Silly
         new HappyHands().load();
