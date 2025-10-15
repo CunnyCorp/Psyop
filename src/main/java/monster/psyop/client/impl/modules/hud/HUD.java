@@ -9,12 +9,12 @@ public abstract class HUD extends Module {
     public final IntSetting xPos = new IntSetting.Builder()
             .name("x")
             .defaultTo(100)
-            .range(0, 2000)
+            .range(0, 4000)
             .addTo(coreGroup);
     public final IntSetting yPos = new IntSetting.Builder()
             .name("y")
             .defaultTo(100)
-            .range(0, 2000)
+            .range(0, 4000)
             .addTo(coreGroup);
 
 
