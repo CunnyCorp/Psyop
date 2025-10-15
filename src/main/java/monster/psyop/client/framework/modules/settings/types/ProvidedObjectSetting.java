@@ -32,12 +32,10 @@ public abstract class ProvidedObjectSetting<S, T> extends Setting<S, T> {
 
         ImGui.spacing();
 
-        // Filter input with clear button
         ImGui.text("Filter:");
         ImGui.sameLine();
         float filterWidth = ImGui.getContentRegionAvail().x - 60;
         ImGui.setNextItemWidth(filterWidth);
-        String hint = getSuggestions().stream().findFirst().map(this::itemToString).orElse("");
         ImGui.inputTextWithHint("##filter_" + name, "Type to filter...", textFilter, ImGuiInputTextFlags.CallbackResize);
 
         ImGui.sameLine();
@@ -47,16 +45,13 @@ public abstract class ProvidedObjectSetting<S, T> extends Setting<S, T> {
 
         ImGui.spacing();
 
-        // Current value display
         ImGui.text("Current: " + StringUtils.readable(itemToString(value()), Config.get().coreSettings));
 
         ImGui.spacing();
 
-        // Suggestions section
         ImGui.text("Select new item:");
 
         if (getSuggestions() != null && !getSuggestions().isEmpty()) {
-            // Show suggestions dropdown button
             if (ImGui.button("Show Suggestions##" + name)) {
                 showSuggestions = !showSuggestions;
             }
@@ -81,7 +76,6 @@ public abstract class ProvidedObjectSetting<S, T> extends Setting<S, T> {
                             }
                         }
 
-                        // Tooltip with more info if available
                         if (ImGui.isItemHovered()) {
                             ImGui.beginTooltip();
                             ImGui.text("Click to select: " + nameStr);
