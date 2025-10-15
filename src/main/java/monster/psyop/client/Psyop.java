@@ -207,7 +207,7 @@ public class Psyop implements ModInitializer {
         new EffectSpoof().load();
         new AutoTool().load();
 
-        new AutoTotem().load();
+        new Offhand().load();
 
         // Movement
         new AntiPush().load();
