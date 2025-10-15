@@ -21,6 +21,8 @@ import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
@@ -299,6 +301,7 @@ public class KillAura extends HUD {
         }
 
         entities.sort(Comparator.comparingDouble((e) -> e.distanceToSqr(MC.player)));
+        entities.sort(Comparator.comparingDouble((e) -> getTargetScore(e instanceof LivingEntity ? (LivingEntity) e : null)));
 
         target = entities.get(0);
 
@@ -409,5 +412,30 @@ public class KillAura extends HUD {
         Render3DUtil.drawCircleEdgesXZ(event.quads, pose, cx, cy, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
         Render3DUtil.drawCircleEdgesXZ(event.quads, pose, cx, cy - 0.1f, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
 
+    }
+
+    public int getTargetScore(LivingEntity entity) {
+        int score = 0;
+        if (entity == null) {
+            return score;
+        }
+
+        if (entity instanceof Creeper) {
+            score += 1000;
+        }
+
+        if (entity.getType().getCategory() == MobCategory.MONSTER) {
+            score += 100;
+        }
+
+        if (entity.getHealth() > 0) {
+            score += 1;
+        }
+
+        if (entity.distanceTo(MC.player) < MC.player.entityInteractionRange()) {
+            score += 2500;
+        }
+
+        return score;
     }
 }
