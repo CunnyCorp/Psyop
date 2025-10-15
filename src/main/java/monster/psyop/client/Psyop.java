@@ -5,6 +5,7 @@ import monster.psyop.client.framework.events.EventHandler;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.framework.gui.utility.ColoredText;
+import monster.psyop.client.framework.gui.views.ViewHandler;
 import monster.psyop.client.framework.gui.views.client.ConfigView;
 import monster.psyop.client.framework.gui.views.client.ModuleConfigView;
 import monster.psyop.client.framework.gui.views.client.ModulesView;
@@ -275,6 +276,7 @@ public class Psyop implements ModInitializer {
             }
         }
 
+        ViewHandler.get(FriendsView.class).populateSettings(CONFIG);
 
         Psyop.log("Took {} nanoseconds to load.", System.nanoTime() - loadedStart);
     }
