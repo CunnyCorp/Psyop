@@ -52,6 +52,10 @@ public class Offhand extends Module {
 
             if (nearPlayer.get()) {
                 for (AbstractClientPlayer player : MC.level.players()) {
+                    if (MC.player.equals(player)) {
+                        continue;
+                    }
+
                     if (MC.player.distanceToSqr(player) <= 16) {
                         shouldForceTotem = true;
                         break;
