@@ -127,6 +127,10 @@ public class InventoryUtils {
         return getInventoryOffset() + 27;
     }
 
+    public static int getOffhandOffset() {
+        return getInventoryOffset() + 36;
+    }
+
     public static void swapToHotbar(int slot, int hot) {
         if (MC.player == null || MC.gameMode == null) {
             return;
