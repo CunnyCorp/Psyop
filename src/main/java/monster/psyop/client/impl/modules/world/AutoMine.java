@@ -8,9 +8,12 @@ import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.impl.events.game.OnTick;
+import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.RotationUtils;
 import monster.psyop.client.utility.blocks.BlockUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,19 +37,6 @@ public class AutoMine extends Module {
                     .description("A list of blocks to mine.")
                     .defaultTo(List.of(Blocks.EMERALD_BLOCK, Blocks.END_STONE))
                     .addTo(coreGroup);
-    public final BoolSetting nuker =
-            new BoolSetting.Builder()
-                    .name("nuker")
-                    .description("Automatically aim at mineable blocks.")
-                    .defaultTo(true)
-                    .addTo(coreGroup);
-    public final FloatSetting rotationSpeed =
-            new FloatSetting.Builder()
-                    .name("rotation-speed")
-                    .description("Speed to rotate towards entities at.")
-                    .defaultTo(0.32f)
-                    .range(0.5f, 1.1f)
-                    .addTo(coreGroup);
     public final FloatSetting maxDistance =
             new FloatSetting.Builder()
                     .name("max-distance")
@@ -61,6 +51,13 @@ public class AutoMine extends Module {
                     .defaultTo(2)
                     .range(0, 5)
                     .addTo(coreGroup);
+    public final IntSetting blocksPerTick =
+            new IntSetting.Builder()
+                    .name("blocks-per-tick")
+                    .description("How many blocks to mine per tick.")
+                    .defaultTo(12)
+                    .range(1, 16)
+                    .addTo(coreGroup);
 
 
     private BlockPos lastAttackedPos = BlockPos.ZERO;
@@ -71,14 +68,6 @@ public class AutoMine extends Module {
 
     @EventListener
     public void onTick(OnTick.Post ignored) {
-        if (isLookingAtValidBlock()) {
-            if (((BlockHitResult) MC.hitResult).getBlockPos().equals(lastAttackedPos)) {
-                MC.continueAttack(true);
-            } else {
-                MC.startAttack();
-                lastAttackedPos = ((BlockHitResult) MC.hitResult).getBlockPos();
-            }
-        } else if (nuker.get()) {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
             List<int[]> blockVecs = new ArrayList<>();
             for (int y = (MC.player.getAbilities().flying ? -yScan.get() : 0); y <= yScan.get(); y++) {
@@ -86,10 +75,6 @@ public class AutoMine extends Module {
                     mutableBlockPos.set(vecPos[0], vecPos[1], vecPos[2]);
 
                     if (!ignoreWhitelist.get() && !blocks.value().contains(BlockUtils.getState(mutableBlockPos).getBlock())) {
-                        return false;
-                    }
-
-                    if (!BlockUtils.isExposedToAir(mutableBlockPos)) {
                         return false;
                     }
 
@@ -117,44 +102,18 @@ public class AutoMine extends Module {
                 return Math.abs(RotationUtils.getYaw(mutableBlockPos) - MC.player.getYRot()) + Math.abs(RotationUtils.getPitch(mutableBlockPos) - MC.player.getXRot());
             }));
 
-            int[] firstVec = blockVecs.get(0);
+            for (int i = 0; i < blocksPerTick.get(); i++) {
+                if (blockVecs.size() <= i) break;
 
-            float playerPitch = Mth.clamp(MC.player.getXRot(), -90.0f, 90.0f);
-            float playerYaw = Mth.wrapDegrees(MC.player.getYRot());
+                int[] vec = blockVecs.get(i);
 
-            mutableBlockPos.set(firstVec[0], firstVec[1], firstVec[2]);
+                mutableBlockPos.set(vec[0], vec[1], vec[2]);
 
-            float pitch = RotationUtils.getPitch(mutableBlockPos);
-            float yaw = RotationUtils.getYaw(mutableBlockPos);
+                if (MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) > maxDistance.get()) continue;
 
-            playerPitch = Mth.rotLerp(rotationSpeed.get(), playerPitch, pitch);
-            playerYaw = Mth.rotLerp(rotationSpeed.get(), playerYaw, yaw);
-
-            RotationUtils.rotate(playerPitch, playerYaw);
-        }
-    }
-
-    public boolean isLookingAtValidBlock() {
-        if (MC.player == null
-                || MC.hitResult == null
-                || MC.hitResult.getType() != HitResult.Type.BLOCK
-                || MC.level == null) {
-            return false;
-        }
-
-        BlockPos blockPos = ((BlockHitResult) MC.hitResult).getBlockPos();
-
-        BlockState state = MC.level.getBlockState(blockPos);
-
-        if (state.getDestroySpeed(MC.level, blockPos) == -1.0f) {
-            return false;
-        }
-
-        if (BlockUtils.isLiquid(blockPos)) {
-            return false;
-        }
-
-        return ignoreWhitelist.get() || blocks.value().contains(state.getBlock());
+                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, Direction.UP));
+                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos, Direction.UP));
+            }
     }
 }
 

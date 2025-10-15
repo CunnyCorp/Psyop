@@ -59,6 +59,7 @@ accessible method net/minecraft/client/renderer/RenderType$CompositeState$Compos
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder createCompositeState (Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setLightmapState (Lnet/minecraft/client/renderer/RenderStateShard$LightmapStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setOverlayState (Lnet/minecraft/client/renderer/RenderStateShard$OverlayStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
+accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setTexturingState (Lnet/minecraft/client/renderer/RenderStateShard$TexturingStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
 
 accessible field net/minecraft/client/renderer/RenderStateShard NO_TEXTURE Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;
 accessible field net/minecraft/client/renderer/RenderStateShard VIEW_OFFSET_Z_LAYERING Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;
@@ -66,8 +67,13 @@ accessible field net/minecraft/client/renderer/RenderStateShard VIEW_OFFSET_Z_LA
 accessible field net/minecraft/client/renderer/RenderStateShard NO_LAYERING Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;
 accessible class net/minecraft/client/renderer/RenderStateShard$LineStateShard
 accessible field net/minecraft/client/renderer/RenderStateShard OUTLINE_TARGET Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;
+accessible field net/minecraft/client/renderer/RenderStateShard GLINT_TEXTURING Lnet/minecraft/client/renderer/RenderStateShard$TexturingStateShard;
 
 accessible method net/minecraft/client/renderer/RenderPipelines register (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
 accessible field net/minecraft/client/renderer/RenderPipelines DEBUG_FILLED_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible field net/minecraft/client/renderer/RenderPipelines LINES_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible field net/minecraft/client/renderer/RenderPipelines ENTITY_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines MATRICES_PROJECTION_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines FOG_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+
+accessible method net/minecraft/client/model/geom/ModelPart compile (Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V

@@ -1,21 +1,35 @@
 package monster.psyop.client.impl.modules.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import imgui.type.ImString;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
+import monster.psyop.client.framework.modules.settings.types.ProvidedStringSetting;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemUseAnimation;
 import org.joml.Quaternionf;
+
+import java.util.List;
 
 public class HandView extends Module {
     public BoolSetting noHurt = new BoolSetting.Builder()
             .name("no-hurt")
             .description("Prevents bob-hurting.")
             .defaultTo(true)
+            .addTo(coreGroup);
+    public BoolSetting wizard = new BoolSetting.Builder()
+            .name("wizard")
+            .description("You're a wizard...")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    public ProvidedStringSetting bufferModifier = new ProvidedStringSetting.Builder()
+            .suggestions(List.of(new ImString("quads"), new ImString("lines"), new ImString("item"), new ImString("wireframe"), new ImString("none")))
+            .name("buffer-modifier")
+            .defaultTo(new ImString("quads"))
             .addTo(coreGroup);
     public GroupedSettings animationsGroup = addGroup(new GroupedSettings("animations", "Modifications to animations."));
     public BoolSetting blockAnimation = new BoolSetting.Builder()

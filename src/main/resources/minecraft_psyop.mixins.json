@@ -27,6 +27,7 @@
     "GameRendererMixin",
     "ItemInHandRendererMixin",
     "ItemRendererMixin",
+    "ItemStackRenderState$LayerRenderStateMixin",
     "KeyboardHandlerMixin",
     "LevelRendererMixin",
     "LightTextureMixin",
@@ -35,6 +36,7 @@
     "MinecraftMixin",
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
+    "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
     "TextFieldHelperMixin"
   ],
