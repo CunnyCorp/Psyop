@@ -253,7 +253,7 @@ public class Psyop implements ModInitializer {
                 new SkyRefill().load();
             }
         }
-        new AutoMine().load();
+        new Nuker().load();
         new BreakDelay().load();
         new FastBreak().load();
         new Scaffold().load();

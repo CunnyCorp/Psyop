@@ -14,17 +14,14 @@ import monster.psyop.client.utility.blocks.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class AutoMine extends Module {
+public class Nuker extends Module {
     public final BoolSetting ignoreWhitelist =
             new BoolSetting.Builder()
                     .name("ingore-whitelist")
@@ -59,11 +56,8 @@ public class AutoMine extends Module {
                     .range(1, 16)
                     .addTo(coreGroup);
 
-
-    private BlockPos lastAttackedPos = BlockPos.ZERO;
-
-    public AutoMine() {
-        super(Categories.WORLD, "auto-mine", "Automatically mines blocks you look at.");
+    public Nuker() {
+        super(Categories.WORLD, "nuker", "Very fast block breaking brrr.");
     }
 
     @EventListener
@@ -112,7 +106,8 @@ public class AutoMine extends Module {
                 if (MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) > maxDistance.get()) continue;
 
                 PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, Direction.UP));
-                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos, Direction.UP));
+                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), Direction.UP));
+                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), Direction.UP));
             }
     }
 }
