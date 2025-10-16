@@ -202,6 +202,7 @@ public class Psyop implements ModInitializer {
         new TestModule().load();
         new UseControl().load();
         new Friends().load();
+        new InventoryPanel().load();
         new AutoElytraSwap().load();
         new DiscordRPC().load();
         new EffectSpoof().load();

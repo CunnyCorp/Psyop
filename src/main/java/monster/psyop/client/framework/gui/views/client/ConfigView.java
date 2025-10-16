@@ -132,7 +132,6 @@ public class ConfigView extends View {
         super.load();
         Psyop.EVENT_HANDLER.add(this);
 
-        // Run all initialization callbacks
         initializationCallbacks.forEach(callback -> callback.accept(this));
     }
 

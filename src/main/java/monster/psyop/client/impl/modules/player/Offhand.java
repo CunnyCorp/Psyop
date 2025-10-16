@@ -69,8 +69,8 @@ public class Offhand extends Module {
                 if (slot == -1) {
                     return;
                 }
-                InventoryUtils.pickup(slot);
-                InventoryUtils.placeItem(InventoryUtils.getOffhandOffset());
+                // lol x1
+                InventoryUtils.swapToHotbar(slot, 40);
                 return;
             }
         }
@@ -87,8 +87,8 @@ public class Offhand extends Module {
             }
 
             NotificationManager.get().addNotification("Offhand", "Moved item to offhand.", NotificationEvent.Type.INFO, 5000L);
-            InventoryUtils.pickup(slot);
-            InventoryUtils.placeItem(InventoryUtils.getOffhandOffset());
+            // lol x2
+            InventoryUtils.swapToHotbar(slot, 40);
         }
     }
 }

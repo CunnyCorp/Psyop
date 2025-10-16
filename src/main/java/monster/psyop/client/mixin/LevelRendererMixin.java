@@ -31,8 +31,8 @@ import java.util.List;
 
 @Mixin(value = LevelRenderer.class, priority = 749)
 public class LevelRendererMixin {
-    @Inject(method = "renderEntities", at = @At("TAIL"))
-    private void psyop$renderEntities(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Camera camera, DeltaTracker deltaTracker, List<Entity> list, CallbackInfo ci) {
+    @Inject(method = "renderBlockEntities", at = @At("TAIL"))
+    private void psyop$renderEntities(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, MultiBufferSource.BufferSource bufferSource2, Camera camera, float f, CallbackInfo ci) {
         GlStateManager._depthMask(false);
         GlStateManager._disableDepthTest();
 

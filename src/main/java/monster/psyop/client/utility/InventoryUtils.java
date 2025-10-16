@@ -144,7 +144,7 @@ public class InventoryUtils {
             return;
         }
 
-        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, 1, ClickType.PICKUP_ALL, MC.player);
+        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, 1, ClickType.PICKUP, MC.player);
     }
 
     public static void pickup(int slot) {
@@ -152,7 +152,7 @@ public class InventoryUtils {
             return;
         }
 
-        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, 0, ClickType.PICKUP_ALL, MC.player);
+        MC.gameMode.handleInventoryMouseClick(MC.player.containerMenu.containerId, slot, 0, ClickType.PICKUP, MC.player);
     }
 
     public static void quickMove(int slot) {

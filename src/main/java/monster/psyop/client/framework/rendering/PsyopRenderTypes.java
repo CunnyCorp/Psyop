@@ -60,6 +60,31 @@ public final class PsyopRenderTypes {
                             .createCompositeState(false)
             )
     );
+    private static final Supplier<RenderType> ENTITY_GLINT = Suppliers.memoize(() ->
+            RenderType.create("entity_glint",
+                    1536,
+                    GLINT,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(new RenderStateShard.TextureStateShard(ItemRenderer.ENCHANTED_GLINT_ARMOR, false))
+                            .setTexturingState(RenderType.ENTITY_GLINT_TEXTURING)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> GLINT_TRANSLUCENT_ENTITY = Suppliers.memoize(() ->
+            RenderType.create("glint_translucent",
+                    1536,
+                    GLINT,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(new RenderStateShard.TextureStateShard(ItemRenderer.ENCHANTED_GLINT_ARMOR, false))
+                            .setTexturingState(RenderType.ENTITY_GLINT_TEXTURING)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+
     private static final Supplier<RenderType> WIREFRAME = Suppliers.memoize(() ->
             RenderType.create("wireframe",
                     1536,
@@ -79,11 +104,9 @@ public final class PsyopRenderTypes {
                         .setLightmapState(RenderStateShard.LIGHTMAP)
                         .setOverlayState(RenderStateShard.OVERLAY)
                         .setOutputState(RenderStateShard.OUTLINE_TARGET)
-                        .createCompositeState(boolean_.booleanValue());
+                        .createCompositeState(boolean_);
         return RenderType.create("entity_translucent", 1536, true, true, ENTITY_TRANSLUCENT, compositeState);
     });
-
-
 
     public static RenderType seeThroughLines() {
         return SEE_THROUGH_LINES_SUPPLIER.get();
@@ -99,6 +122,10 @@ public final class PsyopRenderTypes {
 
     public static RenderType glintTranslucent() {
         return GLINT_TRANSLUCENT.get();
+    }
+
+    public static RenderType entityGlint() {
+        return ENTITY_GLINT.get();
     }
 
     public static RenderType wireframe() {

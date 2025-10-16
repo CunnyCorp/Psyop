@@ -1,12 +1,17 @@
 package monster.psyop.client.impl.modules.world.printer;
 
+import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
+import monster.psyop.client.impl.events.game.OnScreen;
 import monster.psyop.client.utility.InventoryUtils;
+import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.blocks.BlockUtils;
+import net.minecraft.client.gui.screens.inventory.ShulkerBoxScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.BlockHitResult;
@@ -29,6 +34,7 @@ public class SkyRefill extends Module {
     private int emptyTimer = 0;
     private int idle = 0;
     private boolean useUnder = false;
+    private boolean isStealing = false;
 
     public SkyRefill() {
         super(Categories.WORLD, "sky-refill", "Auto refill from inventory for sky arts");
@@ -44,10 +50,31 @@ public class SkyRefill extends Module {
         return true;
     }
 
+    @EventListener
+    public void onScreen(OnScreen.Open event) {
+        if (event.screen instanceof ShulkerBoxScreen) {
+            isStealing = true;
+        }
+    }
+
     @Override
     public void update() {
         int validSlot = InventoryUtils.findAnySlot(validBlocks.value());
         System.out.println(validSlot + "-" + emptyTimer);
+
+        if (isStealing) {
+            int slot = InventoryUtils.findMatchingSlot((stack, s) -> !stack.isEmpty() && s < 27);
+
+            if (slot != -1) {
+                InventoryUtils.quickMove(slot);
+            } else {
+                isStealing = false;
+                PacketUtils.send(new ServerboundContainerClosePacket(MC.player.containerMenu.containerId));
+                MC.player.clientSideCloseContainer();
+            }
+            return;
+        }
+
         if (validSlot == -1) {
             emptyTimer++;
         } else {

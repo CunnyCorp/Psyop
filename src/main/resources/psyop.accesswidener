@@ -68,6 +68,7 @@ accessible field net/minecraft/client/renderer/RenderStateShard NO_LAYERING Lnet
 accessible class net/minecraft/client/renderer/RenderStateShard$LineStateShard
 accessible field net/minecraft/client/renderer/RenderStateShard OUTLINE_TARGET Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;
 accessible field net/minecraft/client/renderer/RenderStateShard GLINT_TEXTURING Lnet/minecraft/client/renderer/RenderStateShard$TexturingStateShard;
+accessible field net/minecraft/client/renderer/RenderStateShard ENTITY_GLINT_TEXTURING Lnet/minecraft/client/renderer/RenderStateShard$TexturingStateShard;
 
 accessible method net/minecraft/client/renderer/RenderPipelines register (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
 accessible field net/minecraft/client/renderer/RenderPipelines DEBUG_FILLED_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
