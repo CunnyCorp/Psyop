@@ -1,9 +1,6 @@
 package monster.psyop.client.impl.modules.misc.rpc;
 
 import com.google.gson.JsonParser;
-import monster.psyop.client.impl.modules.misc.rpc.Opcode;
-import monster.psyop.client.impl.modules.misc.rpc.Packet;
-import monster.psyop.client.impl.modules.misc.rpc.Connection;
 
 import java.io.IOException;
 import java.net.UnixDomainSocketAddress;
@@ -75,7 +72,8 @@ public class UnixConnection extends Connection {
                     }
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     @Override

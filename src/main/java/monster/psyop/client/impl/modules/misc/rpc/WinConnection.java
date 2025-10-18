@@ -1,9 +1,6 @@
 package monster.psyop.client.impl.modules.misc.rpc;
 
 import com.google.gson.JsonParser;
-import monster.psyop.client.impl.modules.misc.rpc.Opcode;
-import monster.psyop.client.impl.modules.misc.rpc.Packet;
-import monster.psyop.client.impl.modules.misc.rpc.Connection;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -54,7 +51,8 @@ public class WinConnection extends Connection {
                 // Call callback
                 callback.accept(new Packet(opcode, JsonParser.parseString(data).getAsJsonObject()));
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     private void readFully(ByteBuffer buffer) throws IOException {

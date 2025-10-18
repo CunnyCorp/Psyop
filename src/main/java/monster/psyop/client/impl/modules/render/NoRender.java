@@ -3,8 +3,6 @@ package monster.psyop.client.impl.modules.render;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
-import net.minecraft.client.particle.HugeExplosionParticle;
-import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 
 public class NoRender extends Module {
     public final BoolSetting beams = new BoolSetting.Builder()
@@ -32,7 +30,6 @@ public class NoRender extends Module {
             .description("Hides the hunger bar.")
             .defaultTo(false)
             .addTo(coreGroup);
-
 
 
     public NoRender() {

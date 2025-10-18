@@ -2,9 +2,7 @@ package monster.psyop.client.impl.modules.hud;
 
 import imgui.ImGui;
 import imgui.ImVec2;
-import imgui.flag.ImGuiCol;
 import monster.psyop.client.framework.events.EventListener;
-import monster.psyop.client.framework.gui.utility.GuiUtils;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
@@ -43,11 +41,9 @@ public class HungerBarHUD extends HUD {
         super("HungerBar", "Displays your current hunger as a bar.");
     }
 
-    @EventListener(inGame = false)
-    public void on2D(On2DRender e) {
-        if (MC.player == null) return;
-
-        float foodLevel = MC.player.getFoodData().getFoodLevel();
+    @Override
+    public void render() {
+        float foodLevel = MC.player == null ? 20 : MC.player.getFoodData().getFoodLevel();
 
         float current = Math.max(0f, foodLevel);
         float pct = Math.min(1f, current / 20);

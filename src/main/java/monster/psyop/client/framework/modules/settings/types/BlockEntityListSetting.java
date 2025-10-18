@@ -2,7 +2,6 @@ package monster.psyop.client.framework.modules.settings.types;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.ArrayList;

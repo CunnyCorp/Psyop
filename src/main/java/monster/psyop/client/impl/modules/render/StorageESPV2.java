@@ -1,10 +1,8 @@
 package monster.psyop.client.impl.modules.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BlockEntityColorListSetting;
@@ -22,15 +20,12 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static monster.psyop.client.Psyop.MC;
-
 public class StorageESPV2 extends Module {
-    public GroupedSettings renderingGroup = addGroup(new GroupedSettings("Rendering",  "Rendering options."));
+    public GroupedSettings renderingGroup = addGroup(new GroupedSettings("Rendering", "Rendering options."));
     public BlockEntityColorListSetting storage = new BlockEntityColorListSetting.Builder()
             .name("storage")
             .defaultTo(new ArrayList<>(List.of(BlockEntityType.CHEST, BlockEntityType.TRAPPED_CHEST, BlockEntityType.SHULKER_BOX, BlockEntityType.ENDER_CHEST)))

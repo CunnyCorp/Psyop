@@ -61,8 +61,8 @@ public class NotificationHUD extends HUD {
         lastAnimationUpdate = currentTime;
     }
 
-    @EventListener(inGame = false)
-    public void render(On2DRender event) {
+    @Override
+    public void render() {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
         float screenWidth = ImGui.getMainViewport().getSizeX();
         float margin = 10.0f;

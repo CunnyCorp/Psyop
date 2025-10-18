@@ -54,8 +54,8 @@ public class TargetHUD extends HUD {
         }
     }
 
-    @EventListener
-    public void render(On2DRender event) {
+    @Override
+    public void render() {
         if (Psyop.MC.level == null || Psyop.MC.player == null) {
             target = null;
             return;

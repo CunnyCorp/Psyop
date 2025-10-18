@@ -3,16 +3,12 @@ package monster.psyop.client.impl.modules.hud;
 import imgui.ImGui;
 import imgui.ImVec2;
 import monster.psyop.client.framework.events.EventListener;
-import monster.psyop.client.framework.gui.utility.GuiUtils;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.DimensionCheck;
 import monster.psyop.client.utility.gui.GradientUtils;
-
-import java.awt.*;
 
 import static monster.psyop.client.Psyop.GUI;
 
@@ -33,8 +29,8 @@ public class PositionHUD extends HUD {
         gradientUtils.updateAnimation();
     }
 
-    @EventListener(inGame = false)
-    public void render(On2DRender event) {
+    @Override
+    public void render() {
         String position = "0, 0, 0 - (0, 0)";
 
         if (MC.player != null) {

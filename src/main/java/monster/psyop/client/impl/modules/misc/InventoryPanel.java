@@ -1,12 +1,9 @@
 package monster.psyop.client.impl.modules.misc;
 
-import imgui.ImDrawList;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Category;
-import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
 import monster.psyop.client.impl.events.On2DRender;

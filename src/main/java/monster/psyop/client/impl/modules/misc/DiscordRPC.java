@@ -1,11 +1,11 @@
 package monster.psyop.client.impl.modules.misc;
 
-import monster.psyop.client.impl.modules.misc.rpc.DiscordIPC;
-import monster.psyop.client.impl.modules.misc.rpc.RichPresence;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.StringSetting;
+import monster.psyop.client.impl.modules.misc.rpc.DiscordIPC;
+import monster.psyop.client.impl.modules.misc.rpc.RichPresence;
 
 import java.time.Instant;
 import java.util.Timer;

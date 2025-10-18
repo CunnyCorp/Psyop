@@ -1,10 +1,17 @@
 package monster.psyop.client.framework.modules;
 
+import imgui.ImGui;
+import imgui.ImVec2;
+import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
+import monster.psyop.client.impl.events.On2DRender;
+import monster.psyop.client.impl.events.game.OnMouseClick;
 import monster.psyop.client.impl.events.game.OnTick;
+import monster.psyop.client.impl.modules.hud.HUD;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -26,17 +33,68 @@ public class Modules {
         Psyop.EVENT_HANDLER.add(this);
     }
 
+    @EventListener(inGame = false)
+    public void onRender2D(On2DRender event) {
+        List<Module> modules = new ArrayList<>(NAME_TO_MODULE.values());
+
+        modules.sort((m1, m2) -> m2.priority.get() - m1.priority.get());
+
+        for (Module module : modules) {
+            if (!(module instanceof HUD)) {
+                continue;
+            }
+
+            if (!module.active()) {
+                continue;
+            }
+
+            ((HUD) module).render();
+        }
+    }
+
+    @EventListener(inGame = false)
+    public void onClick(OnMouseClick event) {
+        if (event.key == 2 && event.action == 1) {
+            List<Module> modules = new ArrayList<>(NAME_TO_MODULE.values());
+
+            modules.sort((m1, m2) -> m2.priority.get() - m1.priority.get());
+
+            for (Module module : modules) {
+                if (!(module instanceof HUD hud)) {
+                    continue;
+                }
+
+                if (!module.active()) {
+                    continue;
+                }
+
+                if (hud.move.get()) {
+                    ImVec2 pos = ImGui.getMousePos();
+
+                    hud.xPos.value(new ImInt((int) pos.x));
+                    hud.yPos.value(new ImInt((int) pos.y));
+                    if (hud.stopMove.get()) {
+                        hud.move.value(new ImBoolean(false));
+                    }
+                    event.cancel();
+                }
+
+            }
+        }
+    }
+
+
     @EventListener
     public void onTickPre(OnTick.Pre event) {
-        shadowUpdate();
+        shadowUpdate(true);
     }
 
     @EventListener
     public void onTickPost(OnTick.Post event) {
-        shadowUpdate();
+        shadowUpdate(false);
     }
 
-    private void shadowUpdate() {
+    private void shadowUpdate(boolean preTick) {
         List<Module> modules = new ArrayList<>(NAME_TO_MODULE.values());
 
         modules.sort((m1, m2) -> m2.priority.get() - m1.priority.get());
@@ -48,6 +106,7 @@ public class Modules {
                 continue;
             }
 
+
             if (skipOtherHotbars && module.controlsHotbar()) {
                 continue;
             }
@@ -56,7 +115,14 @@ public class Modules {
                 skipOtherHotbars = true;
             }
 
-            module.update();
+            if (module.preTick.get() && preTick) {
+                module.update();
+                continue;
+            }
+
+            if (module.postTick.get() && !preTick) {
+                module.update();
+            }
         }
     }
 

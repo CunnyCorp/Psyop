@@ -9,13 +9,10 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnTick;
-import monster.psyop.client.utility.gui.GradientUtils;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -56,8 +53,8 @@ public class ArrayHUD extends HUD {
         labels.sort(Comparator.comparing(String::length).reversed());
     }
 
-    @EventListener(inGame = false)
-    public void render(On2DRender event) {
+    @Override
+    public void render() {
         int curY = yPos.get();
         for (String label : labels) {
             ImVec2 textSize = new ImVec2();

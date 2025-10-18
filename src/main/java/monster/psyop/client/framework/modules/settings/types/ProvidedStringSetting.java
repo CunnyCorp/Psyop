@@ -1,15 +1,7 @@
 package monster.psyop.client.framework.modules.settings.types;
 
-import imgui.ImGui;
-import imgui.ImVec2;
-import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiStyleVar;
-import imgui.type.ImInt;
 import imgui.type.ImString;
-import monster.psyop.client.config.modules.settings.IntSettingConfig;
 import monster.psyop.client.config.modules.settings.StringSettingConfig;
-import monster.psyop.client.framework.gui.utility.KeyUtils;
-import monster.psyop.client.utility.AnimationUtils;
 
 import java.util.ArrayList;
 import java.util.List;

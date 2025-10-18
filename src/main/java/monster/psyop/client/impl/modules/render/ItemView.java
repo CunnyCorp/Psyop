@@ -5,10 +5,8 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import monster.psyop.client.framework.modules.settings.types.ProvidedObjectSetting;
 import monster.psyop.client.framework.modules.settings.types.ProvidedStringSetting;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemView extends Module {

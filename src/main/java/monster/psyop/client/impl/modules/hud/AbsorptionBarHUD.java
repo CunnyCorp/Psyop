@@ -4,14 +4,11 @@ import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import monster.psyop.client.framework.events.EventListener;
-import monster.psyop.client.framework.gui.utility.GuiUtils;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.On2DRender;
-
-import java.awt.*;
 
 import static monster.psyop.client.Psyop.GUI;
 
@@ -43,12 +40,10 @@ public class AbsorptionBarHUD extends HUD {
         super("AbsorptionBar", "Displays your current absorption as a bar.");
     }
 
-    @EventListener(inGame = false)
-    public void on2D(On2DRender e) {
-        if (MC.player == null) return;
-
-        float absorption = MC.player.getAbsorptionAmount();
-        float maxAbsorption = MC.player.getMaxAbsorption();
+    @Override
+    public void render() {
+        float absorption = MC.player == null ? 4 * 4 : MC.player.getAbsorptionAmount();
+        float maxAbsorption = MC.player == null ? 4 * 4 : MC.player.getMaxAbsorption();
 
         if (maxAbsorption <= 0) {
             return;

@@ -2,7 +2,6 @@ package monster.psyop.client.impl.modules.misc.rpc;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import monster.psyop.client.impl.modules.misc.rpc.Connection;
 
 import java.lang.management.ManagementFactory;
 import java.util.function.BiConsumer;
@@ -20,14 +19,17 @@ public class DiscordIPC {
 
     private static IPCUser user;
 
-    /** Sets the error callback */
+    /**
+     * Sets the error callback
+     */
     public static void setOnError(BiConsumer<Integer, String> onError) {
         DiscordIPC.onError = onError;
     }
 
     /**
      * Tries to open a connection to a locally running Discord instance
-     * @param appId the application id to use
+     *
+     * @param appId   the application id to use
      * @param onReady callback called when a successful connection happens, from that point {@link #getUser()} will return non-null object up until {@link #stop()} is called or an error happens
      * @return true if a connection was opened successfully
      */
@@ -63,6 +65,7 @@ public class DiscordIPC {
 
     /**
      * Sets account's activity
+     *
      * @param presence the rich presence to set the activity to
      */
     public static void setActivity(RichPresence presence) {
@@ -72,7 +75,9 @@ public class DiscordIPC {
         if (receivedDispatch) sendActivity();
     }
 
-    /** Closes the connection to the locally running Discord instance if it is open */
+    /**
+     * Closes the connection to the locally running Discord instance if it is open
+     */
     public static void stop() {
         if (c != null) {
             c.close();
@@ -101,7 +106,8 @@ public class DiscordIPC {
     private static void onPacket(Packet packet) {
         // Close
         if (packet.opcode() == Opcode.Close) {
-            if (onError != null) onError.accept(packet.data().get("code").getAsInt(), packet.data().get("message").getAsString());
+            if (onError != null)
+                onError.accept(packet.data().get("code").getAsInt(), packet.data().get("message").getAsString());
             stop();
         }
         // Frame

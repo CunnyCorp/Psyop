@@ -92,63 +92,63 @@ public class Nuker extends HUD {
     @Override
     public void update() {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-            List<int[]> blockVecs = new ArrayList<>();
-            for (int y = (MC.player.getAbilities().flying ? -yScan.get() : 0); y <= yScan.get(); y++) {
-                blockVecs.addAll(BlockUtils.findNearBlocksByRadius(MC.player.blockPosition().offset(0, y, 0).mutable(), 5, (vecPos) -> {
-                    mutableBlockPos.set(vecPos[0], vecPos[1], vecPos[2]);
+        List<int[]> blockVecs = new ArrayList<>();
+        for (int y = (MC.player.getAbilities().flying ? -yScan.get() : 0); y <= yScan.get(); y++) {
+            blockVecs.addAll(BlockUtils.findNearBlocksByRadius(MC.player.blockPosition().offset(0, y, 0).mutable(), 5, (vecPos) -> {
+                mutableBlockPos.set(vecPos[0], vecPos[1], vecPos[2]);
 
-                    if (!ignoreWhitelist.get() && !blocks.value().contains(BlockUtils.getState(mutableBlockPos).getBlock())) {
-                        return false;
-                    }
-
-                    BlockState state = MC.level.getBlockState(mutableBlockPos);
-
-                    if (state.getDestroySpeed(MC.level, mutableBlockPos) == -1.0f) {
-                        return false;
-                    }
-
-                    if (BlockUtils.isLiquid(mutableBlockPos)) {
-                        return false;
-                    }
-
-                    if (BlockUtils.isAir(mutableBlockPos)) {
-                        return false;
-                    }
-
-                    return MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) <= maxDistance.get();
-                }));
-            }
-
-            blockVecs.sort(Comparator.comparingDouble((value) -> {
-                mutableBlockPos.set(value[0], value[1], value[2]);
-
-                return Math.abs(RotationUtils.getYaw(mutableBlockPos) - MC.player.getYRot()) + Math.abs(RotationUtils.getPitch(mutableBlockPos) - MC.player.getXRot());
-            }));
-
-            for (int i = 0; i < blocksPerTick.get(); i++) {
-                if (blockVecs.size() <= i) break;
-
-                int[] vec = blockVecs.get(i);
-
-                mutableBlockPos.set(vec[0], vec[1], vec[2]);
-
-                if (MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) > maxDistance.get()) continue;
-
-                brokenBlocks.add(new BrokenBlock(mutableBlockPos.immutable(), System.currentTimeMillis(), expireTime.get()));
-                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, Direction.UP));
-                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), Direction.UP));
-                PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), Direction.UP));
-            }
-
-            List<BrokenBlock> toRemove = new ArrayList<>();
-
-            for (BrokenBlock block : brokenBlocks) {
-                if (block.isExpired()) {
-                    toRemove.add(block);
+                if (!ignoreWhitelist.get() && !blocks.value().contains(BlockUtils.getState(mutableBlockPos).getBlock())) {
+                    return false;
                 }
-            }
 
-            brokenBlocks.removeAll(toRemove);
+                BlockState state = MC.level.getBlockState(mutableBlockPos);
+
+                if (state.getDestroySpeed(MC.level, mutableBlockPos) == -1.0f) {
+                    return false;
+                }
+
+                if (BlockUtils.isLiquid(mutableBlockPos)) {
+                    return false;
+                }
+
+                if (BlockUtils.isAir(mutableBlockPos)) {
+                    return false;
+                }
+
+                return MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) <= maxDistance.get();
+            }));
+        }
+
+        blockVecs.sort(Comparator.comparingDouble((value) -> {
+            mutableBlockPos.set(value[0], value[1], value[2]);
+
+            return Math.abs(RotationUtils.getYaw(mutableBlockPos) - MC.player.getYRot()) + Math.abs(RotationUtils.getPitch(mutableBlockPos) - MC.player.getXRot());
+        }));
+
+        for (int i = 0; i < blocksPerTick.get(); i++) {
+            if (blockVecs.size() <= i) break;
+
+            int[] vec = blockVecs.get(i);
+
+            mutableBlockPos.set(vec[0], vec[1], vec[2]);
+
+            if (MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) > maxDistance.get()) continue;
+
+            brokenBlocks.add(new BrokenBlock(mutableBlockPos.immutable(), System.currentTimeMillis(), expireTime.get()));
+            PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, Direction.UP));
+            PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), Direction.UP));
+            PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), Direction.UP));
+        }
+
+        List<BrokenBlock> toRemove = new ArrayList<>();
+
+        for (BrokenBlock block : brokenBlocks) {
+            if (block.isExpired()) {
+                toRemove.add(block);
+            }
+        }
+
+        brokenBlocks.removeAll(toRemove);
     }
 
     @EventListener

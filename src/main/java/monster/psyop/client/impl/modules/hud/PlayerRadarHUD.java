@@ -49,8 +49,8 @@ public class PlayerRadarHUD extends HUD {
         super("player-radar", "Shows nearby players with distance and health.");
     }
 
-    @EventListener
-    public void render(On2DRender event) {
+    @Override
+    public void render() {
         if (Psyop.MC.level == null || Psyop.MC.player == null) return;
 
         List<AbstractClientPlayer> players = Psyop.MC.level.players().stream()

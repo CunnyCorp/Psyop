@@ -44,16 +44,13 @@ public class HealthBarHUD extends HUD {
         super("HealthBar", "Displays your current health as a bar.");
     }
 
-    @EventListener(inGame = false)
-    public void render(On2DRender e) {
-        if (MC.player == null) return;
+    @Override
+    public void render() {
+        float health = MC.player == null ? 20 : MC.player.getHealth();
+        float maxHealth = MC.player == null ? 20 : MC.player.getMaxHealth();
 
-        float health = MC.player.getHealth();
-        float maxHealth = MC.player.getMaxHealth();
-        float absorption = includeAbsorption.get() ? MC.player.getAbsorptionAmount() : 0f;
-
-        float current = Math.max(0f, health + absorption);
-        float max = Math.max(1f, maxHealth + (includeAbsorption.get() ? absorption : 0f));
+        float current = Math.max(0f, health);
+        float max = Math.max(1f, maxHealth);
         float pct = Math.min(1f, current / max);
 
         float x = xPos.get();
@@ -75,7 +72,7 @@ public class HealthBarHUD extends HUD {
 
         if (showNumbers.get()) {
             int hpInt = Math.round(current);
-            int maxInt = Math.round(maxHealth + (includeAbsorption.get() ? absorption : 0f));
+            int maxInt = Math.round(maxHealth);
             String txt = hpInt + "/" + maxInt;
             ImVec2 size = new ImVec2();
             ImGui.calcTextSize(size, txt);

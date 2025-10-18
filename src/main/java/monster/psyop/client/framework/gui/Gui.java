@@ -42,7 +42,7 @@ public class Gui extends RenderProxy {
     public static OfficialTheme THEME = new OfficialTheme();
 
     public static ImGuiIO io;
-    public static final int bgColor = new ImColorW(new Color(71, 69, 69, 142)).packed();
+    public static final int bgColor = new ImColorW(new Color(71, 69, 69, 186)).packed();
     public static final int borderColor = new ImColorW(new Color(11, 10, 10, 255)).packed();
 
     private int WATERMARK_ID = 0;
