@@ -2,10 +2,9 @@ package monster.psyop.client.mixin;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.Psyop;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
+import monster.psyop.client.framework.rendering.CoreRendering;
 import monster.psyop.client.impl.modules.render.HandView;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,13 +21,13 @@ public class PlayerRendererMixin {
             if (module.wizard.get()) {
                 switch (module.bufferModifier.get().get()) {
                     case "quads":
-                        return instance.getBuffer(PsyopRenderTypes.seeThroughQuads());
+                        return instance.getBuffer(CoreRendering.seeThroughQuads());
                     case "lines":
-                        return instance.getBuffer(PsyopRenderTypes.seeThroughLines());
+                        return instance.getBuffer(CoreRendering.seeThroughLines());
                     case "item":
-                        return instance.getBuffer(PsyopRenderTypes.glintTranslucent());
+                        return instance.getBuffer(CoreRendering.glintTranslucent());
                     case "wireframe":
-                        return instance.getBuffer(PsyopRenderTypes.wireframe());
+                        return instance.getBuffer(CoreRendering.wireframe());
                 }
             }
         }

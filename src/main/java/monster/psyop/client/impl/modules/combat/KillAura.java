@@ -1,8 +1,10 @@
 package monster.psyop.client.impl.modules.combat;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import imgui.ImGui;
 import imgui.ImVec2;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.Categories;
@@ -297,11 +299,11 @@ public class KillAura extends HUD {
         List<Entity> entities = filterEntities();
 
         if (entities.isEmpty()) {
+            Psyop.LOG.info("No entities found!");
             return;
         }
 
         entities.sort(Comparator.comparingDouble((e) -> e.distanceToSqr(MC.player)));
-        entities.sort(Comparator.comparingDouble((e) -> getTargetScore(e instanceof LivingEntity ? (LivingEntity) e : null)));
 
         target = entities.get(0);
 
@@ -318,7 +320,6 @@ public class KillAura extends HUD {
         assert MC.player != null;
         MC.player.resetAttackStrengthTicker();
 
-        // 9b doesn't need swinging!
         PacketUtils.send(
                 ServerboundInteractPacket.createAttackPacket(
                         entity, MC.player.isShiftKeyDown()));
@@ -351,10 +352,6 @@ public class KillAura extends HUD {
             boolean isPlayer = entity instanceof Player;
 
             if (entity instanceof LivingEntity living) {
-                if (visibleCheck.get() && !living.canBeSeenByAnyone()) {
-                    continue;
-                }
-
                 if (!isPlayer && noCustomNames.get() && living.hasCustomName()) {
                     continue;
                 }
@@ -409,33 +406,8 @@ public class KillAura extends HUD {
             c = glowColor.get();
         }
 
-        Render3DUtil.drawCircleEdgesXZ(event.quads, pose, cx, cy, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
-        Render3DUtil.drawCircleEdgesXZ(event.quads, pose, cx, cy - 0.1f, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
+        RenderSystem.lineWidth(5.0f);
 
-    }
-
-    public int getTargetScore(LivingEntity entity) {
-        int score = 0;
-        if (entity == null) {
-            return score;
-        }
-
-        if (entity instanceof Creeper) {
-            score += 1000;
-        }
-
-        if (entity.getType().getCategory() == MobCategory.MONSTER) {
-            score += 100;
-        }
-
-        if (entity.getHealth() > 0) {
-            score += 1;
-        }
-
-        if (entity.distanceTo(MC.player) < MC.player.entityInteractionRange()) {
-            score += 2500;
-        }
-
-        return score;
+        Render3DUtil.drawCircleEdgesXZ(event.lines, pose, cx, cy, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
     }
 }

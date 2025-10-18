@@ -42,6 +42,8 @@ public class Gui extends RenderProxy {
     public static OfficialTheme THEME = new OfficialTheme();
 
     public static ImGuiIO io;
+    public static final int bgColor = new ImColorW(new Color(71, 69, 69, 142)).packed();
+    public static final int borderColor = new ImColorW(new Color(11, 10, 10, 255)).packed();
 
     private int WATERMARK_ID = 0;
     private static final float WATERMARK_SCALE = 0.18f;
@@ -220,8 +222,8 @@ public class Gui extends RenderProxy {
 
     public void drawBackground(float x, float y, float width, float height) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
-        drawList.addRectFilled(x, y, width, height, new ImColorW(new Color(71, 69, 69, 182)).packed(), 4f, ImDrawFlags.RoundCornersAll);
-        drawList.addRect(x, y, width, height, new ImColorW(new Color(25, 24, 24, 255)).packed(), 4f, ImDrawFlags.RoundCornersAll);
+        drawList.addRectFilled(x, y, width, height, bgColor, 4f, ImDrawFlags.RoundCornersAll);
+        drawList.addRect(x, y, width, height, borderColor, 4f, ImDrawFlags.RoundCornersAll);
     }
 
     public void drawBackground(float x, float y, float width, float height, int outline, ImColorW color, ImColorW color2) {
@@ -229,16 +231,16 @@ public class Gui extends RenderProxy {
         drawList.addRectFilled(x, y, width, height, color.packed(), 0f, ImDrawFlags.None);
 
         switch (outline) {
-            case 1: // Full outline
+            case 1:
                 drawList.addRect(x, y, width, height, color2.packed(), 0f, ImDrawFlags.None);
                 break;
-            case 2: // Top outline only
+            case 2:
                 drawList.addLine(x, y, width, y, color2.packed(), 0f);
                 break;
-            case 3: // Bottom outline only
+            case 3:
                 drawList.addLine(x, height, width, height, color2.packed(), 0f);
                 break;
-            case 4: // Left and right outlines
+            case 4:
                 drawList.addLine(x, y, x, height, color2.packed(), 0f);
                 drawList.addLine(width, y, width, height, color2.packed(), 0f);
                 break;

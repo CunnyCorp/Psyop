@@ -60,9 +60,11 @@ public class Friends extends Module {
 
                         if (removeStr != null) {
                             players.value().remove(removeStr);
+                            friends.remove(removeStr.get());
                             NotificationManager.get().addNotification("Friends", removeStr + " was unfriended.", NotificationEvent.Type.INFO, 5000L);
                         }
                     } else {
+                        players.value().add(new ImString(hitResult.getEntity().getName().getString()));
                         friends.add(hitResult.getEntity().getName().getString());
                         NotificationManager.get().addNotification("Friends", hitResult.getEntity().getName().getString() + " was added as a friend.", NotificationEvent.Type.INFO, 5000L);
                     }

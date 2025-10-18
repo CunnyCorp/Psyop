@@ -200,7 +200,6 @@ public class PlacingManager {
 
                 InventoryUtils.swapSlot(PrinterUtils.PRINTER.dedicatedSlot.get());
                 InventoryUtils.swapToHotbar(slot, PrinterUtils.PRINTER.dedicatedSlot.get());
-                Psyop.LOG.info("Swapping slot {} for color check", slot);
                 break;
             }
 
@@ -245,7 +244,6 @@ public class PlacingManager {
 
 
             if (slot == -1) {
-                Psyop.LOG.info("Slot was -1");
                 continue;
             }
 

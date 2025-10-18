@@ -72,11 +72,6 @@ public class StorageESP extends Module {
             .name("glow")
             .defaultTo(true)
             .addTo(style);
-    public BoolSetting hideLines = new BoolSetting.Builder()
-            .name("hide-lines")
-            .description("Hide back-facing lines (depth-tested lines instead of see-through)")
-            .defaultTo(true)
-            .addTo(style);
     public FloatSetting glowWidth = new FloatSetting.Builder()
             .name("glow-width")
             .description("How far the glow extends outwards from the box/rectangle")

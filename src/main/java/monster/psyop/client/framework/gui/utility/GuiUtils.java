@@ -31,6 +31,15 @@ public class GuiUtils {
         );
     }
 
+    public static void drawRectFilled(float x, float y, float x2, float y2, int color, float rounding) {
+        ImGui.getWindowDrawList().addRectFilled(
+                x, y,
+                x2, y2,
+                color,
+                rounding
+        );
+    }
+
     public static boolean isHovering(ImVec2 cornerMin, ImVec2 cornerMax) {
         return ImGui.isMouseHoveringRect(cornerMin.x, cornerMin.y, cornerMax.x, cornerMax.y);
     }

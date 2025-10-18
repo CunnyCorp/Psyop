@@ -3,7 +3,6 @@ package monster.psyop.client.framework.rendering;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
@@ -15,13 +14,12 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.OptionalDouble;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class PsyopRenderTypes {
-    public static final RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withDepthWrite(false).build());
+public final class CoreRendering {
+    public static final RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.OVERLAY).withDepthWrite(false).build());
     public static final RenderPipeline LINES = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.LINES_SNIPPET).withLocation("pipeline/lines").withCull(false).withDepthWrite(false).build());
-    public static final RenderPipeline ENTITY_TRANSLUCENT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET).withLocation("pipeline/entity_translucent").withShaderDefine("ALPHA_CUTOUT", 0.5f).withSampler("Sampler1").withBlend(BlendFunction.TRANSLUCENT).withCull(false).withDepthWrite(false).build());
+    public static final RenderPipeline ENTITY_TRANSLUCENT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET).withLocation("pipeline/entity_translucent").withShaderDefine("ALPHA_CUTOUT", 0.5f).withShaderDefine("EMISSIVE").withSampler("Sampler1").withBlend(BlendFunction.TRANSLUCENT).withCull(false).withDepthWrite(false).build());
     public static final RenderPipeline GLINT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, RenderPipelines.FOG_SNIPPET, RenderPipelines.LINES_SNIPPET).withLocation("pipeline/glint").withVertexShader("core/glint").withFragmentShader("core/glint").withSampler("Sampler0").withDepthWrite(false).withCull(false).withBlend(BlendFunction.GLINT).withVertexFormat(DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS).build());
 
     private static final Supplier<RenderType> SEE_THROUGH_LINES_SUPPLIER = Suppliers.memoize(() ->

@@ -3,11 +3,11 @@ package monster.psyop.client.framework.rendering;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.Psyop;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.awt.*;
 
@@ -340,6 +340,11 @@ public final class Render3DUtil {
         vc.addVertex(pose, (float) p1.x, (float) p1.y, (float) p1.z).setColor(r, g, b, a).setNormal(pose, 0, 0, 1);
     }
 
+    public static void addLine(VertexConsumer vc, PoseStack.Pose pose, Vector3f p0, Vector3f p1, float r, float g, float b, float a) {
+        vc.addVertex(pose, p0.x, p0.y, p0.z).setColor(r, g, b, a).setNormal(pose, 0, 0, 1);
+        vc.addVertex(pose, p1.x, p1.y, p1.z).setColor(r, g, b, a).setNormal(pose, 0, 0, 1);
+    }
+
     public static void addLineRel(VertexConsumer vc, PoseStack.Pose pose, Vec3 p0, Vec3 p1, float r, float g, float b, float a) {
         addLine(vc, pose, getCameraRelPos(p0), getCameraRelPos(p1), r, g, b, a);
     }
@@ -522,8 +527,8 @@ public final class Render3DUtil {
     public static void drawAxisRel(VertexConsumer vc, PoseStack.Pose pose,
                                    Vec3 pos, float length,
                                    float r, float g, float b, float a) {
-        Vec3 camRel = getCameraRelPos(pos);
-        drawAxis(vc, pose, (float) camRel.x, (float) camRel.y, (float) camRel.z, length, r, g, b, a);
+        Vector3f camRel = getCameraRelPos(pos);
+        drawAxis(vc, pose, camRel.x, camRel.y, camRel.z, length, r, g, b, a);
     }
 
     public static void drawCross(VertexConsumer vc, PoseStack.Pose pose,
@@ -536,11 +541,17 @@ public final class Render3DUtil {
     public static void drawCrossRel(VertexConsumer vc, PoseStack.Pose pose,
                                     Vec3 pos, float size,
                                     float r, float g, float b, float a) {
-        Vec3 camRel = getCameraRelPos(pos);
-        drawCross(vc, pose, (float) camRel.x, (float) camRel.y, (float) camRel.z, size, r, g, b, a);
+        Vector3f camRel = getCameraRelPos(pos);
+        drawCross(vc, pose, camRel.x, camRel.y, camRel.z, size, r, g, b, a);
     }
 
-    public static Vec3 getCameraRelPos(Vec3 vec3) {
-        return Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(vec3);
+    public static Vector3f getCameraRelPos(Vec3 vec3) {
+
+        Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
+        double camX = cam.x();
+        double camY = cam.y();
+        double camZ = cam.z();
+
+        return new Vector3f((float) (camX - vec3.x), (float) (camY - vec3.y), (float) (camZ - vec3.z));
     }
 }

@@ -2,13 +2,11 @@ package monster.psyop.client.impl.modules.world;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.events.game.OnTick;
@@ -128,7 +126,7 @@ public class Scaffold extends Module {
             if (slot == -1) break;
 
             int hotbarOffset = InventoryUtils.getHotbarOffset();
-            if (slot < hotbarOffset || slot > hotbarOffset + 8) {
+            if (!allowed.contains(MC.player.getMainHandItem().getItem()) && (slot < hotbarOffset || slot > hotbarOffset + 8)) {
                 InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
             }
             InventoryUtils.swapSlot(dedicatedSlot.get());
@@ -176,9 +174,6 @@ public class Scaffold extends Module {
     public void onRender3D(OnRender event) {
         if (!rendering.get() || recent.isEmpty() || MC.player == null) return;
         RenderSystem.lineWidth(1.5f);
-        var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer lines = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
-        VertexConsumer quads = buffers.getBuffer(PsyopRenderTypes.seeThroughQuads());
         PoseStack ps = new PoseStack();
         PoseStack.Pose pose = ps.last();
 
@@ -189,12 +184,9 @@ public class Scaffold extends Module {
             float[] c = pb.color;
             float a = Math.max(0.0f, Math.min(1.0f, c[3] * life));
 
-            Render3DUtil.drawBlockBoxFaces(quads, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a * 0.35f);
-            Render3DUtil.drawBlockBoxEdges(lines, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a);
+            Render3DUtil.drawBlockBoxFaces(event.quads, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a * 0.35f);
+            Render3DUtil.drawBlockBoxEdges(event.quads, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a);
         }
-
-        buffers.endBatch(PsyopRenderTypes.seeThroughQuads());
-        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
     }
 
     private static class PlacedBox {

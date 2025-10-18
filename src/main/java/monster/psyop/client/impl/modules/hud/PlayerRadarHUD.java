@@ -45,7 +45,6 @@ public class PlayerRadarHUD extends HUD {
                     .defaultTo(true)
                     .addTo(coreGroup);
 
-
     public PlayerRadarHUD() {
         super("player-radar", "Shows nearby players with distance and health.");
     }

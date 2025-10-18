@@ -174,7 +174,7 @@ public class DiscordRPC extends Module {
 
             presence.setDetails(detailsText);
             presence.setState(stateText);
-            presence.setLargeImage("psyoplogo", largeImageText.value().get());
+            presence.setLargeImage("https://images-ext-2.discordapp.net/external/yCitMxL7hePIjIsLhqDEu5yGJrBMO4zq7eJIuvbPD8k/https/pa1.narvii.com/6740/71030feb6d1c2a315c6f66cb8c4e49ace76fb763_hq.gif", largeImageText.value().get());
 
             DiscordIPC.setActivity(presence);
         } catch (Throwable t) {

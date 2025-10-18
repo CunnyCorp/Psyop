@@ -3,6 +3,7 @@ package monster.psyop.client.impl.modules.hud;
 import imgui.ImGui;
 import imgui.ImVec2;
 import monster.psyop.client.framework.events.EventListener;
+import monster.psyop.client.framework.gui.utility.GuiUtils;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
@@ -16,44 +17,10 @@ import java.awt.*;
 import static monster.psyop.client.Psyop.GUI;
 
 public class PositionHUD extends HUD {
-    public ColorSetting textColor =
-            new ColorSetting.Builder()
-                    .name("text-color")
-                    .defaultTo(new float[]{0.90f, 0.90f, 0.95f, 0.95f})
-                    .addTo(coreGroup);
-    public ColorSetting upperColor =
-            new ColorSetting.Builder()
-                    .name("upper-color")
-                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
-                    .addTo(coreGroup);
-    public ColorSetting middleColor =
-            new ColorSetting.Builder()
-                    .name("middle-color")
-                    .defaultTo(new float[]{0.00f, 0.60f, 0.60f, 1.0f})
-                    .addTo(coreGroup);
-    public ColorSetting lowerColor =
-            new ColorSetting.Builder()
-                    .name("lower-color")
-                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
-                    .addTo(coreGroup);
-    public final IntSetting alpha =
-            new IntSetting.Builder()
-                    .name("alpha")
-                    .range(40, 200)
-                    .defaultTo(184)
-                    .addTo(coreGroup);
-    public final IntSetting waveSpeed =
-            new IntSetting.Builder()
-                    .name("wave-speed")
-                    .range(1, 10)
-                    .defaultTo(3)
-                    .addTo(coreGroup);
-    public final IntSetting waveDensity =
-            new IntSetting.Builder()
-                    .name("wave-density")
-                    .range(1, 10)
-                    .defaultTo(5)
-                    .addTo(coreGroup);
+    public final ColorSetting textColor = new ColorSetting.Builder()
+            .name("text-color")
+            .defaultTo(new float[]{0.95f, 0.95f, 1.0f, 1.0f})
+            .addTo(coreGroup);
 
     private final GradientUtils gradientUtils = new GradientUtils(0.5f);
 
@@ -100,18 +67,7 @@ public class PositionHUD extends HUD {
         float bgX = xPos.get() - padding;
         float bgY = yPos.get() - padding;
 
-        Color[] waveColors = {
-                GradientUtils.getColorFromSetting(upperColor),
-                GradientUtils.getColorFromSetting(middleColor),
-                GradientUtils.getColorFromSetting(lowerColor)
-        };
-
-        gradientUtils.drawHorizontalWaveGradientTile(
-                bgX, bgY, bgWidth, bgHeight,
-                waveColors, alpha.get(),
-                waveSpeed.get() / 2f,
-                waveDensity.get() / 2f
-        );
+        GUI.drawBackground(bgX, bgY, bgWidth, bgHeight);
 
         float textX = bgX + padding;
         float textY = bgY + padding;

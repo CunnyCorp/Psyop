@@ -4,22 +4,25 @@ import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import monster.psyop.client.framework.events.EventListener;
+import monster.psyop.client.framework.gui.utility.GuiUtils;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.On2DRender;
 
+import java.awt.*;
+
 import static monster.psyop.client.Psyop.GUI;
 
-public class HealthBarHUD extends HUD {
+public class AbsorptionBarHUD extends HUD {
     public final ColorSetting textColor = new ColorSetting.Builder()
             .name("text-color")
             .defaultTo(new float[]{0.95f, 0.95f, 1.0f, 1.0f})
             .addTo(coreGroup);
     public final ColorSetting healthColor = new ColorSetting.Builder()
             .name("health-color")
-            .defaultTo(new float[]{0.0f, 1.0f, 0.0f, 1.0f})
+            .defaultTo(new float[]{0.0f, 0.2f, 0.4f, 1.0f})
             .addTo(coreGroup);
     public final IntSetting width = new IntSetting.Builder()
             .name("width")
@@ -35,26 +38,24 @@ public class HealthBarHUD extends HUD {
             .name("show-numbers")
             .defaultTo(true)
             .addTo(coreGroup);
-    public final BoolSetting includeAbsorption = new BoolSetting.Builder()
-            .name("include-absorption")
-            .defaultTo(true)
-            .addTo(coreGroup);
 
-    public HealthBarHUD() {
-        super("HealthBar", "Displays your current health as a bar.");
+    public AbsorptionBarHUD() {
+        super("AbsorptionBar", "Displays your current absorption as a bar.");
     }
 
     @EventListener(inGame = false)
-    public void render(On2DRender e) {
+    public void on2D(On2DRender e) {
         if (MC.player == null) return;
 
-        float health = MC.player.getHealth();
-        float maxHealth = MC.player.getMaxHealth();
-        float absorption = includeAbsorption.get() ? MC.player.getAbsorptionAmount() : 0f;
+        float absorption = MC.player.getAbsorptionAmount();
+        float maxAbsorption = MC.player.getMaxAbsorption();
 
-        float current = Math.max(0f, health + absorption);
-        float max = Math.max(1f, maxHealth + (includeAbsorption.get() ? absorption : 0f));
-        float pct = Math.min(1f, current / max);
+        if (maxAbsorption <= 0) {
+            return;
+        }
+
+        float current = Math.max(0f, absorption);
+        float pct = Math.min(1f, current / maxAbsorption);
 
         float x = xPos.get();
         float y = yPos.get();
@@ -75,7 +76,7 @@ public class HealthBarHUD extends HUD {
 
         if (showNumbers.get()) {
             int hpInt = Math.round(current);
-            int maxInt = Math.round(maxHealth + (includeAbsorption.get() ? absorption : 0f));
+            int maxInt = Math.round(maxAbsorption);
             String txt = hpInt + "/" + maxInt;
             ImVec2 size = new ImVec2();
             ImGui.calcTextSize(size, txt);

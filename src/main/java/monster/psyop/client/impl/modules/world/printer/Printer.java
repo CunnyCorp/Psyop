@@ -13,7 +13,7 @@ import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.modules.settings.wrappers.ImBlockPos;
-import monster.psyop.client.framework.rendering.PsyopRenderTypes;
+import monster.psyop.client.framework.rendering.CoreRendering;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.world.printer.movesets.AdvancedMove;
@@ -716,11 +716,7 @@ public class Printer extends Module {
         if (MC.level == null || MC.player == null) return;
 
         RenderSystem.lineWidth(renderLineWidth.get());
-        var buffers = MC.renderBuffers().bufferSource();
-        VertexConsumer lineVc = buffers.getBuffer(PsyopRenderTypes.seeThroughLines());
-        VertexConsumer quadVc = buffers.getBuffer(PsyopRenderTypes.seeThroughQuads());
-        PoseStack ps = new PoseStack();
-        PoseStack.Pose pose = ps.last();
+        PoseStack.Pose pose = event.poseStack.last();
 
         Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
         double camX = cam.x();
@@ -734,12 +730,12 @@ public class Printer extends Module {
                 float tx = (float) ((ap.getX() + 0.5) - camX);
                 float ty = (float) ((ap.getY() + 0.5) - camY);
                 float tz = (float) ((ap.getZ() + 0.5) - camZ);
-                Render3DUtil.drawTracer(lineVc, pose, tx, ty, tz, ac[0], ac[1], ac[2], ac[3]);
+                Render3DUtil.drawTracer(event.lines, pose, tx, ty, tz, ac[0], ac[1], ac[2], ac[3]);
 
                 AABB bb = new AABB(ap);
                 AABB rel = bb.move(-camX, -camY, -camZ);
-                Render3DUtil.drawBoxEdges(lineVc, pose, rel, ac[0], ac[1], ac[2], ac[3]);
-                Render3DUtil.drawBoxFaces(quadVc, pose, rel, ac[0], ac[1], ac[2], ac[3] * 0.15f);
+                Render3DUtil.drawBoxEdges(event.lines, pose, rel, ac[0], ac[1], ac[2], ac[3]);
+                Render3DUtil.drawBoxFaces(event.quads, pose, rel, ac[0], ac[1], ac[2], ac[3] * 0.15f);
             }
         }
 
@@ -751,7 +747,7 @@ public class Printer extends Module {
                 BlockPos p = new BlockPos(posVec[0], posVec[1], posVec[2]);
                 AABB bb = new AABB(p);
                 AABB rel = bb.move(-camX, -camY, -camZ);
-                Render3DUtil.drawBoxEdges(lineVc, pose, rel, qc[0], qc[1], qc[2], qc[3]);
+                Render3DUtil.drawBoxEdges(event.lines, pose, rel, qc[0], qc[1], qc[2], qc[3]);
             }
 
             long now = System.currentTimeMillis();
@@ -777,13 +773,9 @@ public class Printer extends Module {
                 float aEdge = qc[3] * (1.0f - t);
                 float aFace = aEdge * 0.25f;
 
-                Render3DUtil.drawBoxEdges(lineVc, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aEdge);
-                Render3DUtil.drawBoxFaces(quadVc, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aFace);
+                Render3DUtil.drawBoxEdges(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aEdge);
+                Render3DUtil.drawBoxFaces(event.quads, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aFace);
             }
         }
-
-        buffers.endBatch(PsyopRenderTypes.seeThroughLines());
-        buffers.endBatch(PsyopRenderTypes.seeThroughQuads());
     }
-
 }

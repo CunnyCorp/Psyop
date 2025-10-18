@@ -57,7 +57,6 @@ public class Psyop implements ModInitializer {
     public static Gui GUI;
     public static Config CONFIG;
     public static boolean DEBUGGING = false;
-    public static Thread RENDERING_THREAD;
 
     public static void postInit() {
         GUI = new Gui();
@@ -143,10 +142,6 @@ public class Psyop implements ModInitializer {
                                         CONFIG.save();
                                     }
 
-                                    if (RENDERING_THREAD != null) {
-                                        RENDERING_THREAD.interrupt();
-                                    }
-
                                     for (JavaAddon addon : ADDON_MANAGER.plugins.values()) {
                                         addon.onShutdown();
                                     }
@@ -175,6 +170,9 @@ public class Psyop implements ModInitializer {
         new TargetHUD().load();
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
+        new HealthBarHUD().load();
+        new AbsorptionBarHUD().load();
+        new HungerBarHUD().load();
 
         // Combat
         new AntiKb().load();
@@ -236,9 +234,11 @@ public class Psyop implements ModInitializer {
         new ItemView().load();
         new WorldView().load();
         new StorageESP().load();
+        new StorageESPV2().load();
         new Ripples().load();
         new BetterTab().load();
         new Trail().load();
+        new NoRender().load();
         new ParticleEngine().load();
         new PopESP().load();
 

@@ -1,13 +1,13 @@
 package monster.psyop.client.impl.modules.world;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
-import monster.psyop.client.framework.modules.Module;
-import monster.psyop.client.framework.modules.settings.types.BlockListSetting;
-import monster.psyop.client.framework.modules.settings.types.BoolSetting;
-import monster.psyop.client.framework.modules.settings.types.FloatSetting;
-import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.impl.events.game.OnTick;
+import monster.psyop.client.framework.modules.settings.GroupedSettings;
+import monster.psyop.client.framework.modules.settings.types.*;
+import monster.psyop.client.framework.rendering.Render3DUtil;
+import monster.psyop.client.impl.events.game.OnRender;
+import monster.psyop.client.impl.modules.hud.HUD;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.RotationUtils;
 import monster.psyop.client.utility.blocks.BlockUtils;
@@ -16,53 +16,82 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class Nuker extends Module {
+public class Nuker extends HUD {
+    public final GroupedSettings generalGroup = addGroup(new GroupedSettings("general", "Core settings"));
+    public final GroupedSettings renderingGroup = addGroup(new GroupedSettings("rendering", "Rendering settings"));
+
     public final BoolSetting ignoreWhitelist =
             new BoolSetting.Builder()
                     .name("ingore-whitelist")
                     .description("Whether or not to ignore the whitelist.")
                     .defaultTo(true)
-                    .addTo(coreGroup);
+                    .addTo(generalGroup);
     public final BlockListSetting blocks =
             new BlockListSetting.Builder()
                     .name("blocks")
                     .description("A list of blocks to mine.")
                     .defaultTo(List.of(Blocks.EMERALD_BLOCK, Blocks.END_STONE))
-                    .addTo(coreGroup);
+                    .addTo(generalGroup);
     public final FloatSetting maxDistance =
             new FloatSetting.Builder()
                     .name("max-distance")
                     .description("Max mining distance.")
                     .defaultTo(3.75f)
                     .range(2f, 5.0f)
-                    .addTo(coreGroup);
+                    .addTo(generalGroup);
     public final IntSetting yScan =
             new IntSetting.Builder()
                     .name("y-scan")
                     .description("How far to check for Y.")
                     .defaultTo(2)
                     .range(0, 5)
-                    .addTo(coreGroup);
+                    .addTo(generalGroup);
     public final IntSetting blocksPerTick =
             new IntSetting.Builder()
                     .name("blocks-per-tick")
                     .description("How many blocks to mine per tick.")
                     .defaultTo(12)
-                    .range(1, 16)
-                    .addTo(coreGroup);
+                    .range(1, 32)
+                    .addTo(generalGroup);
+
+    public BoolSetting radius = new BoolSetting.Builder()
+            .name("radius")
+            .description("Whether or not to render a sphere the size of your reach.")
+            .defaultTo(false)
+            .addTo(renderingGroup);
+    public ColorSetting radiusColor = new ColorSetting.Builder()
+            .name("radius-color")
+            .defaultTo(new float[]{0.0f, 0.0f, 1.0f, 0.15f})
+            .addTo(renderingGroup);
+    public BoolSetting attemptBreak = new BoolSetting.Builder()
+            .name("attempt-break")
+            .defaultTo(true)
+            .addTo(renderingGroup);
+    public ColorSetting breakColor = new ColorSetting.Builder()
+            .name("break-color")
+            .defaultTo(new float[]{0.0f, 1.0f, 0.0f, 0.4f})
+            .addTo(renderingGroup);
+    public IntSetting expireTime = new IntSetting.Builder()
+            .name("expire-time")
+            .defaultTo(2500)
+            .range(1000, 10000)
+            .addTo(renderingGroup);
+
+    public List<BrokenBlock> brokenBlocks = new ArrayList<>();
 
     public Nuker() {
         super(Categories.WORLD, "nuker", "Very fast block breaking brrr.");
     }
 
-    @EventListener
-    public void onTick(OnTick.Post ignored) {
-            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+    @Override
+    public void update() {
+        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
             List<int[]> blockVecs = new ArrayList<>();
             for (int y = (MC.player.getAbilities().flying ? -yScan.get() : 0); y <= yScan.get(); y++) {
                 blockVecs.addAll(BlockUtils.findNearBlocksByRadius(MC.player.blockPosition().offset(0, y, 0).mutable(), 5, (vecPos) -> {
@@ -105,10 +134,53 @@ public class Nuker extends Module {
 
                 if (MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) > maxDistance.get()) continue;
 
+                brokenBlocks.add(new BrokenBlock(mutableBlockPos.immutable(), System.currentTimeMillis(), expireTime.get()));
                 PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, Direction.UP));
                 PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), Direction.UP));
                 PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), Direction.UP));
             }
+
+            List<BrokenBlock> toRemove = new ArrayList<>();
+
+            for (BrokenBlock block : brokenBlocks) {
+                if (block.isExpired()) {
+                    toRemove.add(block);
+                }
+            }
+
+            brokenBlocks.removeAll(toRemove);
+    }
+
+    @EventListener
+    public void onRender(OnRender event) {
+        PoseStack.Pose pose = event.poseStack.last();
+
+        Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
+        double camX = cam.x();
+        double camY = cam.y();
+        double camZ = cam.z();
+
+        if (radius.get()) {
+            float cx = (float) (MC.player.position().x - camX);
+            float cy = (float) (MC.player.position().y - camY) + MC.player.getEyeHeight() / 2;
+            float cz = (float) (MC.player.position().z - camZ);
+
+            Render3DUtil.drawSphereFaces(event.quads, pose, cx, cy, cz, (float) MC.player.blockInteractionRange(), 24, radiusColor.get()[0], radiusColor.get()[1], radiusColor.get()[2], radiusColor.get()[3]);
+        }
+
+        if (breakColor.get()[3] > 0.0f && attemptBreak.get()) {
+            for (BrokenBlock block : brokenBlocks) {
+                if (block.isExpired()) continue;
+                Render3DUtil.drawBlockBoxFaces(event.quads, pose, block.pos, cam, 0.0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
+                Render3DUtil.drawBlockBoxEdges(event.lines, pose, block.pos, cam, 0.0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
+            }
+        }
+    }
+
+    public record BrokenBlock(BlockPos pos, long keepAliveMS, long expireTimeMS) {
+        public boolean isExpired() {
+            return System.currentTimeMillis() - keepAliveMS >= expireTimeMS;
+        }
     }
 }
 
