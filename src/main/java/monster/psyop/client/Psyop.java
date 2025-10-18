@@ -223,6 +223,7 @@ public class Psyop implements ModInitializer {
         new ElytraPause().load();
         new SillyBot().load();
         new LagbackDetector().load();
+        new GuiMove().load();
 
         // Render
         new BlockLights().load();

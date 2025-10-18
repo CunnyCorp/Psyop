@@ -59,8 +59,6 @@ dependencies {
     shadow "io.github.spair:imgui-java-natives-linux-ft:${project.imgui_version}"
     shadow "io.github.spair:imgui-java-natives-macos-ft:${project.imgui_version}"
 
-    // Discord RPC
-    shadow "meteordevelopment:discord-ipc:1.1"
     shadow "com.google.code.gson:gson:2.8.9"
 }
 

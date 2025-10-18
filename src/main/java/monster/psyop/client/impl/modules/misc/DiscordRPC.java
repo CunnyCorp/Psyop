@@ -1,7 +1,7 @@
 package monster.psyop.client.impl.modules.misc;
 
-import meteordevelopment.discordipc.DiscordIPC;
-import meteordevelopment.discordipc.RichPresence;
+import monster.psyop.client.impl.modules.misc.rpc.DiscordIPC;
+import monster.psyop.client.impl.modules.misc.rpc.RichPresence;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
@@ -12,8 +12,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class DiscordRPC extends Module {
-    private static final long CLIENT_ID = 1425266312287879188L;
-
     private static DiscordRPC INSTANCE;
 
     private final RichPresence presence = new RichPresence();
@@ -22,6 +20,20 @@ public class DiscordRPC extends Module {
     private long lastStateChange = 0;
     private long lastUpdate = 0;
     private int currentState = 0;
+
+    private final StringSetting title =
+            new StringSetting.Builder()
+                    .name("title")
+                    .description("The title of the RPC.")
+                    .defaultTo("Psyop")
+                    .addTo(coreGroup);
+
+    private final StringSetting clientId =
+            new StringSetting.Builder()
+                    .name("client-id")
+                    .description("The Discord application client ID.")
+                    .defaultTo("981509069309354054")
+                    .addTo(coreGroup);
 
     private final StringSetting details =
             new StringSetting.Builder()
@@ -42,13 +54,6 @@ public class DiscordRPC extends Module {
                     .name("state-2")
                     .description("The second line of looping text. Placeholders: {players}, {server}, {username}")
                     .defaultTo("{players} online")
-                    .addTo(coreGroup);
-
-    private final StringSetting largeImageText =
-            new StringSetting.Builder()
-                    .name("large-image-text")
-                    .description("The text that appears when hovering over the large image.")
-                    .defaultTo("Psyop Client")
                     .addTo(coreGroup);
 
     private final IntSetting updateInterval =
@@ -76,8 +81,16 @@ public class DiscordRPC extends Module {
     private static void startRpc() {
         if (INSTANCE == null) return;
 
+        long clientId;
         try {
-            boolean started = DiscordIPC.start(CLIENT_ID, () -> System.out.println("Logged in account: " + DiscordIPC.getUser().username));
+            clientId = Long.parseLong(INSTANCE.clientId.value().get());
+        } catch (NumberFormatException e) {
+            System.err.println("[DiscordRPC] Invalid Client ID.");
+            return;
+        }
+
+        try {
+            boolean started = DiscordIPC.start(clientId, () -> System.out.println("Logged in account: " + DiscordIPC.getUser().username));
             if (!started) {
                 System.out.println("Failed to start Discord IPC");
                 return;
@@ -156,6 +169,11 @@ public class DiscordRPC extends Module {
             } catch (Throwable t) {
             }
 
+            String nameText = title.value().get()
+                    .replace("{username}", username)
+                    .replace("{server}", server)
+                    .replace("{players}", players);
+
             String detailsText = details.value().get()
                     .replace("{username}", username)
                     .replace("{server}", server)
@@ -172,9 +190,10 @@ public class DiscordRPC extends Module {
                 stateText = "In the main menu";
             }
 
+            presence.setName(nameText);
             presence.setDetails(detailsText);
             presence.setState(stateText);
-            presence.setLargeImage("psyoplogo", largeImageText.value().get());
+            presence.setLargeImage("https://s12.gifyu.com/images/b3puS.gif", title.value().get());
 
             DiscordIPC.setActivity(presence);
         } catch (Throwable t) {
