@@ -65,7 +65,7 @@ public class HealthBarHUD extends HUD {
         float bgW = w + 8f;
         float bgH = h + 12f;
 
-        GUI.drawBackground(bgX, bgY, bgW, bgH);
+        GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
 
         float filledW = Math.max(0f, Math.min(w, w * pct));
         int fColor = ImColorW.packed(healthColor.get());

@@ -28,30 +28,8 @@ public class ArrayHUD extends HUD {
                     .name("text-color")
                     .defaultTo(new float[]{0.90f, 0.90f, 0.95f, 0.95f})
                     .addTo(coreGroup);
-    public ColorSetting upperColor =
-            new ColorSetting.Builder()
-                    .name("upper-color")
-                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
-                    .addTo(coreGroup);
-    public ColorSetting middleColor =
-            new ColorSetting.Builder()
-                    .name("middle-color")
-                    .defaultTo(new float[]{0.00f, 0.60f, 0.60f, 1.0f})
-                    .addTo(coreGroup);
-    public ColorSetting lowerColor =
-            new ColorSetting.Builder()
-                    .name("lower-color")
-                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
-                    .addTo(coreGroup);
-    public final IntSetting alpha =
-            new IntSetting.Builder()
-                    .name("alpha")
-                    .range(40, 200)
-                    .defaultTo(184)
-                    .addTo(coreGroup);
 
     private final List<String> labels = new ArrayList<>();
-    private final GradientUtils gradientUtils = new GradientUtils(0.5f);
 
     public ArrayHUD() {
         super("array", "Shows a list of enabled modules.");
@@ -59,8 +37,6 @@ public class ArrayHUD extends HUD {
 
     @EventListener(inGame = false)
     public void onTickPre(OnTick.Pre event) {
-        gradientUtils.updateAnimation();
-
         labels.clear();
 
         for (Category cat : Categories.INDEX) {
@@ -83,14 +59,6 @@ public class ArrayHUD extends HUD {
     @EventListener(inGame = false)
     public void render(On2DRender event) {
         int curY = yPos.get();
-
-        Color[] waveColors = {
-                GradientUtils.getColorFromSetting(upperColor),
-                GradientUtils.getColorFromSetting(middleColor),
-                GradientUtils.getColorFromSetting(lowerColor),
-                GradientUtils.getColorFromSetting(middleColor)
-        };
-
         for (String label : labels) {
             ImVec2 textSize = new ImVec2();
             ImGui.calcTextSize(textSize, label);
@@ -98,11 +66,10 @@ public class ArrayHUD extends HUD {
             float textX = xPos.get() - textSize.x;
             float bgX = textX - 4;
             float bgY = curY - 4;
-            float bgWidth = textSize.x + 8;
-            float bgHeight = textSize.y + 8;
+            float bgW = textSize.x + 8;
+            float bgH = textSize.y + 8;
 
-            gradientUtils.drawHorizontalWaveGradientTile(bgX, bgY, bgWidth, bgHeight,
-                    waveColors, alpha.get(), 2.0f, 0.5f);
+            GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
 
             GUI.drawString(label, textX, curY, new ImColorW(textColor.get()));
 

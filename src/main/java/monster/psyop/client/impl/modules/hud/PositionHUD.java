@@ -61,13 +61,13 @@ public class PositionHUD extends HUD {
         ImGui.calcTextSize(textSize, position);
 
         float padding = 8f;
-        float bgWidth = textSize.x + (padding * 2);
-        float bgHeight = textSize.y + (padding * 2);
+        float bgW = textSize.x + (padding * 2);
+        float bgH = textSize.y + (padding * 2);
 
         float bgX = xPos.get() - padding;
         float bgY = yPos.get() - padding;
 
-        GUI.drawBackground(bgX, bgY, bgWidth, bgHeight);
+        GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
 
         float textX = bgX + padding;
         float textY = bgY + padding;

@@ -46,7 +46,7 @@ public class ArmorHUD extends HUD {
                 float bgW = textSize.x + 8;
                 float bgH = textSize.y + 8;
 
-                GUI.drawBackground(bgX, bgY, bgW, bgH);
+                GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
 
                 GUI.drawString(emptyText, xPos.get(), yP, new ImColorW(textColor.get()).packed());
                 yP += textSize.y + 8;
@@ -62,7 +62,7 @@ public class ArmorHUD extends HUD {
                 float bgW = textSize.x + 8;
                 float bgH = textSize.y + 8;
 
-                GUI.drawBackground(bgX, bgY, bgW, bgH);
+                GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
 
                 GUI.drawString(durabilityText, xPos.get(), yP, new ImColorW(textColor.get()).packed());
                 yP += textSize.y + 8;
