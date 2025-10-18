@@ -21,9 +21,9 @@ public class PlayerRendererMixin {
             if (module.wizard.get()) {
                 switch (module.bufferModifier.get().get()) {
                     case "quads":
-                        return instance.getBuffer(CoreRendering.seeThroughQuads());
+                        return instance.getBuffer(CoreRendering.quads());
                     case "lines":
-                        return instance.getBuffer(CoreRendering.seeThroughLines());
+                        return instance.getBuffer(CoreRendering.lines());
                     case "item":
                         return instance.getBuffer(CoreRendering.glintTranslucent());
                     case "wireframe":

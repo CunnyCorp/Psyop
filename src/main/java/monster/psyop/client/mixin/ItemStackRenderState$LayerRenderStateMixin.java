@@ -25,10 +25,10 @@ public abstract class ItemStackRenderState$LayerRenderStateMixin {
 
             switch (module.bufferModifier.get().get()) {
                 case "quads":
-                    setRenderType(CoreRendering.seeThroughQuads());
+                    setRenderType(CoreRendering.quads());
                     return;
                 case "lines":
-                    setRenderType(CoreRendering.seeThroughLines());
+                    setRenderType(CoreRendering.lines());
                     return;
                 case "item":
                     setRenderType(CoreRendering.glintTranslucent());

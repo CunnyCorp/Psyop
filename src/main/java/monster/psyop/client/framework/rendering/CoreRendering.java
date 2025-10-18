@@ -17,14 +17,23 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 public final class CoreRendering {
-    public static final RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.OVERLAY).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_OVERLAY = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.OVERLAY).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_GLINT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.GLINT).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_INVERT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.INVERT).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_TRANSLUCENT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.TRANSLUCENT).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_LIGHTNING = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.LIGHTNING).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_EOB = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.ENTITY_OUTLINE_BLIT).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_ADD = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.ADDITIVE).withDepthWrite(false).build());
+    public static final RenderPipeline QUADS_TPMA = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation("pipeline/debug_quads").withCull(false).withBlend(BlendFunction.TRANSLUCENT_PREMULTIPLIED_ALPHA).withDepthWrite(false).build());
+
     public static final RenderPipeline LINES = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.LINES_SNIPPET).withLocation("pipeline/lines").withCull(false).withDepthWrite(false).build());
     public static final RenderPipeline ENTITY_TRANSLUCENT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET).withLocation("pipeline/entity_translucent").withShaderDefine("ALPHA_CUTOUT", 0.5f).withShaderDefine("EMISSIVE").withSampler("Sampler1").withBlend(BlendFunction.TRANSLUCENT).withCull(false).withDepthWrite(false).build());
     public static final RenderPipeline GLINT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, RenderPipelines.FOG_SNIPPET, RenderPipelines.LINES_SNIPPET).withLocation("pipeline/glint").withVertexShader("core/glint").withFragmentShader("core/glint").withSampler("Sampler0").withDepthWrite(false).withCull(false).withBlend(BlendFunction.GLINT).withVertexFormat(DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS).build());
 
-    private static final Supplier<RenderType> SEE_THROUGH_LINES_SUPPLIER = Suppliers.memoize(() ->
+    private static final Supplier<RenderType> LINES_SUPPLIER = Suppliers.memoize(() ->
             RenderType.create(
-                    "psyop_see_through_lines",
+                    "psyop_lines",
                     1536, LINES,
                     RenderType.CompositeState.builder()
                             .setTextureState(RenderStateShard.NO_TEXTURE)
@@ -34,9 +43,9 @@ public final class CoreRendering {
                             .createCompositeState(false)
             )
     );
-    private static final Supplier<RenderType> SEE_THROUGH_QUADS_SUPPLIER = Suppliers.memoize(() ->
+    private static final Supplier<RenderType> QUADS_SUPPLIER = Suppliers.memoize(() ->
             RenderType.create(
-                    "psyop_see_through_quads",
+                    "psyop_quads",
                     1536,
                     QUADS,
                     RenderType.CompositeState.builder()
@@ -46,6 +55,103 @@ public final class CoreRendering {
                             .createCompositeState(false)
             )
     );
+    private static final Supplier<RenderType> QUADS_GLINT_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_glint",
+                    1536,
+                    QUADS_GLINT,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> QUADS_OVERLAY_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_overlay",
+                    1536,
+                    QUADS_OVERLAY,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> QUADS_INVERT_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_invert",
+                    1536,
+                    QUADS_INVERT,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> QUADS_ADD_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_add",
+                    1536,
+                    QUADS_ADD,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> QUADS_EOB_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_eob",
+                    1536,
+                    QUADS_EOB,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> QUADS_LIGHTNING_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_lightning",
+                    1536,
+                    QUADS_LIGHTNING,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> QUADS_TPMA_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_tpma",
+                    1536,
+                    QUADS_TPMA,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+    private static final Supplier<RenderType> QUADS_TRANSLUCENT_SUPPLIER = Suppliers.memoize(() ->
+            RenderType.create(
+                    "psyop_quads_translucent",
+                    1536,
+                    QUADS_TRANSLUCENT,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(RenderStateShard.NO_TEXTURE)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                            .createCompositeState(false)
+            )
+    );
+
     private static final Supplier<RenderType> GLINT_TRANSLUCENT = Suppliers.memoize(() ->
             RenderType.create("glint_translucent",
                     1536,
@@ -106,12 +212,40 @@ public final class CoreRendering {
         return RenderType.create("entity_translucent", 1536, true, true, ENTITY_TRANSLUCENT, compositeState);
     });
 
-    public static RenderType seeThroughLines() {
-        return SEE_THROUGH_LINES_SUPPLIER.get();
+    public static RenderType lines() {
+        return LINES_SUPPLIER.get();
     }
 
-    public static RenderType seeThroughQuads() {
-        return SEE_THROUGH_QUADS_SUPPLIER.get();
+    public static RenderType quads() {
+        return QUADS_SUPPLIER.get();
+    }
+
+    public static RenderType quadsGlint() {
+        return QUADS_GLINT_SUPPLIER.get();
+    }
+
+    public static RenderType quadsOverlay() {
+        return QUADS_OVERLAY_SUPPLIER.get();
+    }
+
+    public static RenderType quadsInvert() {
+        return QUADS_INVERT_SUPPLIER.get();
+    }
+
+    public static RenderType quadsAdd() {
+        return QUADS_ADD_SUPPLIER.get();
+    }
+
+    public static RenderType quadsEOB() {
+        return QUADS_EOB_SUPPLIER.get();
+    }
+
+    public static RenderType quadsLightning() {
+        return QUADS_LIGHTNING_SUPPLIER.get();
+    }
+
+    public static RenderType quadsTPMA() {
+        return QUADS_TPMA_SUPPLIER.get();
     }
 
     public static RenderType entityTranslucent(ResourceLocation resourceLocation, boolean bl) {

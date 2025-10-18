@@ -242,6 +242,7 @@ public class Psyop implements ModInitializer {
         new NoRender().load();
         new ParticleEngine().load();
         new PopESP().load();
+        new RenderTweaks().load();
 
         // Silly
         new HappyHands().load();

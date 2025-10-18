@@ -25,8 +25,8 @@ public abstract class ItemRendererMixin {
             ItemView module = Psyop.MODULES.get(ItemView.class);
 
             RenderType renderType = switch (module.bufferModifier.get().get()) {
-                case "quads" -> CoreRendering.seeThroughQuads();
-                case "lines" -> CoreRendering.seeThroughLines();
+                case "quads" -> CoreRendering.quads();
+                case "lines" -> CoreRendering.lines();
                 case "item" -> CoreRendering.glintTranslucent();
                 default -> CoreRendering.wireframe();
             };
