@@ -8,7 +8,9 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -203,6 +205,47 @@ public class InventoryUtils {
     }
 
     public static int findAnySlot(List<Item> itemList) {
+        if (MC.player == null) {
+            return -1;
+        }
+
+        int slot = 0;
+
+        for (ItemStack stack : MC.player.containerMenu.getItems()) {
+            if (itemList.contains(stack.getItem())) {
+                return slot;
+            }
+
+            slot++;
+        }
+
+        return -1;
+    }
+
+    public static int findAnySlotB(List<Block> itemList) {
+        if (MC.player == null) {
+            return -1;
+        }
+
+        int slot = 0;
+
+        List<Item> items = new ArrayList<>();
+        for (Block block : itemList) {
+            items.add(block.asItem());
+        }
+
+        for (ItemStack stack : MC.player.containerMenu.getItems()) {
+            if (items.contains(stack.getItem())) {
+                return slot;
+            }
+
+            slot++;
+        }
+
+        return -1;
+    }
+
+    public static int findAnySlot(ArrayList<Item> itemList) {
         if (MC.player == null) {
             return -1;
         }

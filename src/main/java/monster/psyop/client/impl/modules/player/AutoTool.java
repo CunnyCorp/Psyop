@@ -77,7 +77,7 @@ public class AutoTool extends Module {
         }
     }
 
-    private void findAndSwitch(BlockPos pos) {
+    public void findAndSwitch(BlockPos pos) {
         if (MC.player == null || MC.level == null) return;
 
         BlockState blockState = MC.level.getBlockState(pos);

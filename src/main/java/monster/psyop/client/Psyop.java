@@ -256,6 +256,7 @@ public class Psyop implements ModInitializer {
             }
         }
         new Nuker().load();
+        new Painter().load();
         new BreakDelay().load();
         new FastBreak().load();
         new Scaffold().load();

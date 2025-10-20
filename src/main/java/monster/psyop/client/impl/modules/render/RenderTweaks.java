@@ -14,7 +14,7 @@ public class RenderTweaks extends Module {
     public ProvidedStringSetting quadsModifier = new ProvidedStringSetting.Builder()
             .suggestions(List.of(new ImString("quads"), new ImString("quads_invert"), new ImString("quads_overlay"), new ImString("quads_glint"), new ImString("quads_additive"), new ImString("quads_tpma"), new ImString("quads_eob"), new ImString("quads_lightning")))
             .name("quads-modifier")
-            .defaultTo(new ImString("quads"))
+            .defaultTo(new ImString("quads_tpma"))
             .addTo(coreGroup);
 
     public RenderTweaks() {

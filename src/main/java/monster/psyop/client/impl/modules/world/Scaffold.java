@@ -36,55 +36,47 @@ public class Scaffold extends Module {
             .range(0, 8)
             .defaultTo(7)
             .addTo(sgDefault);
-
     public IntSetting blocksPerTick = new IntSetting.Builder()
             .name("blocks-per-tick")
             .description("How many blocks to place per tick")
             .range(1, 8)
             .defaultTo(1)
             .addTo(sgDefault);
-
     public IntSetting radius = new IntSetting.Builder()
             .name("radius")
             .description("XZ radius to search for place positions")
             .range(1, 5)
             .defaultTo(3)
             .addTo(sgDefault);
-
     public FloatSetting placeDistance = new FloatSetting.Builder()
             .name("place-distance")
             .description("Max distance to the hit position for placing")
             .range(3.2f, 5.0f)
             .defaultTo(3.75f)
             .addTo(sgDefault);
-
     public IntSetting depth = new IntSetting.Builder()
             .name("depth")
             .description("How far down to search for positions")
             .range(1, 5)
             .defaultTo(3)
             .addTo(sgDefault);
-
     public GroupedSettings sgLocks = addGroup(new GroupedSettings("locks", "Placement locks"));
     public BoolSetting lockToY = new BoolSetting.Builder()
             .name("lock-to-y")
             .description("Only place at a specific Y level")
             .defaultTo(false)
             .addTo(sgLocks);
-
     public IntSetting yLevel = new IntSetting.Builder()
             .name("y-level")
             .description("Y level to lock placement to")
             .range(-64, 320)
             .defaultTo(319)
             .addTo(sgLocks);
-
     public BoolSetting orAbove = new BoolSetting.Builder()
             .name("or-above")
             .description("Allow placement at Y-level or above")
             .defaultTo(true)
             .addTo(sgLocks);
-
     public GroupedSettings sgRender = addGroup(new GroupedSettings("render", "Rendering"));
     public BoolSetting rendering = new BoolSetting.Builder()
             .name("rendering")
@@ -128,6 +120,8 @@ public class Scaffold extends Module {
             int hotbarOffset = InventoryUtils.getHotbarOffset();
             if (!allowed.contains(MC.player.getMainHandItem().getItem()) && (slot < hotbarOffset || slot > hotbarOffset + 8)) {
                 InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
+
+                return;
             }
             InventoryUtils.swapSlot(dedicatedSlot.get());
 
@@ -185,7 +179,7 @@ public class Scaffold extends Module {
             float a = Math.max(0.0f, Math.min(1.0f, c[3] * life));
 
             Render3DUtil.drawBlockBoxFaces(event.quads, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a * 0.35f);
-            Render3DUtil.drawBlockBoxEdges(event.quads, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a);
+            Render3DUtil.drawBlockBoxEdges(event.lines, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a);
         }
     }
 

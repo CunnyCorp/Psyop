@@ -1,6 +1,7 @@
 package monster.psyop.client.impl.modules.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
@@ -8,6 +9,7 @@ import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.hud.HUD;
+import monster.psyop.client.impl.modules.player.AutoTool;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.RotationUtils;
 import monster.psyop.client.utility.blocks.BlockUtils;
@@ -133,6 +135,8 @@ public class Nuker extends HUD {
             mutableBlockPos.set(vec[0], vec[1], vec[2]);
 
             if (MC.player.getEyePosition().distanceTo(mutableBlockPos.getCenter()) > maxDistance.get()) continue;
+
+            Psyop.MODULES.get(AutoTool.class).findAndSwitch(mutableBlockPos);
 
             brokenBlocks.add(new BrokenBlock(mutableBlockPos.immutable(), System.currentTimeMillis(), expireTime.get()));
             PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, Direction.UP));

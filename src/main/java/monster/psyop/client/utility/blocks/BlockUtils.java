@@ -199,9 +199,9 @@ public class BlockUtils {
                 || block == Blocks.HOPPER);
     }
 
-    public static boolean isExposedToAir(BlockPos pos) {
+    public static boolean isExposed(BlockPos pos) {
         for (Direction direction : ALL) {
-            if (BlockUtils.isAir(pos.relative(direction))) return true;
+            if (BlockUtils.isReplaceable(pos.relative(direction))) return true;
         }
         return false;
     }
