@@ -206,6 +206,7 @@ public class Psyop implements ModInitializer {
         new EffectSpoof().load();
         new AutoTool().load();
         new MiddleClickUse().load();
+        new SkinBlinker().load();
 
         new Offhand().load();
 

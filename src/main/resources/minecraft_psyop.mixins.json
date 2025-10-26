@@ -38,7 +38,8 @@
     "MultiPlayerGameModeMixin",
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
-    "TextFieldHelperMixin"
+    "TextFieldHelperMixin",
+    "OptionsAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
