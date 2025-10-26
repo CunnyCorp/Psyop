@@ -2,7 +2,6 @@ package monster.psyop.client.impl.modules.player;
 
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.lwjgl.glfw.GLFW;
 
@@ -17,7 +16,7 @@ public class GuiMove extends Module {
     @Override
     public void update() {
         if (MC.screen != null) {
-            if (MC.screen instanceof ChatScreen || MC.screen.getFocused() instanceof EditBox) {
+            if (MC.screen instanceof ChatScreen) {
                 return;
             }
             MC.options.keyUp.setDown(GLFW.glfwGetKey(MC.getWindow().getWindow(), GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS);

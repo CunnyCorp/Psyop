@@ -205,6 +205,7 @@ public class Psyop implements ModInitializer {
         new DiscordRPC().load();
         new EffectSpoof().load();
         new AutoTool().load();
+        new MiddleClickUse().load();
 
         new Offhand().load();
 
