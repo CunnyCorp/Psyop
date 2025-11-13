@@ -5,6 +5,7 @@ import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
+import monster.psyop.client.framework.rendering.hud.HudHandler;
 
 public abstract class HUD extends Module {
     public final BoolSetting move = new BoolSetting.Builder()
@@ -31,12 +32,30 @@ public abstract class HUD extends Module {
 
     public HUD(String name, String description) {
         super(Categories.HUD, name, description);
+        HudHandler.addHud(this);
     }
 
     public HUD(Category category, String name, String description) {
         super(category, name, description);
+        HudHandler.addHud(this);
     }
 
     public void render() {
     }
+
+    public boolean leftAligned() {
+        return true;
+    }
+
+    public int getVanillaX() {
+        return xPos.get() / MC.options.guiScale().get();
+    }
+
+    public int getVanillaY() {
+        return yPos.get() / MC.options.guiScale().get();
+    }
+
+    abstract public int getWidth();
+
+    abstract public int getHeight();
 }

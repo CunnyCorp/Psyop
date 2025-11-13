@@ -17,7 +17,7 @@ import monster.psyop.client.framework.gui.utility.KeyUtils;
 import monster.psyop.client.framework.gui.views.View;
 import monster.psyop.client.framework.gui.views.ViewHandler;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
-import monster.psyop.client.impl.events.On2DRender;
+import monster.psyop.client.impl.events.OnGuiRender;
 import monster.psyop.client.impl.events.game.OnKeyInput;
 import monster.psyop.client.impl.events.game.OnMouseClick;
 import monster.psyop.client.utility.PathIndex;
@@ -153,7 +153,7 @@ public class Gui extends RenderProxy {
             );
         }
 
-        Psyop.EVENT_HANDLER.call(On2DRender.get());
+        Psyop.EVENT_HANDLER.call(OnGuiRender.get());
 
 
         if (IS_LOADED.get()) {

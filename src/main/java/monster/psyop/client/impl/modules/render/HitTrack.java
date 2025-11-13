@@ -49,7 +49,7 @@ public class HitTrack extends Module {
             .addTo(coreGroup);
 
     public boolean goUp = true;
-    public float r = 0;
+    public float b = 0;
     public List<HitPoint> hitPoints = new ArrayList<>();
 
     public HitTrack() {
@@ -59,12 +59,12 @@ public class HitTrack extends Module {
     @Override
     public void update() {
         if (pretty.get()) {
-            if (goUp) r += 0.01f;
-            else r -= 0.01f;
+            if (goUp) b += 0.01f;
+            else b -= 0.01f;
 
-            if (r >= 1.0f) {
+            if (b >= 1.0f) {
                 goUp = false;
-            } else if (r <= 0.0f) {
+            } else if (b <= 0.0f) {
                 goUp = true;
             }
         }
@@ -100,12 +100,12 @@ public class HitTrack extends Module {
             float[] c;
 
             if (pretty.get()) {
-                c = new float[]{r, 1.0f, 1.0f, 1.0f};
+                c = new float[]{1.0f, 1.0f, b, 1.0f};
             } else {
                 c = color.get();
             }
 
-            Render3DUtil.drawCircleEdgesXZ(event.quads, pose,
+            Render3DUtil.drawCircleEdgesXZ(event.lines, pose,
                     cx, cy, cz,
                     radius.get(), segments.get(),
                     c[0], c[1], c[2], c[3]);

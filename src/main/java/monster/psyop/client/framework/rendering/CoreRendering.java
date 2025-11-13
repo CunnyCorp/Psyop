@@ -169,7 +169,7 @@ public final class CoreRendering {
                     1536,
                     GLINT,
                     RenderType.CompositeState.builder()
-                            .setTextureState(new RenderStateShard.TextureStateShard(ItemRenderer.ENCHANTED_GLINT_ARMOR, false))
+                            .setTextureState(new RenderStateShard.TextureStateShard(ItemRenderer.ENCHANTED_GLINT_ITEM, false))
                             .setTexturingState(RenderType.ENTITY_GLINT_TEXTURING)
                             .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
                             .setOutputState(RenderStateShard.OUTLINE_TARGET)
@@ -205,6 +205,7 @@ public final class CoreRendering {
         RenderType.CompositeState compositeState =
                 RenderType.CompositeState.builder()
                         .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false))
+                        .setTexturingState(RenderType.ENTITY_GLINT_TEXTURING)
                         .setLightmapState(RenderStateShard.LIGHTMAP)
                         .setOverlayState(RenderStateShard.OVERLAY)
                         .setOutputState(RenderStateShard.OUTLINE_TARGET)

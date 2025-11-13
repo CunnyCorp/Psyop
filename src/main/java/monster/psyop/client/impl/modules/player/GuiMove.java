@@ -5,8 +5,6 @@ import monster.psyop.client.framework.modules.Module;
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.lwjgl.glfw.GLFW;
 
-import static monster.psyop.client.Psyop.MC;
-
 public class GuiMove extends Module {
 
     public GuiMove() {

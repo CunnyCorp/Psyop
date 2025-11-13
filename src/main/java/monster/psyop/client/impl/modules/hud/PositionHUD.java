@@ -5,7 +5,6 @@ import imgui.ImVec2;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
-import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.DimensionCheck;
 import monster.psyop.client.utility.gui.GradientUtils;
@@ -31,7 +30,28 @@ public class PositionHUD extends HUD {
 
     @Override
     public void render() {
-        String position = "0, 0, 0 - (0, 0)";
+        String position = getPositionText();
+
+        ImVec2 textSize = new ImVec2();
+        ImGui.calcTextSize(textSize, position);
+
+        float padding = 8f;
+        float bgW = textSize.x + (padding * 2);
+        float bgH = textSize.y + (padding * 2);
+
+        float bgX = xPos.get() - padding;
+        float bgY = yPos.get() - padding;
+
+        GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
+
+        float textX = bgX + padding;
+        float textY = bgY + padding;
+
+        GUI.drawString(position, textX, textY, new ImColorW(textColor.get()));
+    }
+
+    public String getPositionText() {
+        String position = "0, 0, 0";
 
         if (MC.player != null) {
             position = Math.round(MC.player.getX()) + ", " +
@@ -52,22 +72,22 @@ public class PositionHUD extends HUD {
             }
 
         }
+        return position;
+    }
 
+    @Override
+    public int getWidth() {
         ImVec2 textSize = new ImVec2();
-        ImGui.calcTextSize(textSize, position);
+        ImGui.calcTextSize(textSize, getPositionText());
 
-        float padding = 8f;
-        float bgW = textSize.x + (padding * 2);
-        float bgH = textSize.y + (padding * 2);
+        return (int) textSize.x;
+    }
 
-        float bgX = xPos.get() - padding;
-        float bgY = yPos.get() - padding;
+    @Override
+    public int getHeight() {
+        ImVec2 textSize = new ImVec2();
+        ImGui.calcTextSize(textSize, "Wah!");
 
-        GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
-
-        float textX = bgX + padding;
-        float textY = bgY + padding;
-
-        GUI.drawString(position, textX, textY, new ImColorW(textColor.get()));
+        return (int) textSize.y;
     }
 }

@@ -23,7 +23,7 @@ public abstract class ItemStackRenderState$LayerRenderStateMixin {
         if (Psyop.MODULES.isActive(ItemView.class)) {
             ItemView module = Psyop.MODULES.get(ItemView.class);
 
-            switch (module.bufferModifier.get().get()) {
+            switch (module.bufferModifier.get()) {
                 case "quads":
                     setRenderType(CoreRendering.quads());
                     return;

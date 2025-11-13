@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.List;
 
 import static monster.psyop.client.Psyop.MC;
 
@@ -66,13 +67,13 @@ public class EventHandler {
 
         Class<? extends Event> clazz = event.getClass();
 
-        if (!eventMap.containsKey(clazz)) {
-            return;
-        }
+        List<EventWrapper> wrappers = eventMap.get(clazz);
+
+        if (wrappers == null) return;
 
         boolean inGame = MC.player != null && MC.level != null;
 
-        for (EventWrapper wrapper : eventMap.get(clazz)) {
+        for (EventWrapper wrapper : wrappers) {
             if (wrapper.event().inGame() && !inGame) {
                 continue;
             }

@@ -89,6 +89,8 @@ public class PacketUtils {
         } else {
             connection.channel.writeAndFlush(packet);
         }
+
+        Psyop.EVENT_HANDLER.call(OnPacket.Sent.get(packet));
     }
 
     public static void updatePosition(double x, double y, double z) {

@@ -8,7 +8,6 @@ import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
-import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnPacket;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
@@ -134,6 +133,16 @@ public class TargetHUD extends HUD {
         ImGui.popStyleColor();
         ImGui.popStyleVar();
         ImGui.end();
+    }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
     }
 
     private int getPing(AbstractClientPlayer player) {

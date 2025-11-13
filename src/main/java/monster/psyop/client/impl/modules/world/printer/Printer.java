@@ -732,8 +732,8 @@ public class Printer extends Module {
 
                 AABB bb = new AABB(ap);
                 AABB rel = bb.move(-camX, -camY, -camZ);
-                Render3DUtil.drawBoxEdges(event.lines, pose, rel, ac[0], ac[1], ac[2], ac[3]);
-                Render3DUtil.drawBoxFaces(event.quads, pose, rel, ac[0], ac[1], ac[2], ac[3] * 0.15f);
+                Render3DUtil.drawBoxOutline(event.lines, pose, rel, ac[0], ac[1], ac[2], ac[3]);
+                Render3DUtil.drawBoxInner(event.quads, pose, rel, ac[0], ac[1], ac[2], ac[3] * 0.15f);
             }
         }
 
@@ -745,7 +745,7 @@ public class Printer extends Module {
                 BlockPos p = new BlockPos(posVec[0], posVec[1], posVec[2]);
                 AABB bb = new AABB(p);
                 AABB rel = bb.move(-camX, -camY, -camZ);
-                Render3DUtil.drawBoxEdges(event.lines, pose, rel, qc[0], qc[1], qc[2], qc[3]);
+                Render3DUtil.drawBoxOutline(event.lines, pose, rel, qc[0], qc[1], qc[2], qc[3]);
             }
 
             long now = System.currentTimeMillis();
@@ -771,8 +771,8 @@ public class Printer extends Module {
                 float aEdge = qc[3] * (1.0f - t);
                 float aFace = aEdge * 0.25f;
 
-                Render3DUtil.drawBoxEdges(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aEdge);
-                Render3DUtil.drawBoxFaces(event.quads, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aFace);
+                Render3DUtil.drawBoxOutline(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aEdge);
+                Render3DUtil.drawBoxInner(event.quads, pose, minX, minY, minZ, maxX, maxY, maxZ, qc[0], qc[1], qc[2], aFace);
             }
         }
     }

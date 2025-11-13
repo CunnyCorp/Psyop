@@ -3,17 +3,25 @@ package monster.psyop.client.impl.modules.hud;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
 import monster.psyop.client.Psyop;
-import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.StringSetting;
-import monster.psyop.client.impl.events.On2DRender;
 import net.minecraft.client.player.AbstractClientPlayer;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class PlayerRadarHUD extends HUD {
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
+
     public final ColorSetting textColor =
             new ColorSetting.Builder()
                     .name("text-color")

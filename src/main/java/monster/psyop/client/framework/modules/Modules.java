@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
-import monster.psyop.client.impl.events.On2DRender;
+import monster.psyop.client.impl.events.OnGuiRender;
 import monster.psyop.client.impl.events.game.OnMouseClick;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.impl.modules.hud.HUD;
@@ -34,7 +34,7 @@ public class Modules {
     }
 
     @EventListener(inGame = false)
-    public void onRender2D(On2DRender event) {
+    public void onRender2D(OnGuiRender event) {
         List<Module> modules = new ArrayList<>(NAME_TO_MODULE.values());
 
         modules.sort((m1, m2) -> m2.priority.get() - m1.priority.get());

@@ -10,7 +10,6 @@ import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
-import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnTick;
 
 import java.util.ArrayList;
@@ -72,5 +71,32 @@ public class ArrayHUD extends HUD {
 
             curY += (int) (textSize.y + 8);
         }
+    }
+
+    @Override
+    public boolean leftAligned() {
+        return false;
+    }
+
+    @Override
+    public int getWidth() {
+        int maxWidth = 0;
+        for (String label : labels) {
+            ImVec2 textSize = new ImVec2();
+            ImGui.calcTextSize(textSize, label);
+            maxWidth = Math.max(maxWidth, (int) textSize.x);
+        }
+        return maxWidth + 8;
+    }
+
+    @Override
+    public int getHeight() {
+        if (labels.isEmpty()) {
+            return 0;
+        }
+
+        ImVec2 textSize = new ImVec2();
+        ImGui.calcTextSize(textSize, "Psyop");
+        return (int) ((textSize.y) * labels.size()) + 8;
     }
 }

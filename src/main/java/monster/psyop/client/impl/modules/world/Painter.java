@@ -1,7 +1,6 @@
 package monster.psyop.client.impl.modules.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -89,7 +88,7 @@ public class Painter extends Module {
                 mutableBlockPos.set(vec[0] + dir.getStepX(), vec[1] + dir.getStepY(), vec[2] + dir.getStepZ());
                 if (BlockUtils.isReplaceable(mutableBlockPos)) {
                     if (BlockUtils.canPlace(mutableBlockPos)) {
-                        placeable.add(new int[]{vec[0] + dir.getStepX(), vec[1] + dir.getStepY(), vec[2] + dir.getStepZ()});;
+                        placeable.add(new int[]{vec[0] + dir.getStepX(), vec[1] + dir.getStepY(), vec[2] + dir.getStepZ()});
                     }
                 }
             }

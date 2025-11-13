@@ -1,7 +1,7 @@
 package monster.psyop.client.framework.modules;
 
 public class Categories {
-    public static final Category[] INDEX = new Category[11];
+    public static final Category[] INDEX = new Category[12];
 
     public static final Category
             COMBAT = INDEX[0] = new Category("Combat", "Modules related to PvP."),

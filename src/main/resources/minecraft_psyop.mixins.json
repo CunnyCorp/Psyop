@@ -25,6 +25,7 @@
     "EquipmentLayerRendererMixin",
     "FogRendererMixin",
     "GameRendererMixin",
+    "GuiMixin",
     "ItemInHandRendererMixin",
     "ItemRendererMixin",
     "ItemStackRenderState$LayerRenderStateMixin",

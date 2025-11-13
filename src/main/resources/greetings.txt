@@ -1,1 +1,17 @@
-<player> is using Psyop <version>!
+# Greetings file - use {player} as placeholder for player name
+Hello, {player}!
+Welcome back, {player}!
+Good to see you, {player}!
+Hey there, {player}!
+Greetings, {player}!
+Hi {player}! How are you?
+What's up, {player}?
+Nice to have you here, {player}!
+{player}, you're looking great today!
+{player}, how are you today?
+{player}, have you seen my box?
+{player}, do you like my box?
+Hey, {player}, my box is yours!
+Fluckin {player}!
+You make me mad, {player}!
+{player} we gonna do a little trollage.

@@ -14,11 +14,7 @@ import java.awt.*;
 import static monster.psyop.client.Psyop.MC;
 
 public final class Render3DUtil {
-    private Render3DUtil() {
-    }
-
-
-    public static void drawBoxFaces(VertexConsumer vc, PoseStack.Pose pose,
+    public static void drawBoxInner(VertexConsumer vc, PoseStack.Pose pose,
                                     float minX, float minY, float minZ,
                                     float maxX, float maxY, float maxZ,
                                     float r, float g, float b, float a) {
@@ -30,10 +26,10 @@ public final class Render3DUtil {
         addQuad(vc, pose, maxX, minY, minZ, maxX, minY, maxZ, maxX, maxY, maxZ, maxX, maxY, minZ, 1, 0, 0, r, g, b, a);
     }
 
-    public static void drawBoxEdges(VertexConsumer vc, PoseStack.Pose pose,
-                                    float minX, float minY, float minZ,
-                                    float maxX, float maxY, float maxZ,
-                                    float r, float g, float b, float a) {
+    public static void drawBoxOutline(VertexConsumer vc, PoseStack.Pose pose,
+                                      float minX, float minY, float minZ,
+                                      float maxX, float maxY, float maxZ,
+                                      float r, float g, float b, float a) {
         addLine(vc, pose, minX, minY, minZ, maxX, minY, minZ, r, g, b, a);
         addLine(vc, pose, maxX, minY, minZ, maxX, minY, maxZ, r, g, b, a);
         addLine(vc, pose, maxX, minY, maxZ, minX, minY, maxZ, r, g, b, a);
@@ -249,78 +245,78 @@ public final class Render3DUtil {
         vc.addVertex(pose, x1, y1, z1).setColor(r, g, b, a).setNormal(pose, 0, 0, 1);
     }
 
-    public static void drawBoxFaces(VertexConsumer vc, PoseStack.Pose pose, AABB bbRelCam, float r, float g, float b, float a) {
-        drawBoxFaces(vc, pose,
+    public static void drawBoxInner(VertexConsumer vc, PoseStack.Pose pose, AABB bbRelCam, float r, float g, float b, float a) {
+        drawBoxInner(vc, pose,
                 (float) bbRelCam.minX, (float) bbRelCam.minY, (float) bbRelCam.minZ,
                 (float) bbRelCam.maxX, (float) bbRelCam.maxY, (float) bbRelCam.maxZ,
                 r, g, b, a);
     }
 
-    public static void drawBoxEdges(VertexConsumer vc, PoseStack.Pose pose, AABB bbRelCam, float r, float g, float b, float a) {
-        drawBoxEdges(vc, pose,
+    public static void drawBoxOutline(VertexConsumer vc, PoseStack.Pose pose, AABB bbRelCam, float r, float g, float b, float a) {
+        drawBoxOutline(vc, pose,
                 (float) bbRelCam.minX, (float) bbRelCam.minY, (float) bbRelCam.minZ,
                 (float) bbRelCam.maxX, (float) bbRelCam.maxY, (float) bbRelCam.maxZ,
                 r, g, b, a);
     }
 
-    public static void drawBoxFaces(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos,
+    public static void drawBoxInner(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos,
                                     float r, float g, float b, float a) {
         AABB rel = bbWorld.move(-camPos.x, -camPos.y, -camPos.z);
-        drawBoxFaces(vc, pose, rel, r, g, b, a);
+        drawBoxInner(vc, pose, rel, r, g, b, a);
     }
 
-    public static void drawBoxEdges(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos,
-                                    float r, float g, float b, float a) {
+    public static void drawBoxOutline(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos,
+                                      float r, float g, float b, float a) {
         AABB rel = bbWorld.move(-camPos.x, -camPos.y, -camPos.z);
-        drawBoxEdges(vc, pose, rel, r, g, b, a);
+        drawBoxOutline(vc, pose, rel, r, g, b, a);
     }
 
-    public static void drawBoxFaces(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos,
+    public static void drawBoxInner(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos,
                                     float r, float g, float b, float a) {
         AABB bb = new AABB(pos);
-        drawBoxFaces(vc, pose, bb, camPos, r, g, b, a);
+        drawBoxInner(vc, pose, bb, camPos, r, g, b, a);
     }
 
-    public static void drawBoxEdges(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos,
-                                    float r, float g, float b, float a) {
+    public static void drawBoxOutline(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos,
+                                      float r, float g, float b, float a) {
         AABB bb = new AABB(pos);
-        drawBoxEdges(vc, pose, bb, camPos, r, g, b, a);
+        drawBoxOutline(vc, pose, bb, camPos, r, g, b, a);
     }
 
-    public static void drawBlockBoxFaces(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate,
-                                         float r, float g, float b, float a) {
+    public static void drawBlockInner(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate,
+                                      float r, float g, float b, float a) {
         AABB bb = new AABB(pos).inflate(inflate);
-        drawBoxFaces(vc, pose, bb, camPos, r, g, b, a);
+        drawBoxInner(vc, pose, bb, camPos, r, g, b, a);
     }
 
-    public static void drawBlockBoxEdges(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate,
-                                         float r, float g, float b, float a) {
+    public static void drawBlockOutline(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate,
+                                        float r, float g, float b, float a) {
         AABB bb = new AABB(pos).inflate(inflate);
-        drawBoxEdges(vc, pose, bb, camPos, r, g, b, a);
+        drawBoxOutline(vc, pose, bb, camPos, r, g, b, a);
     }
 
-    public static void drawBoxFaces(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos, float[] rgba) {
-        drawBoxFaces(vc, pose, bbWorld, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
+    public static void drawBoxInner(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos, float[] rgba) {
+        drawBoxInner(vc, pose, bbWorld, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
-    public static void drawBoxEdges(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos, float[] rgba) {
-        drawBoxEdges(vc, pose, bbWorld, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
+    public static void drawBoxOutline(VertexConsumer vc, PoseStack.Pose pose, AABB bbWorld, Vec3 camPos, float[] rgba) {
+        drawBoxOutline(vc, pose, bbWorld, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
-    public static void drawBoxFaces(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float[] rgba) {
-        drawBoxFaces(vc, pose, pos, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
+    public static void drawBoxInner(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float[] rgba) {
+        drawBoxInner(vc, pose, pos, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
-    public static void drawBoxEdges(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float[] rgba) {
-        drawBoxEdges(vc, pose, pos, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
+    public static void drawBoxOutline(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float[] rgba) {
+        drawBoxOutline(vc, pose, pos, camPos, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
-    public static void drawBlockBoxFaces(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate, float[] rgba) {
-        drawBlockBoxFaces(vc, pose, pos, camPos, inflate, rgba[0], rgba[1], rgba[2], rgba[3]);
+    public static void drawBlockInner(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate, float[] rgba) {
+        drawBlockInner(vc, pose, pos, camPos, inflate, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
-    public static void drawBlockBoxEdges(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate, float[] rgba) {
-        drawBlockBoxEdges(vc, pose, pos, camPos, inflate, rgba[0], rgba[1], rgba[2], rgba[3]);
+    public static void drawBlockOutline(VertexConsumer vc, PoseStack.Pose pose, BlockPos pos, Vec3 camPos, float inflate, float[] rgba) {
+        drawBlockOutline(vc, pose, pos, camPos, inflate, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
     public static void addQuadVarying(VertexConsumer vc, PoseStack.Pose pose,

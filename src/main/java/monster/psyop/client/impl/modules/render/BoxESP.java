@@ -325,10 +325,10 @@ public class BoxESP extends Module {
             } else {
                 if (filled.get()) {
                     float a = Math.max(0.0f, Math.min(1.0f, fillAlpha.get()));
-                    Render3DUtil.drawBoxFaces(event.quads, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], a);
+                    Render3DUtil.drawBoxInner(event.quads, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], a);
                 }
 
-                Render3DUtil.drawBoxEdges(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], c[3]);
+                Render3DUtil.drawBoxOutline(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], c[3]);
 
                 if (glow.get()) {
                     int steps = Math.max(1, glowSteps.get());
@@ -345,7 +345,7 @@ public class BoxESP extends Module {
                         float expand = f * width;
                         float a = baseA * (1.0f - f) * pulse;
                         if (a <= 0.001f) continue;
-                        Render3DUtil.drawBoxFaces(
+                        Render3DUtil.drawBoxInner(
                                 event.quads, pose,
                                 minX - expand, minY - expand, minZ - expand,
                                 maxX + expand, maxY + expand, maxZ + expand,

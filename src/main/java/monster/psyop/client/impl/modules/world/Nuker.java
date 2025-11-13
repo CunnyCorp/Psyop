@@ -175,10 +175,20 @@ public class Nuker extends HUD {
         if (breakColor.get()[3] > 0.0f && attemptBreak.get()) {
             for (BrokenBlock block : brokenBlocks) {
                 if (block.isExpired()) continue;
-                Render3DUtil.drawBlockBoxFaces(event.quads, pose, block.pos, cam, 0.0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
-                Render3DUtil.drawBlockBoxEdges(event.lines, pose, block.pos, cam, 0.0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
+                Render3DUtil.drawBlockInner(event.quads, pose, block.pos, cam, 0.0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
+                Render3DUtil.drawBlockOutline(event.lines, pose, block.pos, cam, 0.0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
             }
         }
+    }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
     }
 
     public record BrokenBlock(BlockPos pos, long keepAliveMS, long expireTimeMS) {

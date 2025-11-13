@@ -2,22 +2,17 @@ package monster.psyop.client.impl.modules.combat;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import imgui.ImGui;
-import imgui.ImVec2;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.Categories;
+import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
-import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.framework.rendering.Render3DUtil;
-import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnRender;
-import monster.psyop.client.impl.modules.hud.HUD;
 import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
-import monster.psyop.client.utility.gui.GradientUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.entity.Entity;
@@ -28,58 +23,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static monster.psyop.client.Psyop.GUI;
-
-public class KillAura extends HUD {
-    public final BoolSetting displayHUD =
-            new BoolSetting.Builder()
-                    .name("display-hud")
-                    .description("Displays a HUD element with entity info!")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    public ColorSetting textColor =
-            new ColorSetting.Builder()
-                    .name("text-color")
-                    .defaultTo(new float[]{0.90f, 0.90f, 0.95f, 0.95f})
-                    .addTo(coreGroup);
-    public ColorSetting upperColor =
-            new ColorSetting.Builder()
-                    .name("upper-color")
-                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
-                    .addTo(coreGroup);
-    public ColorSetting middleColor =
-            new ColorSetting.Builder()
-                    .name("middle-color")
-                    .defaultTo(new float[]{0.00f, 0.60f, 0.60f, 1.0f})
-                    .addTo(coreGroup);
-    public ColorSetting lowerColor =
-            new ColorSetting.Builder()
-                    .name("lower-color")
-                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
-                    .addTo(coreGroup);
-    public final IntSetting alpha =
-            new IntSetting.Builder()
-                    .name("alpha")
-                    .range(40, 200)
-                    .defaultTo(184)
-                    .addTo(coreGroup);
-    public final IntSetting waveSpeed =
-            new IntSetting.Builder()
-                    .name("wave-speed")
-                    .range(1, 10)
-                    .defaultTo(3)
-                    .addTo(coreGroup);
-    public final IntSetting waveDensity =
-            new IntSetting.Builder()
-                    .name("wave-density")
-                    .range(1, 10)
-                    .defaultTo(5)
-                    .addTo(coreGroup);
+public class KillAura extends Module {
     public final BoolSetting shouldGlow =
             new BoolSetting.Builder()
                     .name("should-glow")
@@ -163,7 +111,6 @@ public class KillAura extends HUD {
                     .defaultTo(true)
                     .addTo(checksGroup);
 
-    private final GradientUtils gradientUtils = new GradientUtils(0.5f);
     private int delay = 0;
     public Entity target = null;
     public float r = 0;
@@ -176,69 +123,6 @@ public class KillAura extends HUD {
                 Categories.COMBAT,
                 "kill-aura",
                 "Automatically hits entities around the player.");
-    }
-
-    @EventListener(inGame = false)
-    public void onRender2D(On2DRender event) {
-        if (!displayHUD.get()) {
-            return;
-        }
-
-        String targetingDistance = "0 Blocks Away";
-        String targetingHealth = "0/0";
-        String targetingName = "No Target";
-
-        assert MC.player != null;
-        if (target != null) {
-            targetingDistance = Math.round(MC.player.distanceTo(target)) + " Blocks Away";
-            if (target instanceof LivingEntity le) {
-                targetingHealth = Math.round(le.getHealth() + le.getAbsorptionAmount()) + "/" + Math.round(le.getMaxHealth());
-            }
-
-            if (target.hasCustomName()) {
-                targetingName = target.getDisplayName().getString();
-            } else {
-                targetingName = EntityType.getKey(target.getType()).getPath();
-            }
-        }
-
-
-        ImVec2 textSize = new ImVec2();
-        ImGui.calcTextSize(textSize, targetingDistance.length() > targetingName.length() ? targetingDistance : targetingName);
-
-        float padding = 8f;
-        float bgWidth = textSize.x + (padding * 2);
-        float bgHeight = (textSize.y * 3) + 6 + (padding * 2);
-
-        float bgX = xPos.get() - padding;
-        float bgY = yPos.get() - padding;
-
-        Color[] waveColors = {
-                GradientUtils.getColorFromSetting(upperColor),
-                GradientUtils.getColorFromSetting(middleColor),
-                GradientUtils.getColorFromSetting(lowerColor),
-                GradientUtils.getColorFromSetting(middleColor)
-        };
-
-        gradientUtils.drawHorizontalWaveGradientTile(
-                bgX, bgY, bgWidth, bgHeight,
-                waveColors, alpha.get(),
-                waveSpeed.get() / 2f,
-                waveDensity.get() / 2f
-        );
-
-        float textX = bgX + padding;
-        float textY = bgY + padding;
-
-        ImColorW colorW = new ImColorW(textColor.get());
-
-        GUI.drawString(targetingName, textX, textY, colorW);
-
-        textY += textSize.y + 2;
-        GUI.drawString(targetingHealth, textX, textY, colorW);
-
-        textY += textSize.y + 2;
-        GUI.drawString(targetingDistance, textX, textY, colorW);
     }
 
     @Override
@@ -404,8 +288,8 @@ public class KillAura extends HUD {
             c = glowColor.get();
         }
 
-        RenderSystem.lineWidth(5.0f);
+        RenderSystem.lineWidth(15.0f);
 
-        Render3DUtil.drawCircleEdgesXZ(event.lines, pose, cx, cy, cz, circleRadius.get(), 24, c[0], c[1], c[2], c[3]);
+        Render3DUtil.drawCircleEdgesXZ(event.lines, pose, cx, cy, cz, circleRadius.get() * target.getBbWidth(), 24, c[0], c[1], c[2], c[3]);
     }
 }

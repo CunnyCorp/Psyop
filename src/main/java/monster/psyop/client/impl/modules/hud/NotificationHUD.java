@@ -9,7 +9,6 @@ import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
-import monster.psyop.client.impl.events.On2DRender;
 import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.gui.GradientUtils;
 import monster.psyop.client.utility.gui.NotificationEvent;
@@ -78,6 +77,16 @@ public class NotificationHUD extends HUD {
                     animationProgress, notificationIndex);
             notificationIndex++;
         }
+    }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
     }
 
     private float calculateAnimationProgress(NotificationEvent notification) {

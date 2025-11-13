@@ -14,33 +14,31 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.lwjgl.glfw.GLFW;
 
-import static monster.psyop.client.Psyop.MC;
-
 public class MiddleClickUse extends Module {
 
     private final StringSetting mode = new StringSetting.Builder()
-        .name("mode")
-        .description("Which item to use. Options: Pearl, Rocket")
-        .defaultTo("Rocket")
-        .addTo(coreGroup);
+            .name("mode")
+            .description("Which item to use. Options: Pearl, Rocket")
+            .defaultTo("Rocket")
+            .addTo(coreGroup);
 
     private final BoolSetting silentSwitch = new BoolSetting.Builder()
-        .name("silent-switch")
-        .description("Uses items from your hotbar without changing your selected slot.")
-        .defaultTo(true)
-        .addTo(coreGroup);
+            .name("silent-switch")
+            .description("Uses items from your hotbar without changing your selected slot.")
+            .defaultTo(true)
+            .addTo(coreGroup);
 
     private final BoolSetting disableInCreative = new BoolSetting.Builder()
-        .name("disable-in-creative")
-        .description("Disables middle click action in Creative mode.")
-        .defaultTo(true)
-        .addTo(coreGroup);
+            .name("disable-in-creative")
+            .description("Disables middle click action in Creative mode.")
+            .defaultTo(true)
+            .addTo(coreGroup);
 
     private final BoolSetting notify = new BoolSetting.Builder()
-        .name("notify")
-        .description("Notifies you if you don't have the required item.")
-        .defaultTo(true)
-        .addTo(coreGroup);
+            .name("notify")
+            .description("Notifies you if you don't have the required item.")
+            .defaultTo(true)
+            .addTo(coreGroup);
 
     private boolean wasMiddleMouseDown = false;
 
@@ -101,7 +99,7 @@ public class MiddleClickUse extends Module {
         }
     }
 
-    private int findItemInHotbar(Item item) {
+    public static int findItemInHotbar(Item item) {
         if (MC.player == null) return -1;
         for (int i = 0; i < 9; i++) {
             ItemStack stack = MC.player.getInventory().getItem(i);

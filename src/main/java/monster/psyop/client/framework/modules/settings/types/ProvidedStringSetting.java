@@ -16,8 +16,8 @@ public class ProvidedStringSetting extends ProvidedObjectSetting<ProvidedStringS
         this.suggestions = builder.suggestions;
     }
 
-    public ImString get() {
-        return value();
+    public String get() {
+        return value().get();
     }
 
     @Override

@@ -4,10 +4,10 @@ import imgui.ImDrawList;
 import imgui.ImGui;
 import monster.psyop.client.framework.events.Event;
 
-public class On2DRender extends Event {
-    public static On2DRender INSTANCE = new On2DRender();
+public class OnGuiRender extends Event {
+    public static OnGuiRender INSTANCE = new OnGuiRender();
 
-    public On2DRender() {
+    public OnGuiRender() {
         super(false);
     }
 
@@ -15,7 +15,7 @@ public class On2DRender extends Event {
         return ImGui.getBackgroundDrawList();
     }
 
-    public static On2DRender get() {
+    public static OnGuiRender get() {
         return INSTANCE;
     }
 }

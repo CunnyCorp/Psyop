@@ -24,7 +24,7 @@ public abstract class ItemRendererMixin {
         if (Psyop.MODULES.isActive(ItemView.class)) {
             ItemView module = Psyop.MODULES.get(ItemView.class);
 
-            RenderType renderType = switch (module.bufferModifier.get().get()) {
+            RenderType renderType = switch (module.bufferModifier.get()) {
                 case "quads" -> CoreRendering.quads();
                 case "lines" -> CoreRendering.lines();
                 case "item" -> CoreRendering.glintTranslucent();
@@ -38,7 +38,7 @@ public abstract class ItemRendererMixin {
                 i = module.itemColor.get()[3];
             }
 
-            if (module.bufferModifier.get().get().equals("none")) {
+            if (module.bufferModifier.get().equals("none")) {
                 instance.putBulkData(pose, bakedQuad, f, g, h, i, j, k);
             } else {
                 MC.renderBuffers().bufferSource().getBuffer(renderType).putBulkData(pose, bakedQuad, f, g, h, i, j, k);

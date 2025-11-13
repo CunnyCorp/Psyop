@@ -43,10 +43,10 @@ public record ContractingBlock(BlockPos pos, long time, long keep) {
     }
 
     public void render(PoseStack.Pose pose, VertexConsumer quads, VertexConsumer lines, boolean outline, float[] color) {
-        Render3DUtil.drawBoxFaces(quads, pose, getMinX(), getMinY(), getMinZ(), getMaxX(), getMaxY(), getMaxZ(), color[0], color[1], color[2], color[3] * getAlphaMulti());
+        Render3DUtil.drawBoxInner(quads, pose, getMinX(), getMinY(), getMinZ(), getMaxX(), getMaxY(), getMaxZ(), color[0], color[1], color[2], color[3] * getAlphaMulti());
 
         if (outline) {
-            Render3DUtil.drawBoxEdges(lines, pose, getMinX(), getMinY(), getMinZ(), getMaxX(), getMaxY(), getMaxZ(), color[0], color[1], color[2], 1.0f);
+            Render3DUtil.drawBoxOutline(lines, pose, getMinX(), getMinY(), getMinZ(), getMaxX(), getMaxY(), getMaxZ(), color[0], color[1], color[2], 1.0f);
         }
     }
 }

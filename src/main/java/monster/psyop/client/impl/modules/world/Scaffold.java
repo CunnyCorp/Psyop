@@ -178,8 +178,8 @@ public class Scaffold extends Module {
             float[] c = pb.color;
             float a = Math.max(0.0f, Math.min(1.0f, c[3] * life));
 
-            Render3DUtil.drawBlockBoxFaces(event.quads, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a * 0.35f);
-            Render3DUtil.drawBlockBoxEdges(event.lines, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a);
+            Render3DUtil.drawBlockInner(event.quads, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a * 0.35f);
+            Render3DUtil.drawBlockOutline(event.lines, pose, pb.pos, cam, 0.0f, c[0], c[1], c[2], a);
         }
     }
 

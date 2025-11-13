@@ -16,6 +16,11 @@ public class RenderTweaks extends Module {
             .name("quads-modifier")
             .defaultTo(new ImString("quads_tpma"))
             .addTo(coreGroup);
+    public ProvidedStringSetting vanillaHudInjection = new ProvidedStringSetting.Builder()
+            .suggestions(List.of(new ImString("sleep"), new ImString("tail"), new ImString("overlays")))
+            .name("vanilla-hud")
+            .defaultTo(new ImString("tail"))
+            .addTo(coreGroup);
 
     public RenderTweaks() {
         super(Categories.RENDER, "render-tweaks", "Lets you modify how Psyop renders, always active.");
@@ -24,7 +29,7 @@ public class RenderTweaks extends Module {
     public static RenderType getQuadsRenderType() {
         RenderTweaks module = Psyop.MODULES.get(RenderTweaks.class);
 
-        return switch (module.quadsModifier.get().get()) {
+        return switch (module.quadsModifier.get()) {
             case "quads_invert" -> CoreRendering.quadsInvert();
             case "quads_overlay" -> CoreRendering.quadsOverlay();
             case "quads_glint" -> CoreRendering.quadsGlint();

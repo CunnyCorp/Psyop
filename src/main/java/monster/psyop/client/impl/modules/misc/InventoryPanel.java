@@ -6,12 +6,13 @@ import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
-import monster.psyop.client.impl.events.On2DRender;
+import monster.psyop.client.impl.events.OnGuiRender;
 import monster.psyop.client.impl.modules.hud.HUD;
 import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.world.inventory.MenuType;
 
 import java.util.ArrayList;
 
@@ -38,7 +39,7 @@ public class InventoryPanel extends HUD {
     }
 
     @EventListener
-    public void onRender2D(On2DRender event) {
+    public void onRender2D(OnGuiRender event) {
         if (MC.screen instanceof AbstractContainerScreen) {
             ImGui.begin("Inventory Panel", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.AlwaysAutoResize);
 
@@ -76,6 +77,12 @@ public class InventoryPanel extends HUD {
 
     @Override
     public void update() {
+        if (MC.player.containerMenu.getType() == MenuType.CRAFTING) {
+            dump = false;
+            steal = false;
+            return;
+        }
+
         if (steal) {
             for (int i = 0; i < movesPerTick.get(); i++) {
                 int slot = InventoryUtils.findMatchingSlot((stack, s) -> stealList.value().contains(stack.getItem()) && s < MC.player.containerMenu.slots.size());
@@ -101,5 +108,15 @@ public class InventoryPanel extends HUD {
                 }
             }
         }
+    }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
     }
 }

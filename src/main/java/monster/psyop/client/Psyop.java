@@ -27,6 +27,8 @@ import monster.psyop.client.impl.modules.player.*;
 import monster.psyop.client.impl.modules.render.*;
 import monster.psyop.client.impl.modules.silly.HappyHands;
 import monster.psyop.client.impl.modules.silly.OiledUp;
+import monster.psyop.client.impl.modules.vhud.ArmorHUD;
+import monster.psyop.client.impl.modules.vhud.InventoryHUD;
 import monster.psyop.client.impl.modules.world.*;
 import monster.psyop.client.impl.modules.world.printer.Printer;
 import monster.psyop.client.impl.modules.world.printer.SkyRefill;
@@ -63,6 +65,7 @@ public class Psyop implements ModInitializer {
         GUI.launch();
 
         PacketUtils.load();
+
 
         McDataCache.init();
 
@@ -163,69 +166,73 @@ public class Psyop implements ModInitializer {
         new BetterChat().load();
         new Spammer().load();
 
-        // HUD
-        new ArmorHUD().load();
-        new ArrayHUD().load();
-        new PositionHUD().load();
-        new TargetHUD().load();
-        new NotificationHUD().load();
-        new PlayerRadarHUD().load();
-        new HealthBarHUD().load();
-        new AbsorptionBarHUD().load();
-        new HungerBarHUD().load();
-
         // Combat
         new AntiKb().load();
         new AttackBurst().load();
+        new AutoElytraSwap().load();
+        new AutoPhase().load();
         new KillAura().load();
-        new TriggerBot().load();
+        new Surround().load();
 
         // Exploits
         new FastSwap().load();
+        new HoldPackets().load();
         new InstantClose().load();
+        new LoginFuckery().load();
         new QueueBypass().load();
         new SilentClose().load();
-        new LoginFuckery().load();
-        new HoldPackets().load();
+
+        // HUD
+        new ArmorHUD().load();
+        new ArrayHUD().load();
+        new HudEditor().load();
+        new InventoryHUD().load();
+        new LookingAtHUD().load();
+        new NotificationHUD().load();
+        new PlayerRadarHUD().load();
+        new PositionHUD().load();
+        new TargetHUD().load();
 
         // Misc
-        new AutoEat().load();
-        new NoMiss().load();
-        new FastUse().load();
         new BrandSpoof().load();
         new DetachMouse().load();
-        new PingSpoof().load();
-        new Reach().load();
-        new Rotation().load();
-        new TestModule().load();
-        new UseControl().load();
+        new DiscordRPC().load();
         new Friends().load();
         new InventoryPanel().load();
-        new AutoElytraSwap().load();
-        new DiscordRPC().load();
-        new EffectSpoof().load();
-        new AutoTool().load();
-        new MiddleClickUse().load();
-        new SkinBlinker().load();
+        new NoMiss().load();
+        new PingSpoof().load();
+        new Rotation().load();
+        new UseControl().load();
 
+        // Player
+        new AutoEat().load();
+        new AutoTool().load();
+        new EffectSpoof().load();
+        new FastUse().load();
+        new GuiMove().load();
+        new MiddleClickUse().load();
         new Offhand().load();
+        new Reach().load();
+
 
         // Movement
         new AntiPush().load();
         new AutoWalk().load();
+        new ElytraPause().load();
+        new GrimBunnyHop().load();
         new Jumping().load();
+        new LagbackDetector().load();
         new Phase().load();
         new Sneak().load();
         new GrimBunnyHop().load();
         new PlayerTimer().load();
-        new Sprint().load();
-        new SpinBot().load();
-        new ElytraPause().load();
         new SillyBot().load();
-        new LagbackDetector().load();
-        new GuiMove().load();
+        new Sneak().load();
+        new SpinBot().load();
+        new Sprint().load();
 
         // Render
+        new BetterTab().load();
         new BlockLights().load();
         new BoxESP().load();
         new Chams().load();
@@ -237,14 +244,20 @@ public class Psyop implements ModInitializer {
         new ItemView().load();
         new WorldView().load();
         new StorageESP().load();
-        new StorageESPV2().load();
         new Ripples().load();
         new BetterTab().load();
         new Trail().load();
         new NoRender().load();
         new ParticleEngine().load();
         new PopESP().load();
+        new PumpkinSpoof().load();
         new RenderTweaks().load();
+        new Ripples().load();
+        new SphereESP().load();
+        new StorageESP().load();
+        new Tint().load();
+        new Trail().load();
+        new WorldView().load();
 
         // Silly
         new HappyHands().load();

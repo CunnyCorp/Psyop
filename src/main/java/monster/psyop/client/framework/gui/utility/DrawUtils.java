@@ -75,6 +75,11 @@ public class DrawUtils {
         drawList.addText(x, y, color.packed(), text);
     }
 
+    public static void drawText(String text, float x, float y, ImColorW color, float scale) {
+        ImDrawList drawList = ImGui.getBackgroundDrawList();
+        drawList.addText(ImGui.getFont(), scale, x, y, color.packed(), text);
+    }
+
     public static void drawTextWithBackground(String text, float x, float y, ImColorW textColor, ImColorW backgroundColor, float padding) {
         ImVec2 textSize = new ImVec2();
         ImGui.calcTextSize(textSize, text);
