@@ -21,14 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 public class ModulesView extends View {
-    // Configuration variables
     private Category previewCategory = Categories.COMBAT;
     private final ImString searchText = new ImString();
     private boolean searchActive = false;
     private float categoriesPanelWidth = 140.0f;
     private boolean categoriesOnLeft = true;
     private boolean showCategoryHeaders = true;
-    private boolean showKeybinds = true;
     private float buttonHeight = 0.0f; // 0 = auto
     private float itemSpacing = 6.0f;
     private float verticalSpacing = 4.0f;
@@ -38,8 +36,6 @@ public class ModulesView extends View {
     private float windowPaddingY = 8.0f;
     private float animationSpeed = 8f;
     private float searchFocusDuration = 0.3f;
-    private boolean filterEmptyCategories = true;
-    private boolean searchIncludesDescription = false;
     private final Map<Module, Float> moduleHoverAnimations = new HashMap<>();
     private final Map<Module, Float> moduleActiveAnimations = new HashMap<>();
     private final Map<Category, Float> categoryHoverAnimations = new HashMap<>();
@@ -132,7 +128,7 @@ public class ModulesView extends View {
         }
 
         for (Category category : Categories.INDEX) {
-            if (filterEmptyCategories && Psyop.MODULES.getModules(category).isEmpty()) continue;
+            if (Psyop.MODULES.getModules(category).isEmpty()) continue;
 
             float categoryHover = categoryHoverAnimations.getOrDefault(category, 0f);
             float categoryActive = categoryActiveAnimations.getOrDefault(category, 0f);
@@ -198,19 +194,49 @@ public class ModulesView extends View {
         }
 
         List<Module> modules = new ArrayList<>();
+        List<Module> nameSearchSW = new ArrayList<>();
+        List<Module> nameSearch = new ArrayList<>();
+        List<Module> descriptionSearch = new ArrayList<>();
+        List<Module> settingSearch = new ArrayList<>();
+
+
         if (searchActive) {
+            String st = searchText.get().toLowerCase();
+
             for (Category cat : Categories.INDEX) {
                 for (Module module : Psyop.MODULES.getModules(cat)) {
-                    boolean matchesName = module.getLabel().toLowerCase().contains(searchText.get().toLowerCase());
-                    boolean matchesDescription = searchIncludesDescription &&
-                            module.description() != null &&
-                            module.description().toLowerCase().contains(searchText.get().toLowerCase());
+                    boolean matchesNameSW = module.getLabel().toLowerCase().startsWith(st);
+                    boolean matchesName = module.getLabel().toLowerCase().contains(st);
+                    boolean matchesDescription = module.description() != null && module.description().toLowerCase().contains(st);
+                    boolean matchesSetting = false;
 
-                    if (matchesName || matchesDescription) {
-                        modules.add(module);
+                    // Search for setting names!
+                    if (st.length() >= 3) {
+                        for (var groups : module.getGroupedSettings()) {
+                            for (var setting : groups.getRaw()) {
+                                if (setting.label().toLowerCase().contains(st)) {
+                                    matchesSetting = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (matchesNameSW) {
+                        nameSearchSW.add(module);
+                    } else if (matchesName) {
+                        nameSearch.add(module);
+                    } else if (matchesDescription) {
+                        descriptionSearch.add(module);
+                    } else if (matchesSetting) {
+                        settingSearch.add(module);
                     }
                 }
             }
+
+            modules.addAll(nameSearchSW);
+            modules.addAll(nameSearch);
+            modules.addAll(descriptionSearch);
+            modules.addAll(settingSearch);
         } else {
             modules.addAll(Psyop.MODULES.getModules(previewCategory));
         }
@@ -249,11 +275,12 @@ public class ModulesView extends View {
             ImGui.pushStyleColor(ImGuiCol.Text, 0.90f, 0.90f, 0.95f, 1.00f);
 
             String buttonText = module.getLabel();
-            if (showKeybinds) {
-                String keybindText = KeyUtils.getTranslation(module.keybinding.value().get());
-                if (!keybindText.isEmpty()) {
-                    buttonText += " (" + keybindText + ")";
-                }
+
+            String keybindText = KeyUtils.getTranslation(module.keybinding.value().get());
+
+            if (!keybindText.isEmpty()) {
+                ImGui.textDisabled("[" + keybindText + "]");
+                ImGui.sameLine();
             }
 
             if (ImGui.button(buttonText, -1, buttonHeight)) {

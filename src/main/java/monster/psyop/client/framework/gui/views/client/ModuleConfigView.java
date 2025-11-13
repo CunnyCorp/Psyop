@@ -243,15 +243,31 @@ public class ModuleConfigView extends View {
                 }
 
                 List<Setting<?, ?>> visibleSettings = new ArrayList<>();
+                List<Setting<?, ?>> nameSearchSW = new ArrayList<>();
+                List<Setting<?, ?>> nameSearch = new ArrayList<>();
+                List<Setting<?, ?>> descriptionSearch = new ArrayList<>();
+
+                String st = searchText.get().toLowerCase();
+
                 for (Setting<?, ?> setting : previewCategory.getRaw()) {
-                    if (setting.isVisible() &&
-                            (!searchActive ||
-                                    setting.name.toLowerCase().contains(searchText.get().toLowerCase()) ||
-                                    (setting.description != null &&
-                                            setting.description.toLowerCase().contains(searchText.get().toLowerCase())))) {
-                        visibleSettings.add(setting);
+                    if (setting.isVisible()) {
+                        String sn = setting.label().toLowerCase();
+
+                        if (!searchActive) {
+                            visibleSettings.add(setting);
+                        } else if (sn.startsWith(st)) {
+                            nameSearchSW.add(setting);
+                        } else if (sn.contains(st)) {
+                            nameSearch.add(setting);
+                        } else if (setting.description != null && !setting.description.isBlank() && setting.description.toLowerCase().contains(st)) {
+                            descriptionSearch.add(setting);
+                        }
                     }
                 }
+
+                visibleSettings.addAll(nameSearchSW);
+                visibleSettings.addAll(nameSearch);
+                visibleSettings.addAll(descriptionSearch);
 
                 if (visibleSettings.isEmpty()) {
                     if (searchActive) {
@@ -266,7 +282,7 @@ public class ModuleConfigView extends View {
 
                     for (Setting<?, ?> setting : visibleSettings) {
                         float settingHover = settingHoverAnimations.getOrDefault(setting, 0f);
-                        boolean isSettingHovered = false;
+                        boolean isSettingHovered;
 
                         ImGui.pushID(setting.name);
                         ImGui.beginGroup();

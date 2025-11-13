@@ -8,15 +8,6 @@ import java.awt.*;
 
 public class DefaultTheme {
     public void load(ImGuiStyle style) {
-       /* ImFont font = ImGui.getIO().getFonts().addFontFromFileTTF(PathIndex.FONTS.resolve("Amorlate.otf").toString(), 16);
-
-        ImGui.getIO().getFonts().getTexDataAsAlpha8(new ImInt(16), new ImInt(16));
-
-        GlStateManager._bindTexture();
-
-        ImGui.getIO().setFontDefault(font);*/
-
-        // style.setAntiAliasedFill(true);
         style.setAlpha(0.78f);
         style.setChildRounding(6);
         style.setTabRounding(3);
