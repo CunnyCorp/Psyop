@@ -19,7 +19,7 @@ jobs:
                 with:
                     repo_token: '${{ secrets.GITHUB_TOKEN }}'
                     automatic_release_tag: 1.21.8-DEV
-                    prerelease: true
-                    title: Shondo Client (1.21.8)
+                    prerelease: false
+                    title: Psyop (1.21.8)
                     files: |
                         ./build/libs/*.jar
