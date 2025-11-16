@@ -5,6 +5,7 @@ import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.impl.modules.player.MiddleClickUse;
+import monster.psyop.client.utility.EntityUtils;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.RotationUtils;
 import monster.psyop.client.utility.blocks.BlockUtils;
@@ -76,7 +77,7 @@ public class AutoPhase extends Module {
             return;
         }
 
-        if (phaseTime <= -1 && BlockUtils.isAir(MC.player.blockPosition())) {
+        if (phaseTime <= -1 && !EntityUtils.isPhased(MC.player)) {
             phasePos = getPhasePos();
 
             if (phasePos != null) {
