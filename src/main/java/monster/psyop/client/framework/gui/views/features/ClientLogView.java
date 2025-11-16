@@ -248,7 +248,7 @@ public class ClientLogView extends View {
 
         // Info command
         commands.put("info", args -> {
-            addLog("Shondo Client v1.0.0", new Color(0, 180, 220));
+            addLog("Psyop", new Color(0, 180, 220));
             addLog("Terminal Mode: ACTIVE", new Color(0, 200, 0));
             addLog("Security: ENABLED", new Color(0, 220, 150));
         });
