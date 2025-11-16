@@ -60,6 +60,14 @@ public class ImColorW {
         return ImColor.rgba(color[0], color[1], color[2], color[3]);
     }
 
+    public static int toInt(float[] color) {
+        int a = (int) (color[3] * 255);
+        int r = (int) (color[0] * 255);
+        int g = (int) (color[1] * 255);
+        int b = (int) (color[2] * 255);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
     public int toInt() {
         int a = (int) (color[3] * 255);
         int r = (int) (color[0] * 255);

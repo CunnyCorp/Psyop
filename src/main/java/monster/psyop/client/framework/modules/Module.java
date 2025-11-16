@@ -15,6 +15,7 @@ import monster.psyop.client.framework.modules.settings.Setting;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.KeybindingSetting;
+import monster.psyop.client.impl.modules.client.AntiCheatModule;
 import monster.psyop.client.utility.StringUtils;
 import monster.psyop.client.utility.TextUtils;
 import monster.psyop.client.utility.gui.NotificationEvent;
@@ -47,7 +48,6 @@ public class Module {
     public GroupedSettings coreGroup = addGroup(new GroupedSettings("core", "Core module settings."));
     public KeybindingSetting keybinding =
             new KeybindingSetting.Builder()
-                    .action(() -> this.active(!this.active()))
                     .name("bind")
                     .description("The key to bind for the client.")
                     .defaultTo(new ImInt(-1))
@@ -229,5 +229,25 @@ public class Module {
 
         if (dependencies.isEmpty() || dependencies.stream().allMatch(Dependency::isLoaded))
             Psyop.MODULES.add(this);
+    }
+
+    public boolean shouldRender() {
+        String acMode = Psyop.MODULES.get(AntiCheatModule.class).antiCheat.get();
+
+        return switch (getAntiCheat()) {
+            case Veck_Grim -> Objects.equals(acMode, "Universal") || Objects.equals(acMode, "Veck_Grim");
+            case Fraze_Grim -> Objects.equals(acMode, "Universal") || Objects.equals(acMode, "Fraze_Grim");
+            case Universal -> true;
+        };
+    }
+
+    public AntiCheat getAntiCheat() {
+        return AntiCheat.Universal;
+    }
+
+    public enum AntiCheat {
+        Veck_Grim,
+        Fraze_Grim,
+        Universal
     }
 }

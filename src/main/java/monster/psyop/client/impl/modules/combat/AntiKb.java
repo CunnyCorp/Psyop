@@ -15,58 +15,50 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.world.phys.Vec3;
 
 public class AntiKb extends Module {
-    public final BoolSetting noLiquid =
-            new BoolSetting.Builder()
-                    .name("no-liquid")
-                    .description("Prevents motion in liquid.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    public final IntSetting minLiquidTime =
-            new IntSetting.Builder()
-                    .name("ticks-out-of-liquid")
-                    .description("How many ticks must you be out of liquids.")
-                    .defaultTo(4)
-                    .range(0, 20)
-                    .visible(intSetting -> !noLiquid.get())
-                    .addTo(coreGroup);
-    public final BoolSetting whileGliding =
-            new BoolSetting.Builder()
-                    .name("while-gliding")
-                    .description("Prevent motion if elytra-gliding.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    public final BoolSetting grimMode =
-            new BoolSetting.Builder()
-                    .name("grim-mode")
-                    .description("Disables motions from being re-set for grim.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    public final BoolSetting explosions =
-            new BoolSetting.Builder()
-                    .name("explosions")
-                    .description("Modifies explosion knockback.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    public final FloatSetting horizontalMulti =
-            new FloatSetting.Builder()
-                    .name("horizontal-multi")
-                    .description("What to multiply horizontal knockback by.")
-                    .defaultTo(0f)
-                    .range(0.0f, 1f)
-                    .addTo(coreGroup);
-    public final FloatSetting verticalMulti =
-            new FloatSetting.Builder()
-                    .name("vertical-multi")
-                    .description("What to multiply vertical knockback by.")
-                    .defaultTo(0.4f)
-                    .range(0.0f, 1f)
-                    .addTo(coreGroup);
-    public final BoolSetting log =
-            new BoolSetting.Builder()
-                    .name("log")
-                    .description("Logs when knockback is attempted to be set.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
+    public final BoolSetting noLiquid = new BoolSetting.Builder()
+            .name("no-liquid")
+            .description("Prevents motion in liquid.")
+            .defaultTo(false)
+            .addTo(coreGroup);
+    public final IntSetting minLiquidTime = new IntSetting.Builder()
+            .name("ticks-out-of-liquid")
+            .description("How many ticks must you be out of liquids.")
+            .defaultTo(4)
+            .range(0, 20)
+            .visible(intSetting -> !noLiquid.get())
+            .addTo(coreGroup);
+    public final BoolSetting whileGliding = new BoolSetting.Builder()
+            .name("while-gliding")
+            .description("Prevent motion if elytra-gliding.")
+            .defaultTo(false)
+            .addTo(coreGroup);
+    public final BoolSetting grimMode = new BoolSetting.Builder()
+            .name("grim-mode")
+            .description("Disables motions from being re-set for grim.")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    public final BoolSetting explosions = new BoolSetting.Builder()
+            .name("explosions")
+            .description("Modifies explosion knockback.")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    public final FloatSetting horizontalMulti = new FloatSetting.Builder()
+            .name("horizontal-multi")
+            .description("What to multiply horizontal knockback by.")
+            .defaultTo(0f)
+            .range(0.0f, 1f)
+            .addTo(coreGroup);
+    public final FloatSetting verticalMulti = new FloatSetting.Builder()
+            .name("vertical-multi")
+            .description("What to multiply vertical knockback by.")
+            .defaultTo(0.0f)
+            .range(0.0f, 1f)
+            .addTo(coreGroup);
+    public final BoolSetting log = new BoolSetting.Builder()
+            .name("log")
+            .description("Logs when knockback is attempted to be set.")
+            .defaultTo(false)
+            .addTo(coreGroup);
 
     private int outOfLiquidTime = 0;
 

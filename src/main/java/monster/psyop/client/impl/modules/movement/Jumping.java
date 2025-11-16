@@ -15,6 +15,13 @@ public class Jumping extends Module {
                     .defaultTo(1.0f)
                     .range(0.5f, 1.5f)
                     .addTo(coreGroup);
+    public final FloatSetting jumpSprintMulti =
+            new FloatSetting.Builder()
+                    .name("jump-sprint-multi")
+                    .description("Jump sprint speed multiplier.")
+                    .defaultTo(1.0f)
+                    .range(0.5f, 1.5f)
+                    .addTo(coreGroup);
     public final BoolSetting removeDelay =
             new BoolSetting.Builder()
                     .name("remove-delay")

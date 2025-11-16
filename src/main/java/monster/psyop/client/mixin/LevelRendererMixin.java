@@ -10,7 +10,7 @@ import monster.psyop.client.impl.events.game.OnRender;
 import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.render.BlockLights;
 import monster.psyop.client.impl.modules.render.Chams;
-import monster.psyop.client.impl.modules.render.RenderTweaks;
+import monster.psyop.client.impl.modules.client.RenderTweaks;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;

@@ -1,14 +1,18 @@
 package monster.psyop.client.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnScreen;
+import monster.psyop.client.impl.modules.movement.NoSlow;
 import monster.psyop.client.impl.modules.movement.Phase;
 import monster.psyop.client.impl.modules.movement.Sprint;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.phys.Vec2;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -56,5 +60,28 @@ public class LocalPlayerMixin {
 
             cir.setReturnValue(module.shouldStopSprinting());
         }
+    }
+
+    @Redirect(method = "modifyInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec2;scale(F)Lnet/minecraft/world/phys/Vec2;", ordinal = 1))
+    public Vec2 modifyInput(Vec2 instance, float f) {
+        if (Psyop.MODULES.isActive(NoSlow.class)) {
+            NoSlow module = Psyop.MODULES.get(NoSlow.class);
+
+            return instance.scale(module.usingItemScale.get());
+        }
+        return instance.scale(f);
+    }
+
+    @ModifyReturnValue(method = "isMovingSlowly", at = @At("RETURN"))
+    public boolean isMovingSlowly(boolean original) {
+        if (Psyop.MODULES.isActive(NoSlow.class)) {
+            NoSlow module = Psyop.MODULES.get(NoSlow.class);
+
+            if (module.sneaking.get()) {
+                return false;
+            }
+        }
+
+        return original;
     }
 }

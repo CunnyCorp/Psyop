@@ -21,7 +21,7 @@ public class GroupedSettings {
 
     public GroupedSettings(String name, String description) {
         this.name = name;
-        this.label = StringUtils.readable(name, Config.get().coreSettings);
+        this.label = StringUtils.readable(name);
         this.description = description;
     }
 

@@ -77,7 +77,7 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
                         int i = 0;
 
                         for (T entry : value()) {
-                            String entryStr = StringUtils.readable(itemToString(entry), Config.get().coreSettings);
+                            String entryStr = StringUtils.readable(itemToString(entry));
                             String lowerFilter = textFilter.get().toLowerCase();
 
                             if (textFilter.isEmpty() || entryStr.toLowerCase().contains(lowerFilter)) {
@@ -134,7 +134,7 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
                                 continue;
                             }
 
-                            String nameStr = StringUtils.readable(itemToString(value), Config.get().coreSettings);
+                            String nameStr = StringUtils.readable(itemToString(value));
 
                             if (isFilterEmpty || nameStr.toLowerCase().contains(lowerFilter)) {
                                 if (ImGui.selectable(nameStr)) {

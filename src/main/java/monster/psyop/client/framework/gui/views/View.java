@@ -13,7 +13,7 @@ public abstract class View {
 
     public String displayName() {
         if (readableName == null) {
-            readableName = StringUtils.readable(name(), Config.get().coreSettings);
+            readableName = StringUtils.readable(name());
         }
 
         String name = readableName;

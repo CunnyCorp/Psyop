@@ -6,7 +6,6 @@ import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.gui.Gui;
 import monster.psyop.client.framework.gui.utility.ColoredText;
 import monster.psyop.client.framework.gui.views.ViewHandler;
-import monster.psyop.client.framework.gui.views.client.ConfigView;
 import monster.psyop.client.framework.gui.views.client.ModuleConfigView;
 import monster.psyop.client.framework.gui.views.client.ModulesView;
 import monster.psyop.client.framework.gui.views.features.BookEditorView;
@@ -16,8 +15,12 @@ import monster.psyop.client.framework.gui.views.features.TrollingView;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.impl.eggs.EggLoader;
+import monster.psyop.client.impl.modules.chat.AutoGroom;
 import monster.psyop.client.impl.modules.chat.BetterChat;
 import monster.psyop.client.impl.modules.chat.Spammer;
+import monster.psyop.client.impl.modules.client.AntiCheatModule;
+import monster.psyop.client.impl.modules.client.ConfigModule;
+import monster.psyop.client.impl.modules.client.RenderTweaks;
 import monster.psyop.client.impl.modules.combat.*;
 import monster.psyop.client.impl.modules.exploits.*;
 import monster.psyop.client.impl.modules.hud.*;
@@ -65,10 +68,7 @@ public class Psyop implements ModInitializer {
         GUI.launch();
 
         PacketUtils.load();
-
-
-        McDataCache.init();
-
+        McDataCache.load();
         WorldUtils.load();
     }
 
@@ -96,7 +96,7 @@ public class Psyop implements ModInitializer {
     }
 
     public static void debug(String str, Object... args) {
-        if (!DEBUGGING) {
+        if (!DEBUGGING && !ConfigModule.isDebugging()) {
             return;
         }
 
@@ -117,12 +117,10 @@ public class Psyop implements ModInitializer {
 
         INSTANCE = this;
 
-        FriendManager.init();
-
+        FriendManager.load();
         new StringUtils();
 
         MC = Minecraft.getInstance();
-
         CONFIG = new Config();
         CONFIG.load();
 
@@ -154,7 +152,6 @@ public class Psyop implements ModInitializer {
 
 
         // Views
-        new ConfigView().load();
         new ModulesView().load();
         new ModuleConfigView().load();
         new ClientLogView().load();
@@ -163,6 +160,7 @@ public class Psyop implements ModInitializer {
         new TrollingView().load();
 
         // Chat
+        new AutoGroom().load();
         new BetterChat().load();
         new Spammer().load();
 
@@ -172,7 +170,6 @@ public class Psyop implements ModInitializer {
         new AutoElytraSwap().load();
         new AutoPhase().load();
         new KillAura().load();
-        new Surround().load();
 
         // Exploits
         new FastSwap().load();
@@ -194,12 +191,14 @@ public class Psyop implements ModInitializer {
         new TargetHUD().load();
 
         // Misc
+        new AntiNarrator().load();
         new BrandSpoof().load();
         new DetachMouse().load();
         new DiscordRPC().load();
         new Friends().load();
         new InventoryPanel().load();
         new NoMiss().load();
+        new NoSwing().load();
         new PingSpoof().load();
         new Rotation().load();
         new UseControl().load();
@@ -219,39 +218,32 @@ public class Psyop implements ModInitializer {
         new AntiPush().load();
         new AutoWalk().load();
         new ElytraPause().load();
+        new Glide().load();
         new GrimBunnyHop().load();
         new Jumping().load();
         new LagbackDetector().load();
+        new NoSlow().load();
         new Phase().load();
-        new Sneak().load();
-        new GrimBunnyHop().load();
         new PlayerTimer().load();
-        new SillyBot().load();
         new Sneak().load();
         new SpinBot().load();
         new Sprint().load();
+        new Speed().load();
 
         // Render
         new BetterTab().load();
         new BlockLights().load();
         new BoxESP().load();
         new Chams().load();
-        new SphereESP().load();
         new HandView().load();
         new HideArmor().load();
         new HitTrack().load();
         new ItemESP().load();
         new ItemView().load();
-        new WorldView().load();
-        new StorageESP().load();
-        new Ripples().load();
-        new BetterTab().load();
-        new Trail().load();
         new NoRender().load();
         new ParticleEngine().load();
         new PopESP().load();
         new PumpkinSpoof().load();
-        new RenderTweaks().load();
         new Ripples().load();
         new SphereESP().load();
         new StorageESP().load();
@@ -265,7 +257,7 @@ public class Psyop implements ModInitializer {
 
         // World
         if (Dependencies.LITEMATICA.isLoaded()) {
-            if (Dependencies.BARITONE.isLoaded()) {
+            if (Dependencies.BARITONE.isLoaded() || Dependencies.BARITONE_METEOR.isLoaded()) {
                 new Printer().load();
                 new SkyRefill().load();
             }
@@ -276,6 +268,11 @@ public class Psyop implements ModInitializer {
         new FastBreak().load();
         new Scaffold().load();
         new SignFucker().load();
+
+        // Client
+        new AntiCheatModule().load();
+        new ConfigModule().load();
+        new RenderTweaks().load();
 
         EggLoader.loadEggs();
 

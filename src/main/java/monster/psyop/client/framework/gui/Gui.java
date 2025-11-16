@@ -20,6 +20,8 @@ import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.OnGuiRender;
 import monster.psyop.client.impl.events.game.OnKeyInput;
 import monster.psyop.client.impl.events.game.OnMouseClick;
+import monster.psyop.client.impl.modules.client.ConfigModule;
+import monster.psyop.client.impl.modules.client.RenderTweaks;
 import monster.psyop.client.utility.PathIndex;
 import org.lwjgl.opengl.GL11;
 
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static monster.psyop.client.Psyop.MC;
+import static monster.psyop.client.Psyop.MODULES;
 
 public class Gui extends RenderProxy {
     public static ImBoolean IS_LOADED = new ImBoolean(false);
@@ -76,7 +79,7 @@ public class Gui extends RenderProxy {
             return;
         }
 
-        if (event.key == Config.get().coreSettings.guiBind.get()) {
+        if (event.key == ConfigModule.INSTANCE.openGui.get().get()) {
             IS_LOADED.set(!IS_LOADED.get());
             if (Config.get() != null) {
                 Config.get().save();
@@ -138,7 +141,7 @@ public class Gui extends RenderProxy {
     public void process() {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
-        if (WATERMARK_ID != -1 && WATERMARK_ORIGINAL_WIDTH > 0 && WATERMARK_ORIGINAL_HEIGHT > 0) {
+        if (RenderTweaks.INSTANCE.showWatermark.get() && WATERMARK_ID != -1 && WATERMARK_ORIGINAL_WIDTH > 0 && WATERMARK_ORIGINAL_HEIGHT > 0) {
             float scaledWidth = WATERMARK_ORIGINAL_WIDTH * WATERMARK_SCALE;
             float scaledHeight = WATERMARK_ORIGINAL_HEIGHT * WATERMARK_SCALE;
             float padding = 10f;
@@ -260,25 +263,21 @@ public class Gui extends RenderProxy {
             float bgWidth = Math.max(minWidth, textSize.x + padding * 2);
             float bgHeight = textSize.y + padding * 2;
 
-            // Draw background first
             drawBackground(bgX, bgY, bgX + bgWidth, bgY + bgHeight);
         }
 
-        // Draw the text
         drawList.addText(x, y, ImGui.getColorU32(ImGuiCol.Text), text);
     }
 
     public void drawString(String text, float x, float y, ImColorW color) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
-        // Draw the text
         drawList.addText(x, y, color.packed(), text);
     }
 
     public void drawString(String text, float x, float y, int color) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
-        // Draw the text
         drawList.addText(x, y, color, text);
     }
 

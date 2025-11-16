@@ -77,7 +77,7 @@ public class InventoryPanel extends HUD {
 
     @Override
     public void update() {
-        if (MC.player.containerMenu.getType() == MenuType.CRAFTING) {
+        if (MC.player.containerMenu.menuType == null) {
             dump = false;
             steal = false;
             return;

@@ -22,7 +22,7 @@ public class ArrayHUD extends HUD {
     public ColorSetting textColor =
             new ColorSetting.Builder()
                     .name("text-color")
-                    .defaultTo(new float[]{0.90f, 0.90f, 0.95f, 0.95f})
+                    .defaultTo(new float[]{0.020f, 0.812f, 0.949f, 1.0f})
                     .addTo(coreGroup);
 
     private final List<String> labels = new ArrayList<>();

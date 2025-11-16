@@ -2,7 +2,7 @@ package monster.psyop.client.mixin;
 
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnVGuiRender;
-import monster.psyop.client.impl.modules.render.RenderTweaks;
+import monster.psyop.client.impl.modules.client.RenderTweaks;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;

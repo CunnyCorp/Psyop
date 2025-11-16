@@ -91,7 +91,7 @@ public class BookEditorView extends View {
 
                 if (config.title.modifier != BookModifier.NONE) {
                     ImGui.pushStyleColor(ImGuiCol.Text, 0.85f, 0.35f, 0.75f, 1.0f);
-                    ImGui.textWrapped("Active Modification: " + StringUtils.readable(config.title.modifier.name(), Config.get().coreSettings));
+                    ImGui.textWrapped("Active Modification: " + StringUtils.readable(config.title.modifier.name()));
                     ImGui.popStyleColor();
                 }
 
@@ -146,7 +146,7 @@ public class BookEditorView extends View {
 
                 if (config.pages.modifier != BookModifier.NONE) {
                     ImGui.pushStyleColor(ImGuiCol.Text, 0.85f, 0.35f, 0.75f, 1.0f);
-                    ImGui.textWrapped("Active Modification: " + StringUtils.readable(config.pages.modifier.name(), Config.get().coreSettings));
+                    ImGui.textWrapped("Active Modification: " + StringUtils.readable(config.pages.modifier.name()));
                     ImGui.popStyleColor();
                 }
 

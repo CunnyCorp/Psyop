@@ -37,17 +37,17 @@ public class BetterTab extends Module {
     public ColorSetting defaultColor = new ColorSetting.Builder()
             .name("default-color")
             .description("The color for everyone else.")
-            .defaultTo(new float[]{1.0f, 0.5f, 1.0f, 1.0f})
+            .defaultTo(new float[]{0.906f, 0.639f, 0.906f, 1.0f})
             .addTo(coreGroup);
     public ColorSetting friendColor = new ColorSetting.Builder()
             .name("friend-color")
             .description("The color for friends.")
-            .defaultTo(new float[]{1.0f, 0.3f, 1.0f, 1.0f})
+            .defaultTo(new float[]{0.498f, 0.949f, 0.949f, 1.0f})
             .addTo(coreGroup);
     public ColorSetting selfColor = new ColorSetting.Builder()
             .name("self-color")
             .description("The color for yourself.")
-            .defaultTo(new float[]{1.0f, 0.23f, 1.0f, 1.0f})
+            .defaultTo(new float[]{1.0f, 0.231f, 1.0f, 1.0f})
             .addTo(coreGroup);
     public ColorSetting customColor = new ColorSetting.Builder()
             .name("custom-color")

@@ -45,7 +45,7 @@ public abstract class ProvidedObjectSetting<S, T> extends Setting<S, T> {
 
         ImGui.spacing();
 
-        ImGui.text("Current: " + StringUtils.readable(itemToString(value()), Config.get().coreSettings));
+        ImGui.text("Current: " + StringUtils.readable(itemToString(value())));
 
         ImGui.spacing();
 
@@ -67,7 +67,7 @@ public abstract class ProvidedObjectSetting<S, T> extends Setting<S, T> {
                         continue;
                     }
 
-                    String nameStr = StringUtils.readable(itemToString(suggestion), Config.get().coreSettings);
+                    String nameStr = StringUtils.readable(itemToString(suggestion));
 
                     if (isFilterEmpty || nameStr.toLowerCase().contains(lowerFilter)) {
                         if (ImGui.selectable(nameStr)) {

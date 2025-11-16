@@ -66,18 +66,18 @@ public class PlayerTabOverlayMixin {
             BetterTab module = Psyop.MODULES.get(BetterTab.class);
 
             if (component.getString().equals(MC.player.getScoreboardName())) {
-                MutableComponent customComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.packed(module.selfColor.get())).withBold(true));
+                MutableComponent customComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.toInt(module.selfColor.get())).withBold(true));
                 instance.drawString(font, customComponent, i, j, k);
                 return;
             }
 
             if (FriendManager.roles.containsKey(component.getString())) {
-                MutableComponent friendComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.packed(Psyop.MODULES.get(BetterTab.class).friendColor.get())).withBold(true));
+                MutableComponent friendComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.toInt(Psyop.MODULES.get(BetterTab.class).friendColor.get())).withBold(true));
                 instance.drawString(font, friendComponent, i, j, k);
                 return;
             }
 
-            MutableComponent customComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.packed(module.defaultColor.get())));
+            MutableComponent customComponent = Component.literal(component.getString()).withStyle(Style.EMPTY.withColor(ImColorW.toInt(module.defaultColor.get())));
             instance.drawString(font, customComponent, i, j, k);
             return;
         }
@@ -88,7 +88,7 @@ public class PlayerTabOverlayMixin {
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;getBackgroundColor(I)I"))
     public int getBackgroundColor(Options instance, int i) {
         if (Psyop.MODULES.isActive(BetterTab.class)) {
-            return ImColorW.packed(Psyop.MODULES.get(BetterTab.class).customColor.get());
+            return ImColorW.toInt(Psyop.MODULES.get(BetterTab.class).customColor.get());
         }
 
         return instance.getBackgroundColor(i);
@@ -97,7 +97,7 @@ public class PlayerTabOverlayMixin {
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"))
     public void getBackgroundColor(GuiGraphics instance, int i, int j, int k, int l, int m) {
         if (Psyop.MODULES.isActive(BetterTab.class)) {
-            instance.fill(i, j, k, l, ImColorW.packed(Psyop.MODULES.get(BetterTab.class).customColor2.get()));
+            instance.fill(i, j, k, l, ImColorW.toInt(Psyop.MODULES.get(BetterTab.class).customColor2.get()));
             return;
         }
 
@@ -109,7 +109,7 @@ public class PlayerTabOverlayMixin {
         if (Psyop.MODULES.isActive(BetterTab.class)) {
             BetterTab module = Psyop.MODULES.get(BetterTab.class);
             if (module.ping.get()) {
-                MutableComponent latencyComponent = Component.literal(playerInfo.getLatency() + "").withStyle(Style.EMPTY.withBold(true).withColor(ImColorW.packed(module.pingColor.get())));
+                MutableComponent latencyComponent = Component.literal(playerInfo.getLatency() + "").withStyle(Style.EMPTY.withBold(true).withColor(ImColorW.toInt(module.pingColor.get())));
 
                 int baseX = j + i + module.xOffset.get();
                 int baseY = k + module.yOffset.get();

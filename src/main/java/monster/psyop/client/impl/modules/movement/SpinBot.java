@@ -49,18 +49,6 @@ public class SpinBot extends Module {
             .visible(v -> randomizePitch.get())
             .addTo(rotationGroup);
 
-    public final GroupedSettings activationGroup = addGroup(new GroupedSettings("activation", "When to activate SpinBot."));
-    public final BoolSetting onlyWhenAttacking = new BoolSetting.Builder()
-            .name("only-when-attacking")
-            .description("Only activate when attacking an entity.")
-            .defaultTo(false)
-            .addTo(activationGroup);
-    public final BoolSetting requireTarget = new BoolSetting.Builder()
-            .name("require-target")
-            .description("Only activate when a valid target is in range.")
-            .defaultTo(true)
-            .addTo(activationGroup);
-
     public final GroupedSettings delayGroup = addGroup(new GroupedSettings("delay", "SpinBot delay settings."));
     public final IntSetting tickDelay = new IntSetting.Builder()
             .name("tick-delay")
@@ -127,27 +115,13 @@ public class SpinBot extends Module {
     }
 
     private boolean shouldActivate() {
-        if (isHoldingUsable(InteractionHand.MAIN_HAND) || isHoldingUsable(InteractionHand.OFF_HAND)) {
-            return false;
-        }
-
-        if (onlyWhenAttacking.get() && !WorldUtils.isLookingAt(HitResult.Type.ENTITY)) {
-            return false;
-        }
-
-        if (requireTarget.get()) {
-            if (!hasValidTarget()) {
-                return false;
-            }
-        }
-
-        return true;
+        return isntHoldingUsable(InteractionHand.MAIN_HAND) || isntHoldingUsable(InteractionHand.OFF_HAND);
     }
 
-    private boolean isHoldingUsable(InteractionHand hand) {
+    private boolean isntHoldingUsable(InteractionHand hand) {
         ItemStack item = MC.player.getItemInHand(hand);
 
-        return item != null && item.getComponents().has(DataComponents.CONSUMABLE) || isUsable(item.getItem());
+        return !item.getComponents().has(DataComponents.CONSUMABLE) && !isUsable(item.getItem());
     }
 
     private boolean isUsable(Item item) {
@@ -190,15 +164,14 @@ public class SpinBot extends Module {
     }
 
     private InteractionHand determineHandToUse() {
-        if (!isHoldingUsable(InteractionHand.MAIN_HAND)) {
+        if (isntHoldingUsable(InteractionHand.MAIN_HAND)) {
             return InteractionHand.MAIN_HAND;
         }
 
-        if (!isHoldingUsable(InteractionHand.OFF_HAND)) {
+        if (isntHoldingUsable(InteractionHand.OFF_HAND)) {
             return InteractionHand.OFF_HAND;
         }
 
-        // Default to main hand if both have food (shouldn't happen due to activation check)
         return InteractionHand.MAIN_HAND;
     }
 }

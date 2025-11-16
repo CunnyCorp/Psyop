@@ -226,7 +226,7 @@ public class Ripples extends Module {
                 float cy = (float) (tp.pos.y - camY) + 0.05f;
                 float cz = (float) (tp.pos.z - camZ);
 
-                drawCircle(event.quads, pose, cx, cy, cz, baseRadius, circleSegments.get(), c[0], c[1], c[2], c[3] * ageMul);
+                drawCircle(event.lines, pose, cx, cy, cz, baseRadius, circleSegments.get(), c[0], c[1], c[2], c[3] * ageMul);
 
                 if (glow.get()) {
                     int steps = Math.max(1, glowSteps.get());
@@ -243,7 +243,7 @@ public class Ripples extends Module {
                         float r = baseRadius + f * width;
                         float a = baseA * (1.0f - f) * pulse;
                         if (a <= 0.001f) continue;
-                        drawCircle(event.quads, pose, cx, cy, cz, r, circleSegments.get(), c[0], c[1], c[2], a);
+                        drawCircle(event.lines, pose, cx, cy, cz, r, circleSegments.get(), c[0], c[1], c[2], a);
                     }
                 }
             }

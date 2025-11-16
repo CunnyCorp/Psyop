@@ -3,6 +3,7 @@ package monster.psyop.client.mixin;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnScreen;
 import monster.psyop.client.impl.events.game.OnTick;
+import monster.psyop.client.impl.modules.client.ConfigModule;
 import monster.psyop.client.impl.modules.misc.NoMiss;
 import monster.psyop.client.impl.modules.player.AutoEat;
 import net.minecraft.client.KeyMapping;
@@ -11,7 +12,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,8 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Minecraft.class, priority = 777)
 public class MinecraftMixin {
-    @Shadow
-    protected int missTime;
     @Unique
     private double lastUse = 0;
 
@@ -61,7 +59,7 @@ public class MinecraftMixin {
             Psyop.GUI.renderFrame();
             double currentUse = Math.abs(System.currentTimeMillis() / 1000);
             if (currentUse != lastUse) {
-                if (Psyop.DEBUGGING) System.out.println("Still trying to render frame.");
+                if (Psyop.DEBUGGING || ConfigModule.isDebugging()) System.out.println("Still trying to render frame.");
                 lastUse = currentUse;
             }
         }

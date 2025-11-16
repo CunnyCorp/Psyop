@@ -48,12 +48,12 @@ public abstract class ObjectListSetting<S, T> extends Setting<S, ArrayList<T>> {
             for (T entry : value()) {
                 i++;
                 if (textFilter.isEmpty()
-                        || StringUtils.readable(itemToString(entry), Config.get().coreSettings)
+                        || StringUtils.readable(itemToString(entry))
                         .toLowerCase()
                         .contains(textFilter.get().toLowerCase())) {
                     ImGui.tableNextColumn();
 
-                    ImGui.text(StringUtils.readable(itemToString(entry), Config.get().coreSettings));
+                    ImGui.text(StringUtils.readable(itemToString(entry)));
 
                     ImGui.tableNextColumn();
                     if (ImGui.button("Remove##" + i + "_" + name)) {
@@ -71,12 +71,10 @@ public abstract class ObjectListSetting<S, T> extends Setting<S, ArrayList<T>> {
 
         ImGui.endChild();
 
-        // Filter input with clear button
         ImGui.text("Filter:");
         ImGui.sameLine();
         float filterWidth = ImGui.getContentRegionAvail().x - 60;
         ImGui.setNextItemWidth(filterWidth);
-        String hint = getSuggestions().stream().findFirst().map(this::itemToString).orElse("");
         ImGui.inputTextWithHint("##filter_" + name, "Type to filter...", textFilter, ImGuiInputTextFlags.CallbackResize);
 
         ImGui.sameLine();
@@ -86,11 +84,9 @@ public abstract class ObjectListSetting<S, T> extends Setting<S, ArrayList<T>> {
 
         ImGui.spacing();
 
-        // Suggestions section
         ImGui.text("Add new item:");
 
         if (getSuggestions() != null && !getSuggestions().isEmpty()) {
-            // Show suggestions dropdown button
             if (ImGui.button("Show Suggestions##" + name)) {
                 showSuggestions = !showSuggestions;
             }
@@ -106,7 +102,7 @@ public abstract class ObjectListSetting<S, T> extends Setting<S, ArrayList<T>> {
                         continue;
                     }
 
-                    String nameStr = StringUtils.readable(itemToString(value), Config.get().coreSettings);
+                    String nameStr = StringUtils.readable(itemToString(value));
 
                     if (isFilterEmpty || nameStr.toLowerCase().contains(lowerFilter)) {
                         if (ImGui.selectable(nameStr)) {
@@ -115,7 +111,6 @@ public abstract class ObjectListSetting<S, T> extends Setting<S, ArrayList<T>> {
                             }
                         }
 
-                        // Tooltip with more info if available
                         if (ImGui.isItemHovered()) {
                             ImGui.beginTooltip();
                             ImGui.text("Click to add: " + nameStr);
@@ -127,7 +122,6 @@ public abstract class ObjectListSetting<S, T> extends Setting<S, ArrayList<T>> {
                 ImGui.endChild();
             }
         } else {
-            // Manual input option
             ImGui.inputText("Item name", textFilter, ImGuiInputTextFlags.CallbackResize);
             ImGui.sameLine();
             if (ImGui.button("Add") && !textFilter.isEmpty()) {

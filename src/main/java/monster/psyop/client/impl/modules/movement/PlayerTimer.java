@@ -33,4 +33,9 @@ public class PlayerTimer extends Module {
             lastBurst--;
         }
     }
+
+    @Override
+    public AntiCheat getAntiCheat() {
+        return AntiCheat.Fraze_Grim;
+    }
 }

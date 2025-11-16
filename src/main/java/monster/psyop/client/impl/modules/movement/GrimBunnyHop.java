@@ -85,7 +85,6 @@ public class GrimBunnyHop extends Module {
             .range(9, 1200)
             .addTo(coreGroup);
 
-
     public int phantom = 0;
     private int ticks = 0;
     private boolean forwardPressed = false;
@@ -132,5 +131,10 @@ public class GrimBunnyHop extends Module {
             MC.options.keyUp.setDown(forwardPressed);
             MC.options.keyJump.setDown(jumpPressed);
         }
+    }
+
+    @Override
+    public AntiCheat getAntiCheat() {
+        return AntiCheat.Fraze_Grim;
     }
 }

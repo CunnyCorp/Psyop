@@ -17,13 +17,8 @@ public class ItemView extends Module {
             .addTo(coreGroup);
     public ColorSetting itemColor = new ColorSetting.Builder()
             .name("item-color")
-            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.6f})
+            .defaultTo(new float[]{0.298f, 0.902f, 0.871f, 0.6f})
             .visible((v) -> modifyItemColor.get())
-            .addTo(coreGroup);
-    public ProvidedStringSetting bufferModifier = new ProvidedStringSetting.Builder()
-            .suggestions(List.of(new ImString("quads"), new ImString("lines"), new ImString("item"), new ImString("none")))
-            .name("buffer-modifier")
-            .defaultTo(new ImString("quads"))
             .addTo(coreGroup);
 
     public ItemView() {

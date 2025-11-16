@@ -20,18 +20,20 @@ import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.phys.Vec3;
 
 public class FastBreak extends Module {
+    public GroupedSettings renderGroup = addGroup(new GroupedSettings("Rendering", "Renders visual feedback."));
+
     public FloatSetting breakMultiplier = new FloatSetting.Builder()
             .name("break-multiplier")
-            .defaultTo(2.5f)
+            .defaultTo(1.450f)
             .range(0.1f, 10f)
             .addTo(coreGroup);
     public BoolSetting instant = new BoolSetting.Builder()
             .name("instant")
-            .defaultTo(false)
+            .defaultTo(true)
             .addTo(coreGroup);
     public BoolSetting repeat = new BoolSetting.Builder()
             .name("repeat")
-            .defaultTo(false)
+            .defaultTo(true)
             .visible(v -> instant.get())
             .addTo(coreGroup);
     public BoolSetting resetIfAir = new BoolSetting.Builder()
@@ -39,15 +41,15 @@ public class FastBreak extends Module {
             .defaultTo(false)
             .visible(v -> instant.get())
             .addTo(coreGroup);
-    public GroupedSettings renderGroup = addGroup(new GroupedSettings("Rendering", "Renders visual feedback."));
+
     public BoolSetting render = new BoolSetting.Builder()
             .name("render")
-            .defaultTo(false)
+            .defaultTo(true)
             .addTo(renderGroup);
-    public ColorSetting color = new ColorSetting.Builder()
+    public ColorSetting breakColor = new ColorSetting.Builder()
             .name("color")
             .defaultTo(new float[]{0.5f, 0.0f, 0.3f, 0.5f})
-            .addTo(coreGroup);
+            .addTo(renderGroup);
 
     public BlockPos blockPos = null;
     public Direction direction = Direction.UP;
@@ -81,9 +83,8 @@ public class FastBreak extends Module {
         if (blockPos != null && instant.get() && repeat.get()) {
             Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
 
-            Render3DUtil.drawBlockOutline(event.quads, pose, blockPos, cam, 0f, color.get());
-            Render3DUtil.drawBlockInner(event.quads, pose, blockPos, cam, 0f, color.get());
-
+            Render3DUtil.drawBlockInner(event.quads, pose, blockPos, cam, 0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
+            Render3DUtil.drawBlockOutline(event.lines, pose, blockPos, cam, 0f, breakColor.get()[0], breakColor.get()[1], breakColor.get()[2], breakColor.get()[3]);
         }
     }
 

@@ -27,7 +27,7 @@ public class Setting<S, T> {
         }
         this.defaultValue = builder.defaultValue;
         this.label =
-                Objects.requireNonNullElseGet(builder.label, () -> StringUtils.readable(this.name, Config.get().coreSettings));
+                Objects.requireNonNullElseGet(builder.label, () -> StringUtils.readable(this.name));
         if (builder.visible != null) {
             this.visible = (Predicate<S>) builder.visible;
         }
@@ -50,7 +50,7 @@ public class Setting<S, T> {
     }
 
     public String label() {
-        return StringUtils.readable(label, Config.get().coreSettings);
+        return StringUtils.readable(label);
     }
 
     public String label(String value) {

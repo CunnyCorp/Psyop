@@ -9,7 +9,8 @@ import java.util.ArrayList;
 public class Dependencies {
     public static final ArrayList<Dependency> EMPTY = new ArrayList<>();
     public static Dependency LITEMATICA = new Dependency("litematica");
-    public static Dependency BARITONE = new Dependency("baritone-meteor");
+    public static Dependency BARITONE_METEOR = new Dependency("baritone-meteor");
+    public static Dependency BARITONE = new Dependency("baritone");
     public static Dependency VFP = new Dependency("viafabricplus");
 
     @Retention(RetentionPolicy.RUNTIME)

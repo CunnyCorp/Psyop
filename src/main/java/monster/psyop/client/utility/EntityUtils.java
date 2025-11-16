@@ -2,6 +2,7 @@ package monster.psyop.client.utility;
 
 import lombok.Getter;
 import monster.psyop.client.utility.blocks.BlockUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -30,6 +32,40 @@ public class EntityUtils {
     public static float getActualHealth() {
         assert MC.player != null;
         return MC.player.getHealth() + MC.player.getAbsorptionAmount();
+    }
+
+    public static boolean isPhased(LivingEntity entity) {
+        BlockPos.MutableBlockPos mutableBlockPos = entity.blockPosition().mutable();
+
+        if (BlockUtils.isNotAir(mutableBlockPos) && entity.isColliding(mutableBlockPos, BlockUtils.getState(mutableBlockPos))) {
+            return true;
+        }
+
+        for (Direction dir : EntityUtils.horizontals) {
+            mutableBlockPos.set(entity.blockPosition().getX() + dir.getStepX(), entity.blockPosition().getY(), entity.blockPosition().getZ() + dir.getStepZ());
+            if (BlockUtils.isAir(mutableBlockPos)) continue;
+            if (entity.isColliding(mutableBlockPos, BlockUtils.getState(mutableBlockPos))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Why do we even need this????
+    public static boolean isWithinRange(Entity entity, int sampleCount) {
+        Vec3 vec3 = entity.position();
+
+        for (float i = 0; i < entity.getBbHeight(); i += entity.getBbHeight() / sampleCount) {
+            vec3.y = entity.position().y + i;
+            boolean withinRange = MC.player.getEyePosition().distanceTo(vec3) <= MC.player.entityInteractionRange();
+
+            if (withinRange) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

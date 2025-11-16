@@ -5,6 +5,7 @@ import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Dependencies;
 import monster.psyop.client.impl.events.game.OnPacket;
 import monster.psyop.client.impl.events.game.OnTick;
+import monster.psyop.client.impl.modules.misc.NoSwing;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
@@ -79,7 +80,7 @@ public class PacketUtils {
     }
 
     public static void send(Connection connection, Packet<?> packet) {
-        if (NO_SWING && packet instanceof ServerboundSwingPacket) {
+        if (Psyop.MODULES.get(NoSwing.class).active.get() && packet instanceof ServerboundSwingPacket) {
             return;
         }
 

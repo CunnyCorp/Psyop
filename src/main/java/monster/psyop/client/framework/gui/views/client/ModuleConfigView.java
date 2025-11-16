@@ -90,7 +90,7 @@ public class ModuleConfigView extends View {
                 || (module.getGroupedSettings().size() == 1
                 && !module.getGroupedSettings().get(0).get().hasNext())) return;
 
-        String windowTitle = StringUtils.readable(module.name, Config.get().coreSettings) + " Settings";
+        String windowTitle = StringUtils.readable(module.name) + " Settings";
         if (ImGui.begin(windowTitle, state())) {
             if (settings.hasLoaded) {
                 ImGui.setWindowSize(settings.width, settings.height, ImGuiCond.Once);

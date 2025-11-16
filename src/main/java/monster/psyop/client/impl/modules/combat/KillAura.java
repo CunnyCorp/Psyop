@@ -11,6 +11,7 @@ import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
+import monster.psyop.client.utility.EntityUtils;
 import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
 import net.minecraft.core.component.DataComponents;
@@ -28,17 +29,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class KillAura extends Module {
-    public final BoolSetting shouldGlow =
-            new BoolSetting.Builder()
-                    .name("should-glow")
-                    .description("Makes the target entity glow.")
-                    .defaultTo(true)
-                    .addTo(coreGroup);
-    public ColorSetting glowColor =
-            new ColorSetting.Builder()
-                    .name("glow-color")
-                    .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
-                    .addTo(coreGroup);
+    public final BoolSetting shouldGlow = new BoolSetting.Builder()
+            .name("should-glow")
+            .description("Makes the target entity glow.")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    public ColorSetting glowColor = new ColorSetting.Builder()
+            .name("glow-color")
+            .defaultTo(new float[]{0.00f, 0.75f, 0.75f, 1.0f})
+            .addTo(coreGroup);
     public FloatSetting circleRadius = new FloatSetting.Builder()
             .name("circle-radius")
             .defaultTo(0.5f).range(0.1f, 1.5f)
@@ -52,64 +51,45 @@ public class KillAura extends Module {
             .defaultTo(false)
             .addTo(coreGroup);
     public final GroupedSettings switchGroup = addGroup(new GroupedSettings("auto-switch", "Automatically switch to weapons."));
-    public final BoolSetting autoSwitch =
-            new BoolSetting.Builder()
-                    .name("auto-switch")
-                    .description("Automatically switch to weapons.")
-                    .defaultTo(true)
-                    .addTo(switchGroup);
-    public final IntSetting dedicatedSlot =
-            new IntSetting.Builder()
-                    .name("dedicated-slot")
-                    .description("Slot for weapons!")
-                    .defaultTo(0)
-                    .range(0, 8)
-                    .addTo(switchGroup);
-    public ItemListSetting weapons =
-            new ItemListSetting.Builder()
-                    .name("weapons")
-                    .description("Weapons to switch to.")
-                    .defaultTo(List.of(Items.DIAMOND_SWORD, Items.NETHERITE_SWORD))
-                    .filter((v) -> v.getDefaultInstance().has(DataComponents.WEAPON))
-                    .addTo(switchGroup);
-    public final IntSetting timeout =
-            new IntSetting.Builder()
-                    .name("timeout")
-                    .description("Timeout for KillAura after switching.")
-                    .defaultTo(2)
-                    .range(0, 10)
-                    .addTo(switchGroup);
+    public final BoolSetting autoSwitch = new BoolSetting.Builder()
+            .name("auto-switch")
+            .description("Automatically switch to weapons.")
+            .defaultTo(true)
+            .addTo(switchGroup);
+    public final IntSetting dedicatedSlot = new IntSetting.Builder()
+            .name("dedicated-slot")
+            .description("Slot for weapons!")
+            .defaultTo(0)
+            .range(0, 8)
+            .addTo(switchGroup);
+    public ItemListSetting weapons = new ItemListSetting.Builder()
+            .name("weapons")
+            .description("Weapons to switch to.")
+            .defaultTo(List.of(Items.DIAMOND_SWORD, Items.NETHERITE_SWORD))
+            .filter((v) -> v.getDefaultInstance().has(DataComponents.WEAPON))
+            .addTo(switchGroup);
+    public final IntSetting timeout = new IntSetting.Builder()
+            .name("timeout")
+            .description("Timeout for KillAura after switching.")
+            .defaultTo(2)
+            .range(0, 10)
+            .addTo(switchGroup);
     public final GroupedSettings checksGroup = addGroup(new GroupedSettings("checks", "Checks to run on entities before attacking."));
-    public final EntityListSetting entityTypes =
-            new EntityListSetting.Builder()
-                    .name("entity-types")
-                    .description("The types of entities to attack.")
-                    .defaultTo(List.of(EntityType.PLAYER))
-                    .addTo(checksGroup);
-    public final BoolSetting noCustomNames =
-            new BoolSetting.Builder()
-                    .name("no-named")
-                    .description("Don't attack entities with custom names.")
-                    .defaultTo(false)
-                    .addTo(checksGroup);
-    public final BoolSetting visibleCheck =
-            new BoolSetting.Builder()
-                    .name("is-visible")
-                    .description("Makes sure a entity is visible before attacking.")
-                    .defaultTo(true)
-                    .addTo(checksGroup);
-    public final BoolSetting attackCheck =
-            new BoolSetting.Builder()
-                    .name("can-attack")
-                    .description("Makes sure a entity can be attacked before attacking.")
-                    .defaultTo(true)
-                    .addTo(checksGroup);
-    public final BoolSetting healthCheck =
-            new BoolSetting.Builder()
-                    .name("healthy")
-                    .description("Makes sure a entity is healthy before attacking.")
-                    .defaultTo(true)
-                    .addTo(checksGroup);
+    public final EntityListSetting entityTypes = new EntityListSetting.Builder()
+            .name("entity-types")
+            .description("The types of entities to attack.")
+            .defaultTo(List.of(EntityType.PLAYER))
+            .addTo(checksGroup);
+    public final BoolSetting noCustomNames = new BoolSetting.Builder()
+            .name("no-named")
+            .description("Don't attack entities with custom names.")
+            .defaultTo(false)
+            .addTo(checksGroup);
+    public final BoolSetting attackCheck = new BoolSetting.Builder()
+            .name("can-attack")
+            .description("Makes sure a entity can be attacked before attacking.")
+            .defaultTo(true)
+            .addTo(checksGroup);
 
     private int delay = 0;
     public Entity target = null;
@@ -219,15 +199,11 @@ public class KillAura extends Module {
                 continue;
             }
 
-            if (MC.player.getEyePosition().distanceTo(entity.position()) > MC.player.entityInteractionRange()) {
+            if (EntityUtils.isWithinRange(entity, 6)) {
                 continue;
             }
 
             if (attackCheck.get() && !entity.isAttackable()) {
-                continue;
-            }
-
-            if (visibleCheck.get() && (entity.isInvisible() || entity.isInvisibleTo(MC.player))) {
                 continue;
             }
 
@@ -238,7 +214,7 @@ public class KillAura extends Module {
                     continue;
                 }
 
-                if (healthCheck.get() && (living.getHealth() <= 0 || living.getMaxHealth() <= 0)) {
+                if (living.getHealth() <= 0 || living.getMaxHealth() <= 0) {
                     continue;
                 }
             }

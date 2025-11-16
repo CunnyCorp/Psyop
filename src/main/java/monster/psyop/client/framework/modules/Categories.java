@@ -13,5 +13,6 @@ public class Categories {
             HUD = INDEX[7] = new Category("HUD", "Displays HUD elements."),
             CHAT = INDEX[8] = new Category("Chat", "Modules that add to/tweak chat."),
             EXPLOITS = INDEX[9] = new Category("Exploits", "Exploits and Co"),
-            SILLY = INDEX[10] = new Category("Silly", "You probably shouldn't enable this.");
+            SILLY = INDEX[10] = new Category("Silly", "You probably shouldn't enable this."),
+            CLIENT = INDEX[11] = new Category("Client", "Internal Client Configuration.");
 }

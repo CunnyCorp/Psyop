@@ -9,7 +9,6 @@
     "ConnectionMixin",
     "EntityMixin",
     "FishingHookMixin",
-    "IClipContext",
     "LivingEntityMixin",
     "PlayerMixin",
     "ServerGamePacketListenerImplMixin"
@@ -24,23 +23,24 @@
     "EntityRendererMixin",
     "EquipmentLayerRendererMixin",
     "FogRendererMixin",
+    "GameNarratorMixin",
     "GameRendererMixin",
     "GuiMixin",
     "ItemInHandRendererMixin",
     "ItemRendererMixin",
-    "ItemStackRenderState$LayerRenderStateMixin",
     "KeyboardHandlerMixin",
     "LevelRendererMixin",
     "LightTextureMixin",
     "LivingEntityRendererMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
+    "ModelBlockRendererMixin",
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
+    "OptionsAccessor",
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
-    "TextFieldHelperMixin",
-    "OptionsAccessor"
+    "TextFieldHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

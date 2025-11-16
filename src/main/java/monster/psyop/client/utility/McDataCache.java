@@ -14,7 +14,7 @@ public class McDataCache {
     protected static ArrayList<Integer> MAP_COLOR_IDS = new ArrayList<>();
     protected static HashMap<String, Item> NAME_TO_ITEM = new HashMap<>();
 
-    public static void init() {
+    public static void load() {
         refresh();
     }
 

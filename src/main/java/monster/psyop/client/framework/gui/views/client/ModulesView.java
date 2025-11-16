@@ -205,6 +205,8 @@ public class ModulesView extends View {
 
             for (Category cat : Categories.INDEX) {
                 for (Module module : Psyop.MODULES.getModules(cat)) {
+                    if (!module.shouldRender()) continue;
+
                     boolean matchesNameSW = module.getLabel().toLowerCase().startsWith(st);
                     boolean matchesName = module.getLabel().toLowerCase().contains(st);
                     boolean matchesDescription = module.description() != null && module.description().toLowerCase().contains(st);
@@ -242,6 +244,8 @@ public class ModulesView extends View {
         }
 
         for (Module module : modules) {
+            if (!module.shouldRender()) continue;
+
             float moduleHover = moduleHoverAnimations.getOrDefault(module, 0f);
             float moduleActive = moduleActiveAnimations.getOrDefault(module, 0f);
             boolean isModuleHovered;
@@ -278,7 +282,7 @@ public class ModulesView extends View {
 
             String keybindText = KeyUtils.getTranslation(module.keybinding.value().get());
 
-            if (!keybindText.isEmpty()) {
+            if (!keybindText.isEmpty() && !keybindText.equals("none")) {
                 ImGui.textDisabled("[" + keybindText + "]");
                 ImGui.sameLine();
             }

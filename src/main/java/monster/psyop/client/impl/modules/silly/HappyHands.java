@@ -13,7 +13,6 @@ public class HappyHands extends Module {
     @Override
     public void update() {
         if (Psyop.RANDOM.nextInt(0, 12) >= 10) {
-            MC.player.swing(InteractionHand.MAIN_HAND, true);
             MC.player.swing(InteractionHand.OFF_HAND, true);
         }
     }

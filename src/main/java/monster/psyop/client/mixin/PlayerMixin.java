@@ -2,6 +2,7 @@ package monster.psyop.client.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import monster.psyop.client.Psyop;
+import monster.psyop.client.impl.modules.movement.Speed;
 import monster.psyop.client.impl.modules.player.Reach;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +27,24 @@ public class PlayerMixin {
             Reach module = Psyop.MODULES.get(Reach.class);
 
             return original + (double) module.entity.get();
+        }
+
+        return original;
+    }
+
+    @ModifyReturnValue(method = "getSpeed", at = @At("RETURN"))
+    public float getSpeed(float original) {
+        if (Psyop.MODULES.isActive(Speed.class)) {
+            Speed module = Psyop.MODULES.get(Speed.class);
+
+            if (module.attribute.get()) {
+                float speed = original;
+
+                speed += module.speedBase.get();
+                speed *= module.speedMulti.get();
+
+                return speed;
+            }
         }
 
         return original;

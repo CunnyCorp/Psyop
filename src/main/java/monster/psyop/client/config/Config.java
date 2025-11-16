@@ -19,7 +19,6 @@ import monster.psyop.client.config.sub.Placing;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.friends.RoleType;
 import monster.psyop.client.framework.gui.views.ViewHandler;
-import monster.psyop.client.framework.gui.views.client.ConfigView;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
@@ -61,7 +60,6 @@ public class Config {
                     .setPrettyPrinting()
                     .create();
     private static Config INSTANCE;
-    public Inventory inventory = new Inventory();
     public Placing placing = new Placing();
     public Map<String, PersistentGuiSettings> hudElements = new HashMap<>();
     public GuiSettings guiSettings = new GuiSettings();
@@ -69,14 +67,11 @@ public class Config {
     public ModuleConfigSettings moduleConfigSettings = new ModuleConfigSettings();
     public LogsSettings logsSettings = new LogsSettings();
     public PersistentGuiSettings modulesGui = new PersistentGuiSettings();
-    public PersistentGuiSettings hudGui = new PersistentGuiSettings();
-    public PersistentGuiSettings configGui = new PersistentGuiSettings();
     public PersistentGuiSettings logsGui = new PersistentGuiSettings();
     public PersistentGuiSettings trollingGui = new PersistentGuiSettings();
     public PersistentGuiSettings booksGui = new PersistentGuiSettings();
     public PersistentGuiSettings friendsManagerGui = new PersistentGuiSettings();
     public BookSettings bookSettings = new BookSettings();
-    public CoreConfig coreSettings = new CoreConfig();
     public Map<String, ModuleConfig> modules = new HashMap<>();
     public ObjectColor color = new ObjectColor("uwu", new float[]{0.4f, 0.3f, 0.2f, 1.0f});
 
@@ -137,8 +132,6 @@ public class Config {
 
         hudElements.clear();
 
-        ConfigView.populateConfig();
-
         try {
             String toJson = GSON.toJson(get());
 
@@ -197,14 +190,5 @@ public class Config {
         } else {
             Psyop.log("Module {} does not exist?", module.name);
         }
-    }
-
-    public static boolean chatFeedback() {
-        if (MC.player == null || MC.level == null) {
-            return false;
-        }
-
-        ViewHandler.get(ConfigView.class);
-        return ConfigView.chatFeedback.get();
     }
 }

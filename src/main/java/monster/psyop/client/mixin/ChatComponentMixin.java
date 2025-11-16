@@ -12,14 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ChatComponent.class, priority = 777)
 public class ChatComponentMixin {
-    /**
-     * @author ViaTi
-     * @reason Let's not log all of our chat locally, maybe.
-     */
-    @Overwrite
-    private void logChatMessage(GuiMessage guiMessage) {
-    }
-
     @Inject(method = "clearMessages", at = @At("HEAD"), cancellable = true)
     public void clearMessages(boolean bl, CallbackInfo ci) {
         if (Psyop.MODULES.isActive(BetterChat.class)) {

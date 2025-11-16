@@ -18,7 +18,7 @@ public class FriendManager {
     public static List<RoleType> roleTypes = new ArrayList<>();
     public static Map<String, PlayerRole> roles = new HashMap<>();
 
-    public static void init() {
+    public static void load() {
         loadRole(new Enemy());
         loadRole(new Neutral());
         loadRole(new Friend());

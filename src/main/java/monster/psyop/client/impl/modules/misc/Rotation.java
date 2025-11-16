@@ -8,6 +8,7 @@ import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
+import monster.psyop.client.impl.events.game.OnTick;
 import monster.psyop.client.utility.PacketUtils;
 import net.minecraft.network.protocol.game.ClientboundPlayerLookAtPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
@@ -30,6 +31,10 @@ public class Rotation extends Module {
             .name("reverse")
             .defaultTo(false)
             .addTo(spoofGroup);
+    public BoolSetting headBang = new BoolSetting.Builder()
+            .name("head-bang")
+            .defaultTo(false)
+            .addTo(spoofGroup);
     public BoolSetting random = new BoolSetting.Builder()
             .name("random")
             .defaultTo(false)
@@ -40,6 +45,7 @@ public class Rotation extends Module {
             .range(1, 10)
             .addTo(spoofGroup);
 
+    public boolean isUp = false;
 
     public Rotation() {
         super(Categories.MISC, "rotations", "Allows you to modify how you rotate.");
@@ -77,6 +83,16 @@ public class Rotation extends Module {
         if (updateFresh) {
             PacketUtils.send(new ServerboundMovePlayerPacket.Rot(MC.player.getYRot(), MC.player.getXRot(), MC.player.onGround(), MC.player.horizontalCollision));
         }
+    }
 
+    @EventListener(priority = 999999999)
+    public void onTickPre(OnTick.Pre event) {
+        if (headBang.get()) {
+            if (isUp) {
+                PacketUtils.rotate(90f, MC.player.getYRot(), true);
+            } else {
+                PacketUtils.rotate(-90f, MC.player.getYRot(), true);
+            }
+        }
     }
 }

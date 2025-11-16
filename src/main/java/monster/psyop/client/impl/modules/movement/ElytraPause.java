@@ -17,51 +17,42 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Items;
 
 public class ElytraPause extends Module {
-    private final BoolSetting liquidCheck =
-            new BoolSetting.Builder()
-                    .name("liquid-check")
-                    .description("Check if the player is in liquid.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    private final BoolSetting restoreDelta =
-            new BoolSetting.Builder()
-                    .name("restore-delta")
-                    .description("Re-apply delta movement.")
-                    .defaultTo(true)
-                    .addTo(coreGroup);
-    private final BoolSetting grimRotBypass =
-            new BoolSetting.Builder()
-                    .name("grim-rotation")
-                    .description("Grim is the most bypassable AC, actually.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    private final BoolSetting jitterBug =
-            new BoolSetting.Builder()
-                    .name("jitter-bug")
-                    .description("Makes you into a jitter bug.")
-                    .defaultTo(false)
-                    .addTo(coreGroup);
-    private final FloatSetting idleRate =
-            new FloatSetting.Builder()
-                    .name("idle-rate")
-                    .description("Elevation while idling.")
-                    .defaultTo(0)
-                    .range(-1, 1)
-                    .addTo(coreGroup);
-    private final KeybindingSetting controlKey =
-            new KeybindingSetting.Builder()
-                    .action(() -> {
-                    })
-                    .name("control-key")
-                    .description("The key to accelerate or stop depending on further configuration.")
-                    .defaultTo(new ImInt(KeyUtils.W))
-                    .addTo(coreGroup);
-    private final BoolSetting invertControlKey =
-            new BoolSetting.Builder()
-                    .name("invert-key")
-                    .description("If enabled makes the key stop you, off accelerates.")
-                    .defaultTo(true)
-                    .addTo(coreGroup);
+    private final BoolSetting liquidCheck = new BoolSetting.Builder()
+            .name("liquid-check")
+            .description("Check if the player is in liquid.")
+            .defaultTo(false)
+            .addTo(coreGroup);
+    private final BoolSetting restoreDelta = new BoolSetting.Builder()
+            .name("restore-delta")
+            .description("Re-apply delta movement.")
+            .defaultTo(false)
+            .addTo(coreGroup);
+    private final BoolSetting grimRotBypass = new BoolSetting.Builder()
+            .name("grim-rotation")
+            .description("Grim is the most bypassable AC, actually.")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    private final BoolSetting jitterBug = new BoolSetting.Builder()
+            .name("jitter-bug")
+            .description("Makes you into a jitter bug.")
+            .defaultTo(false)
+            .addTo(coreGroup);
+    private final FloatSetting idleRate = new FloatSetting.Builder()
+            .name("idle-rate")
+            .description("Elevation while idling.")
+            .defaultTo(0)
+            .range(-1, 1)
+            .addTo(coreGroup);
+    private final KeybindingSetting controlKey = new KeybindingSetting.Builder()
+            .name("control-key")
+            .description("The key to accelerate or stop depending on further configuration.")
+            .defaultTo(new ImInt(KeyUtils.W))
+            .addTo(coreGroup);
+    private final BoolSetting invertControlKey = new BoolSetting.Builder()
+            .name("invert-key")
+            .description("If enabled makes the key stop you, off accelerates.")
+            .defaultTo(false)
+            .addTo(coreGroup);
 
     public ElytraPause() {
         super(Categories.MOVEMENT, "elytra-pause", "Allows you to pause flight with rockets.");

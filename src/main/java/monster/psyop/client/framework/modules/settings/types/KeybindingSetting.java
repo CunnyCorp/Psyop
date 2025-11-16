@@ -38,16 +38,13 @@ public class KeybindingSetting extends ProvidedObjectSetting<KeybindingSetting, 
         float deltaTime = (currentTime - lastFrameTime) / 1000f;
         lastFrameTime = currentTime;
 
-        // Update animations
         if (awaitingBinding != wasAwaitingBinding) {
             wasAwaitingBinding = awaitingBinding;
         }
 
-        // Smooth animation for the awaiting binding state
         float targetProgress = awaitingBinding ? 1f : 0f;
         animationProgress = AnimationUtils.lerp(animationProgress, targetProgress, deltaTime * 8f);
 
-        // Pulsing animation for the button
         if (awaitingBinding) {
             pulseValue += deltaTime * (pulseDirection ? 1f : -1f) * 2f;
             if (pulseValue >= 1f) {
@@ -63,7 +60,6 @@ public class KeybindingSetting extends ProvidedObjectSetting<KeybindingSetting, 
 
         ImGui.pushID(label());
 
-        // Label with subtle animation
         ImGui.textColored(
                 AnimationUtils.lerpColor(
                         0xFF888888, 0xFFFFFFFF,
@@ -74,24 +70,17 @@ public class KeybindingSetting extends ProvidedObjectSetting<KeybindingSetting, 
 
         ImGui.sameLine();
 
-        // Calculate button size with animation
         float buttonWidth = ImGui.calcTextSize(awaitingBinding ? "..." : KeyUtils.getTranslation(value().get())).x + 20f;
         buttonWidth = AnimationUtils.lerp(buttonWidth, buttonWidth * 1.1f, animationProgress * 0.1f);
 
-        // Button styling with animations
         ImGui.pushStyleVar(ImGuiStyleVar.FrameRounding, 6f);
         ImGui.pushStyleColor(ImGuiCol.Button, getButtonColor());
         ImGui.pushStyleColor(ImGuiCol.ButtonHovered, getButtonHoverColor());
         ImGui.pushStyleColor(ImGuiCol.ButtonActive, getButtonActiveColor());
 
-        // Animated button
-        if (ImGui.button(awaitingBinding ? "..." : KeyUtils.getTranslation(value().get()), buttonWidth, 0)) {
-            // Button clicked
-        }
+        ImGui.button(awaitingBinding ? "..." : KeyUtils.getTranslation(value().get()), buttonWidth, 0);
 
-        // Visual feedback for awaiting binding state
         if (awaitingBinding) {
-            // Draw pulsing border
             ImVec2 min = ImGui.getItemRectMin();
             ImVec2 max = ImGui.getItemRectMax();
             ImGui.getWindowDrawList().addRect(
@@ -101,7 +90,6 @@ public class KeybindingSetting extends ProvidedObjectSetting<KeybindingSetting, 
                     6f, 0, 2f * pulseValue
             );
 
-            // Help text that fades in
             if (animationProgress > 0.3f) {
                 ImGui.sameLine();
                 ImGui.textColored(
@@ -118,7 +106,6 @@ public class KeybindingSetting extends ProvidedObjectSetting<KeybindingSetting, 
 
         if (ImGui.isKeyPressed(KeyUtils.BACKSPACE)) {
             awaitingBinding = false;
-            // Add a quick visual feedback when cancelled
             pulseValue = 0.8f;
             pulseDirection = false;
         }
@@ -167,18 +154,10 @@ public class KeybindingSetting extends ProvidedObjectSetting<KeybindingSetting, 
     }
 
     public static class Builder extends ProvidedObjectSetting.Builder<KeybindingSetting, ImInt> {
-        private Runnable pressAction;
-
-        public Builder action(Runnable pressAction) {
-            this.pressAction = pressAction;
-            return this;
-        }
 
         @Override
         protected void check() {
             super.check();
-            if (pressAction == null)
-                throw new RuntimeException("pressAction is required when building a keybinding.");
         }
 
         @Override

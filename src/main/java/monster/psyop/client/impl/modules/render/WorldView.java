@@ -24,8 +24,8 @@ public class WorldView extends Module {
             .addTo(worldGroup);
     public FloatSetting ambientLight = new FloatSetting.Builder()
             .name("ambient-light")
-            .defaultTo(15.0f)
-            .range(0.0f, 100.0f)
+            .defaultTo(0.124f)
+            .range(0.0f, 0.5f)
             .visible((v) -> modifyAmbient.get())
             .addTo(worldGroup);
     public BoolSetting forceLightMap = new BoolSetting.Builder()
@@ -39,7 +39,7 @@ public class WorldView extends Module {
             .addTo(entityGroup);
     public IntSetting entityLight = new IntSetting.Builder()
             .name("entity-light")
-            .defaultTo(12)
+            .defaultTo(15)
             .range(0, 15)
             .visible((v) -> modifyEntityLighting.get())
             .addTo(entityGroup);
