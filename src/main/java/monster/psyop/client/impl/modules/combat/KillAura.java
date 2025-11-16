@@ -199,7 +199,7 @@ public class KillAura extends Module {
                 continue;
             }
 
-            if (EntityUtils.isWithinRange(entity, 6)) {
+            if (EntityUtils.isWithinRange(entity)) {
                 continue;
             }
 

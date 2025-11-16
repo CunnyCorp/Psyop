@@ -16,7 +16,6 @@ import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -53,19 +52,8 @@ public class EntityUtils {
     }
 
     // Why do we even need this????
-    public static boolean isWithinRange(Entity entity, int sampleCount) {
-        Vec3 vec3 = entity.position();
-
-        for (float i = 0; i < entity.getBbHeight(); i += entity.getBbHeight() / sampleCount) {
-            vec3.y = entity.position().y + i;
-            boolean withinRange = MC.player.getEyePosition().distanceTo(vec3) <= MC.player.entityInteractionRange();
-
-            if (withinRange) {
-                return true;
-            }
-        }
-
-        return false;
+    public static boolean isWithinRange(Entity entity) {
+        return MC.player.getEyePosition().distanceTo(entity.getEyePosition()) <= MC.player.entityInteractionRange();
     }
 
 
