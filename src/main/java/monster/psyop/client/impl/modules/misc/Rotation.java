@@ -90,8 +90,10 @@ public class Rotation extends Module {
         if (headBang.get()) {
             if (isUp) {
                 PacketUtils.rotate(90f, MC.player.getYRot(), true);
+                isUp = false;
             } else {
                 PacketUtils.rotate(-90f, MC.player.getYRot(), true);
+                isUp = true;
             }
         }
     }

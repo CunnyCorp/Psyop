@@ -18,26 +18,23 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class SignFucker extends Module {
-    public final IntSetting iterations =
-            new IntSetting.Builder()
-                    .name("iterations")
-                    .description("Iterations to run per tick.")
-                    .defaultTo(5)
-                    .range(1, 20)
-                    .addTo(coreGroup);
-    public final IntSetting textLength =
-            new IntSetting.Builder()
-                    .name("length")
-                    .description("The text length.")
-                    .defaultTo(16)
-                    .range(1, 384)
-                    .addTo(coreGroup);
-    public final BoolSetting uniChars =
-            new BoolSetting.Builder()
-                    .name("uni-chars")
-                    .description("Use unicode characters instead of ascii.")
-                    .defaultTo(true)
-                    .addTo(coreGroup);
+    public final IntSetting iterations = new IntSetting.Builder()
+            .name("iterations")
+            .description("Iterations to run per tick.")
+            .defaultTo(5)
+            .range(1, 20)
+            .addTo(coreGroup);
+    public final IntSetting textLength = new IntSetting.Builder()
+            .name("length")
+            .description("The text length.")
+            .defaultTo(16)
+            .range(1, 384)
+            .addTo(coreGroup);
+    public final BoolSetting uniChars = new BoolSetting.Builder()
+            .name("uni-chars")
+            .description("Use unicode characters instead of ascii.")
+            .defaultTo(true)
+            .addTo(coreGroup);
 
     public SignFucker() {
         super(Categories.WORLD, "sign-fucker", "Fucks with the sign you're looking at.");

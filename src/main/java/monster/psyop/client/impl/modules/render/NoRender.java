@@ -10,11 +10,6 @@ public class NoRender extends Module {
             .description("Prevents beam rendering.")
             .defaultTo(false)
             .addTo(coreGroup);
-    public final BoolSetting explosions = new BoolSetting.Builder()
-            .name("explosions")
-            .description("Prevents explosion particles from rendering")
-            .defaultTo(false)
-            .addTo(coreGroup);
     public final BoolSetting playerStatus = new BoolSetting.Builder()
             .name("player-status")
             .description("Hides all player status info.")

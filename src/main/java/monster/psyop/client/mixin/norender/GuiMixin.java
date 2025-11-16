@@ -40,7 +40,7 @@ public class GuiMixin {
         if (Psyop.MODULES.isActive(NoRender.class)) {
             NoRender module = Psyop.MODULES.get(NoRender.class);
 
-            if (module.healthBar.get()) {
+            if (module.hungerBar.get()) {
                 ci.cancel();
             }
         }

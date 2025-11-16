@@ -3,12 +3,15 @@ package monster.psyop.client.mixin;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnBlockModify;
 import monster.psyop.client.impl.modules.combat.AntiKb;
+import monster.psyop.client.impl.modules.render.AntiBlinker;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPacketListener.class)
@@ -35,5 +38,14 @@ public abstract class ClientPacketListenerMixin {
                 ci.cancel();
             }
         }
+    }
+
+    @Redirect(method = "applyPlayerInfoUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundPlayerInfoUpdatePacket$Entry;showHat()Z"))
+    public boolean shouldShowHat(ClientboundPlayerInfoUpdatePacket.Entry instance) {
+        if (Psyop.MODULES.isActive(AntiBlinker.class)) {
+            return true;
+        }
+
+        return instance.showHat();
     }
 }

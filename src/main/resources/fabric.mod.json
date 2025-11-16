@@ -19,7 +19,6 @@
   "accessWidener": "psyop.accesswidener",
   "mixins": [
     "minecraft_psyop.mixins.json",
-    "litematica_psyop.mixins.json",
     "norender_psyop.mixins.json"
   ],
   "depends": {

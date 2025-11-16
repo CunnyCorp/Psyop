@@ -14,46 +14,41 @@ public class EffectSpoof extends Module {
 
     // Haste
     public final GroupedSettings hasteGroup = addGroup(new GroupedSettings("haste", "Spoof Haste (Dig Speed) effect"));
-    public final BoolSetting spoofHaste =
-            new BoolSetting.Builder()
-                    .name("spoof-haste")
-                    .description("Enable Haste effect spoofing.")
-                    .defaultTo(false)
-                    .addTo(hasteGroup);
-    public final IntSetting hasteLevel =
-            new IntSetting.Builder()
-                    .name("haste-level")
-                    .description("The level of Haste to spoof.")
-                    .defaultTo(1)
-                    .range(1, 255)
-                    .addTo(hasteGroup);
+    public final BoolSetting spoofHaste = new BoolSetting.Builder()
+            .name("spoof-haste")
+            .description("Enable Haste effect spoofing.")
+            .defaultTo(false)
+            .addTo(hasteGroup);
+    public final IntSetting hasteLevel = new IntSetting.Builder()
+            .name("haste-level")
+            .description("The level of Haste to spoof.")
+            .defaultTo(1)
+            .range(1, 255)
+            .addTo(hasteGroup);
 
     // Night Vision
     public final GroupedSettings nightVisionGroup = addGroup(new GroupedSettings("night-vision", "Spoof Night Vision effect"));
-    public final BoolSetting spoofNightVision =
-            new BoolSetting.Builder()
-                    .name("spoof-night-vision")
-                    .description("Enable Night Vision effect spoofing.")
-                    .defaultTo(false)
-                    .addTo(nightVisionGroup);
+    public final BoolSetting spoofNightVision = new BoolSetting.Builder()
+            .name("spoof-night-vision")
+            .description("Enable Night Vision effect spoofing.")
+            .defaultTo(false)
+            .addTo(nightVisionGroup);
 
     // Luck
     public final GroupedSettings luckGroup = addGroup(new GroupedSettings("luck", "Spoof Luck effect"));
-    public final BoolSetting spoofLuck =
-            new BoolSetting.Builder()
-                    .name("spoof-luck")
-                    .description("Enable Luck effect spoofing.")
-                    .defaultTo(false)
-                    .addTo(luckGroup);
+    public final BoolSetting spoofLuck = new BoolSetting.Builder()
+            .name("spoof-luck")
+            .description("Enable Luck effect spoofing.")
+            .defaultTo(false)
+            .addTo(luckGroup);
 
     // Unluck
     public final GroupedSettings unluckGroup = addGroup(new GroupedSettings("unluck", "Spoof Unluck effect"));
-    public final BoolSetting spoofUnluck =
-            new BoolSetting.Builder()
-                    .name("spoof-unluck")
-                    .description("Enable Unluck effect spoofing.")
-                    .defaultTo(false)
-                    .addTo(unluckGroup);
+    public final BoolSetting spoofUnluck = new BoolSetting.Builder()
+            .name("spoof-unluck")
+            .description("Enable Unluck effect spoofing.")
+            .defaultTo(false)
+            .addTo(unluckGroup);
 
 
     public EffectSpoof() {

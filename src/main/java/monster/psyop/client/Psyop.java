@@ -231,12 +231,13 @@ public class Psyop implements ModInitializer {
         new Speed().load();
 
         // Render
+        new AntiBlinker().load();
+        new ArmorView().load();
         new BetterTab().load();
         new BlockLights().load();
         new BoxESP().load();
         new Chams().load();
         new HandView().load();
-        new HideArmor().load();
         new HitTrack().load();
         new ItemESP().load();
         new ItemView().load();
