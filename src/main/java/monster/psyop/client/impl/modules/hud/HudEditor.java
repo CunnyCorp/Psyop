@@ -2,6 +2,7 @@ package monster.psyop.client.impl.modules.hud;
 
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.type.ImInt;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.gui.utility.DrawUtils;
 import monster.psyop.client.framework.modules.Categories;
@@ -42,8 +43,8 @@ public class HudEditor extends Module {
         int mouseX = (int) vec2.x;
         int mouseY = (int) vec2.y;
 
-        focusedHud.xPos.value(mouseX - dragOffsetX);
-        focusedHud.yPos.value(mouseY - dragOffsetY);
+        focusedHud.xPos.value(new ImInt(mouseX - dragOffsetX));
+        focusedHud.yPos.value(new ImInt(mouseY - dragOffsetY));
 
     }
 

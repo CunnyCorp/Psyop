@@ -11,7 +11,10 @@
     "FishingHookMixin",
     "LivingEntityMixin",
     "PlayerMixin",
-    "ServerGamePacketListenerImplMixin"
+    "ServerGamePacketListenerImplMixin",
+    "ClientIntentionPacketMixin",
+    "player.ServerboundMovePlayerPacketAccessor",
+    "MinecraftClientAccessor"
   ],
   "client": [
     "BlockEntityRenderDispatcherMixin",

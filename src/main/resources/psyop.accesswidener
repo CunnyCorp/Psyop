@@ -80,3 +80,13 @@ accessible field net/minecraft/client/renderer/RenderPipelines FOG_SNIPPET Lcom/
 accessible method net/minecraft/client/model/geom/ModelPart compile (Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V
 
 accessible field net/minecraft/world/inventory/AbstractContainerMenu menuType Lnet/minecraft/world/inventory/MenuType;
+
+# Alt Manager
+accessible field net/minecraft/client/Minecraft user Lnet/minecraft/client/User;
+mutable field net/minecraft/client/Minecraft user Lnet/minecraft/client/User;
+accessible field net/minecraft/client/Minecraft userApiService Lcom/mojang/authlib/minecraft/UserApiService;
+mutable field net/minecraft/client/Minecraft userApiService Lcom/mojang/authlib/minecraft/UserApiService;
+accessible field net/minecraft/client/Minecraft minecraftSessionService Lcom/mojang/authlib/minecraft/MinecraftSessionService;
+mutable field net/minecraft/client/Minecraft minecraftSessionService Lcom/mojang/authlib/minecraft/MinecraftSessionService;
+accessible field net/minecraft/client/Minecraft authenticationService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
+mutable field net/minecraft/client/Minecraft authenticationService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;

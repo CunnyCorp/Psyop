@@ -24,11 +24,6 @@ public class IntSetting extends Setting<IntSetting, ImInt> {
         return super.value(value);
     }
 
-    public ImInt value(int i) {
-        value().set(i);
-        return value();
-    }
-
     @Override
     public void render() {
         ImGui.sliderInt("##" + label(), value().getData(), range.min(), range.max());

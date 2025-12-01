@@ -8,10 +8,7 @@ import monster.psyop.client.framework.gui.utility.ColoredText;
 import monster.psyop.client.framework.gui.views.ViewHandler;
 import monster.psyop.client.framework.gui.views.client.ModuleConfigView;
 import monster.psyop.client.framework.gui.views.client.ModulesView;
-import monster.psyop.client.framework.gui.views.features.BookEditorView;
-import monster.psyop.client.framework.gui.views.features.ClientLogView;
-import monster.psyop.client.framework.gui.views.features.FriendsView;
-import monster.psyop.client.framework.gui.views.features.TrollingView;
+import monster.psyop.client.framework.gui.views.features.*;
 import monster.psyop.client.framework.modules.*;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.impl.eggs.EggLoader;
@@ -178,6 +175,7 @@ public class Psyop implements ModInitializer {
         new LoginFuckery().load();
         new QueueBypass().load();
         new SilentClose().load();
+        new HostOverride().load();
 
         // HUD
         new ArmorHUD().load();
@@ -251,6 +249,7 @@ public class Psyop implements ModInitializer {
         new Tint().load();
         new Trail().load();
         new WorldView().load();
+        new VisualRange().load();
 
         // Silly
         new HappyHands().load();

@@ -16,7 +16,7 @@ configurations {
 
 repositories {
     mavenCentral()
-
+    maven { url "https://maven.lenni0451.net/" }
     maven { url 'https://jitpack.io' }
 
     maven {
