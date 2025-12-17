@@ -15,6 +15,9 @@ Special thanks to @realfraze for FarSign code, and inspiring some changes and mo
  
 ### Only use this on anarchy servers, you will likely get banned VERY fast if you use it on any other server.
 
+# Support
+* Join our official [discord](https://discord.gg/rNXZFdHXYM) server for faster support on any issue or suggestion.
+
 # Notable Features
 
 * ItemView
