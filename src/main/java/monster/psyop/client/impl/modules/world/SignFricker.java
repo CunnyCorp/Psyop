@@ -17,7 +17,7 @@ import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class SignFucker extends Module {
+public class SignFricker extends Module {
     public final IntSetting iterations = new IntSetting.Builder()
             .name("iterations")
             .description("Iterations to run per tick.")
@@ -36,8 +36,8 @@ public class SignFucker extends Module {
             .defaultTo(true)
             .addTo(coreGroup);
 
-    public SignFucker() {
-        super(Categories.WORLD, "sign-fucker", "Fucks with the sign you're looking at.");
+    public SignFricker() {
+        super(Categories.WORLD, "sign-fricker", "Fricks with the sign you're looking at.");
     }
 
     @EventListener

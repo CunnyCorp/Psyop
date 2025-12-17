@@ -3,13 +3,10 @@ package monster.psyop.client.framework.modules.settings.types;
 import imgui.ImGui;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.type.ImString;
-import monster.psyop.client.config.Config;
-import monster.psyop.client.framework.gui.utility.ColoredText;
-import monster.psyop.client.framework.gui.utility.GuiUtils;
 import monster.psyop.client.framework.modules.settings.Setting;
+import monster.psyop.client.impl.modules.client.GUIModule;
 import monster.psyop.client.utility.StringUtils;
 
-import java.awt.*;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -28,7 +25,7 @@ public abstract class ProvidedObjectSetting<S, T> extends Setting<S, T> {
 
     @Override
     public void render() {
-        GuiUtils.text(new ColoredText(label() + ": ", Color.WHITE), new ColoredText(itemToString(value()), Color.LIGHT_GRAY));
+        float[] tooltipColor = GUIModule.INSTANCE.tooltipColor.get();
 
         ImGui.spacing();
 
@@ -78,7 +75,7 @@ public abstract class ProvidedObjectSetting<S, T> extends Setting<S, T> {
 
                         if (ImGui.isItemHovered()) {
                             ImGui.beginTooltip();
-                            ImGui.text("Click to select: " + nameStr);
+                            ImGui.textColored(tooltipColor[0], tooltipColor[1], tooltipColor[2], tooltipColor[3], "Click to select: " + nameStr);
                             ImGui.endTooltip();
                         }
                     }

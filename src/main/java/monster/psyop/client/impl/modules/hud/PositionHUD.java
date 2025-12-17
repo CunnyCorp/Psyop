@@ -47,7 +47,7 @@ public class PositionHUD extends HUD {
         float textX = bgX + padding;
         float textY = bgY + padding;
 
-        GUI.drawString(position, textX, textY, new ImColorW(textColor.get()));
+        GUI.drawText(position, textX, textY, new ImColorW(textColor.get()));
     }
 
     public String getPositionText() {

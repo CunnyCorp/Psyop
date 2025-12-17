@@ -14,7 +14,7 @@ public class TextUtils {
 
     public static MutableComponent BRACKET_OPEN_COMPONENT = Component.literal("[").setStyle(Style.EMPTY.withColor(new Color(91, 9, 168).getRGB()).withBold(true));
     public static MutableComponent BRACKET_CLOSE_COMPONENT = Component.literal("]").setStyle(Style.EMPTY.withColor(new Color(91, 9, 168).getRGB()).withBold(true));
-    public static MutableComponent CLIENT_TITLE = Component.literal("Liberty - Psyop").withStyle(TextUtils.MODULE_NAME_STYLE);
+    public static MutableComponent CLIENT_TITLE = Component.literal("Psyop").withStyle(TextUtils.MODULE_NAME_STYLE);
 
     public static MutableComponent getModuleNameFormat(Module module) {
         MutableComponent component = Component.empty();

@@ -24,7 +24,7 @@ public class LookingAtHUD extends HUD {
             info = hitResult.getEntity().getDisplayName().getString();
         }
 
-        Psyop.GUI.drawString("Looking at: " + type + " - Info: " + info, xPos.get(), yPos.get(), 40, true);
+        Psyop.GUI.drawText("Looking at: " + type + " - Info: " + info, xPos.get(), yPos.get(), 40, true);
     }
 
     @Override

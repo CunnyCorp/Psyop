@@ -6,6 +6,7 @@ import imgui.type.ImString;
 import monster.psyop.client.config.Config;
 import monster.psyop.client.config.modules.settings.ListColorSettingConfig;
 import monster.psyop.client.framework.modules.settings.Setting;
+import monster.psyop.client.impl.modules.client.GUIModule;
 import monster.psyop.client.utility.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,8 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
         ImGui.pushID(name);
 
         if (ImGui.collapsingHeader(label() + "##" + name)) {
+            float[] tooltipColor = GUIModule.INSTANCE.tooltipColor.get();
+
             ImGui.indent(10);
 
             boolean isHidden = Config.get().isHidden(this);
@@ -93,7 +96,9 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
                                 ImGui.colorEdit4("##color_" + i + "_" + name, colorMap.get(entry),
                                         ImGuiColorEditFlags.NoInputs |
                                                 ImGuiColorEditFlags.NoLabel |
-                                                ImGuiColorEditFlags.AlphaPreview);
+                                                ImGuiColorEditFlags.AlphaBar |
+                                                ImGuiColorEditFlags.AlphaPreviewHalf |
+                                                ImGuiColorEditFlags.OptionsDefault);
 
                                 ImGui.tableNextColumn();
 
@@ -145,7 +150,7 @@ public abstract class ObjectColorListSetting<S, T> extends Setting<S, ArrayList<
 
                                 if (ImGui.isItemHovered()) {
                                     ImGui.beginTooltip();
-                                    ImGui.text("Click to add: " + nameStr);
+                                    ImGui.textColored(tooltipColor[0], tooltipColor[1], tooltipColor[2], tooltipColor[3], "Click to add: " + nameStr);
                                     ImGui.endTooltip();
                                 }
                             }

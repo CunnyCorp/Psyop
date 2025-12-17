@@ -1,8 +1,13 @@
 package monster.psyop.client.impl.modules.movement;
 
+import imgui.type.ImString;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
+import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
+import monster.psyop.client.framework.modules.settings.types.ProvidedStringSetting;
+
+import java.util.List;
 
 public class PlayerTimer extends Module {
     public IntSetting multiplier = new IntSetting.Builder()
@@ -19,6 +24,11 @@ public class PlayerTimer extends Module {
             .name("burst-delay")
             .description("How long between bursts.")
             .defaultTo(10)
+            .addTo(coreGroup);
+    public ProvidedStringSetting elytraMode = new ProvidedStringSetting.Builder()
+            .suggestions(List.of(new ImString("None"), new ImString("Lock"), new ImString("Disabler")))
+            .name("elytra-mode")
+            .defaultTo(new ImString("None"))
             .addTo(coreGroup);
 
     public int lastBurst = 0;

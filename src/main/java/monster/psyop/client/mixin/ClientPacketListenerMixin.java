@@ -2,12 +2,11 @@ package monster.psyop.client.mixin;
 
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.events.game.OnBlockModify;
+import monster.psyop.client.impl.events.game.OnChunk;
 import monster.psyop.client.impl.modules.combat.AntiKb;
 import monster.psyop.client.impl.modules.render.AntiBlinker;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.network.protocol.game.ClientboundExplodePacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.network.protocol.game.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -47,5 +46,15 @@ public abstract class ClientPacketListenerMixin {
         }
 
         return instance.showHat();
+    }
+
+    @Inject(method = "updateLevelChunk", at = @At("TAIL"))
+    public void onLoadChunk(int x, int z, ClientboundLevelChunkPacketData packet, CallbackInfo ci) {
+        Psyop.EVENT_HANDLER.call(OnChunk.Load.get(x, z));
+    }
+
+    @Inject(method = "handleForgetLevelChunk", at = @At("HEAD"))
+    public void onUnloadChunk(ClientboundForgetLevelChunkPacket packet, CallbackInfo ci) {
+        Psyop.EVENT_HANDLER.call(OnChunk.Unload.get(packet.pos().x, packet.pos().z));
     }
 }

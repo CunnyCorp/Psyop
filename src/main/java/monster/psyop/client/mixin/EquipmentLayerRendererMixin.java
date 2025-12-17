@@ -2,11 +2,16 @@ package monster.psyop.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
+import monster.psyop.client.framework.rendering.CoreRendering;
+import monster.psyop.client.impl.modules.client.RenderTweaks;
 import monster.psyop.client.impl.modules.render.ArmorView;
+import monster.psyop.client.impl.modules.render.Chams;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.ResourceKey;

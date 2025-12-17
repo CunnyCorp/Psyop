@@ -4,7 +4,6 @@ import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import net.minecraft.client.gui.screens.ConnectScreen;
 
 public class ArmorView extends Module {
     public BoolSetting hideArmor = new BoolSetting.Builder()
@@ -36,6 +35,15 @@ public class ArmorView extends Module {
             .name("wings-color")
             .defaultTo(new float[]{0.298f, 0.902f, 0.871f, 0.6f})
             .visible((v) -> modifyWingsColor.get())
+            .addTo(coreGroup);
+    public BoolSetting modifyCapeColor = new BoolSetting.Builder()
+            .name("modify-cape-color")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    public ColorSetting capeColor = new ColorSetting.Builder()
+            .name("cape-color")
+            .defaultTo(new float[]{0.298f, 0.902f, 0.871f, 0.6f})
+            .visible((v) -> modifyCapeColor.get())
             .addTo(coreGroup);
     public BoolSetting modifyTrimsColor = new BoolSetting.Builder()
             .name("modify-trims-color")

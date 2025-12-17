@@ -10,7 +10,6 @@ import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.*;
 import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
-import monster.psyop.client.impl.modules.hud.HUD;
 import monster.psyop.client.impl.modules.player.AutoTool;
 import monster.psyop.client.utility.PacketUtils;
 import monster.psyop.client.utility.RotationUtils;

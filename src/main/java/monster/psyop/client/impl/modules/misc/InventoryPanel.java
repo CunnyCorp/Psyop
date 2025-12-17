@@ -12,7 +12,6 @@ import monster.psyop.client.utility.InventoryUtils;
 import monster.psyop.client.utility.PacketUtils;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
-import net.minecraft.world.inventory.MenuType;
 
 import java.util.ArrayList;
 

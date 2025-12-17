@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProvidedStringSetting extends ProvidedObjectSetting<ProvidedStringSetting, ImString> {
-    List<ImString> suggestions = new ArrayList<>();
-
+    public List<ImString> suggestions;
 
     public ProvidedStringSetting(Builder builder) {
         super(builder);

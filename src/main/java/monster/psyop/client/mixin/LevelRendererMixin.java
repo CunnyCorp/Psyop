@@ -7,10 +7,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.rendering.CoreRendering;
 import monster.psyop.client.impl.events.game.OnRender;
+import monster.psyop.client.impl.modules.client.RenderTweaks;
 import monster.psyop.client.impl.modules.combat.KillAura;
 import monster.psyop.client.impl.modules.render.BlockLights;
 import monster.psyop.client.impl.modules.render.Chams;
-import monster.psyop.client.impl.modules.client.RenderTweaks;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -39,12 +39,11 @@ public class LevelRendererMixin {
         VertexConsumer lines = buffers.getBuffer(CoreRendering.lines());
         VertexConsumer quads = buffers.getBuffer(RenderTweaks.getQuadsRenderType());
         PoseStack stack = new PoseStack();
-        RenderSystem.lineWidth(5.0f);
 
         Psyop.EVENT_HANDLER.call(OnRender.get(lines, quads, stack));
 
         buffers.endBatch(CoreRendering.lines());
-        buffers.endBatch(CoreRendering.quads());
+        buffers.endBatch(RenderTweaks.getQuadsRenderType());
 
         GlStateManager._enableDepthTest();
         GlStateManager._depthMask(true);

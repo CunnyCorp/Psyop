@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.OptionalDouble;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class CoreRendering {
@@ -29,7 +30,20 @@ public final class CoreRendering {
 
     public static final RenderPipeline LINES = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.LINES_SNIPPET).withLocation("pipeline/lines").withCull(false).withDepthWrite(false).build());
     public static final RenderPipeline ENTITY_TRANSLUCENT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET).withLocation("pipeline/entity_translucent").withShaderDefine("ALPHA_CUTOUT", 0.5f).withShaderDefine("EMISSIVE").withSampler("Sampler1").withBlend(BlendFunction.TRANSLUCENT).withCull(false).withDepthWrite(false).build());
-    public static final RenderPipeline GLINT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, RenderPipelines.FOG_SNIPPET, RenderPipelines.LINES_SNIPPET).withLocation("pipeline/glint").withVertexShader("core/glint").withFragmentShader("core/glint").withSampler("Sampler0").withDepthWrite(false).withCull(false).withBlend(BlendFunction.GLINT).withVertexFormat(DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS).build());
+    public static final RenderPipeline GLINT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, RenderPipelines.FOG_SNIPPET, RenderPipelines.LINES_SNIPPET).withLocation("pipeline/glint").withVertexShader("core/glint").withFragmentShader("core/glint").withSampler("Sampler0").withDepthWrite(false).withCull(false).withBlend(BlendFunction.TRANSLUCENT_PREMULTIPLIED_ALPHA).withVertexFormat(DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS).build());
+    public static final RenderPipeline ENTITY_CUTOUT_SNIPPET = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET).withLocation("pipeline/entity_cutout_no_cull").withShaderDefine("ALPHA_CUTOUT", 0.1f).withSampler("Sampler1").withDepthWrite(false).withCull(false).withBlend(BlendFunction.TRANSLUCENT_PREMULTIPLIED_ALPHA).build());
+
+    private static final Function<ResourceLocation, RenderType> ENTITY_CUTOUT = Util.memoize(resourceLocation -> {
+        RenderType.CompositeState compositeState =
+                RenderType.CompositeState.builder()
+                        .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false))
+                        .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                        .setLightmapState(RenderType.LIGHTMAP)
+                        .setOverlayState(RenderType.OVERLAY)
+                        .setOutputState(RenderStateShard.OUTLINE_TARGET)
+                        .createCompositeState(true);
+        return RenderType.create("entity_cutout", 1536, true, false, ENTITY_CUTOUT_SNIPPET, compositeState);
+    });
 
     private static final Supplier<RenderType> LINES_SUPPLIER = Suppliers.memoize(() ->
             RenderType.create(
@@ -37,7 +51,7 @@ public final class CoreRendering {
                     1536, LINES,
                     RenderType.CompositeState.builder()
                             .setTextureState(RenderStateShard.NO_TEXTURE)
-                            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+                            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(4.0f)))
                             .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
                             .setOutputState(RenderStateShard.OUTLINE_TARGET)
                             .createCompositeState(false)
@@ -169,21 +183,9 @@ public final class CoreRendering {
                     1536,
                     GLINT,
                     RenderType.CompositeState.builder()
-                            .setTextureState(new RenderStateShard.TextureStateShard(ItemRenderer.ENCHANTED_GLINT_ITEM, false))
-                            .setTexturingState(RenderType.ENTITY_GLINT_TEXTURING)
-                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
-                            .setOutputState(RenderStateShard.OUTLINE_TARGET)
-                            .createCompositeState(false)
-            )
-    );
-    private static final Supplier<RenderType> GLINT_TRANSLUCENT_ENTITY = Suppliers.memoize(() ->
-            RenderType.create("glint_translucent",
-                    1536,
-                    GLINT,
-                    RenderType.CompositeState.builder()
                             .setTextureState(new RenderStateShard.TextureStateShard(ItemRenderer.ENCHANTED_GLINT_ARMOR, false))
                             .setTexturingState(RenderType.ENTITY_GLINT_TEXTURING)
-                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
+                            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING_FORWARD)
                             .setOutputState(RenderStateShard.OUTLINE_TARGET)
                             .createCompositeState(false)
             )
@@ -205,8 +207,6 @@ public final class CoreRendering {
         RenderType.CompositeState compositeState =
                 RenderType.CompositeState.builder()
                         .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false))
-                        .setTexturingState(RenderType.ENTITY_GLINT_TEXTURING)
-                        .setLightmapState(RenderStateShard.LIGHTMAP)
                         .setOverlayState(RenderStateShard.OVERLAY)
                         .setOutputState(RenderStateShard.OUTLINE_TARGET)
                         .createCompositeState(boolean_);
@@ -252,6 +252,11 @@ public final class CoreRendering {
     public static RenderType entityTranslucent(ResourceLocation resourceLocation, boolean bl) {
         return ENTITY_TRANSLUCENT_TYPE.apply(resourceLocation, bl);
     }
+
+    public static RenderType entityCutout(ResourceLocation resourceLocation) {
+        return ENTITY_CUTOUT.apply(resourceLocation);
+    }
+
 
     public static RenderType glintTranslucent() {
         return GLINT_TRANSLUCENT.get();

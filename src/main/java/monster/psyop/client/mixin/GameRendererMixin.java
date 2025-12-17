@@ -2,7 +2,10 @@ package monster.psyop.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import monster.psyop.client.Psyop;
+import monster.psyop.client.impl.events.game.OnScreenRender;
 import monster.psyop.client.impl.modules.render.HandView;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,5 +29,12 @@ public abstract class GameRendererMixin {
         }
 
         bobHurt(poseStack, f);
+    }
+
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+    public void renderWithTooltip(Screen instance, GuiGraphics guiGraphics, int i, int j, float f) {
+        instance.renderWithTooltip(guiGraphics, i, j, f);
+
+        Psyop.EVENT_HANDLER.call(OnScreenRender.get(guiGraphics));
     }
 }

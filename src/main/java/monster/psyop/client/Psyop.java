@@ -17,6 +17,7 @@ import monster.psyop.client.impl.modules.chat.BetterChat;
 import monster.psyop.client.impl.modules.chat.Spammer;
 import monster.psyop.client.impl.modules.client.AntiCheatModule;
 import monster.psyop.client.impl.modules.client.ConfigModule;
+import monster.psyop.client.impl.modules.client.GUIModule;
 import monster.psyop.client.impl.modules.client.RenderTweaks;
 import monster.psyop.client.impl.modules.combat.*;
 import monster.psyop.client.impl.modules.exploits.*;
@@ -29,6 +30,7 @@ import monster.psyop.client.impl.modules.silly.HappyHands;
 import monster.psyop.client.impl.modules.silly.OiledUp;
 import monster.psyop.client.impl.modules.vhud.ArmorHUD;
 import monster.psyop.client.impl.modules.vhud.InventoryHUD;
+import monster.psyop.client.impl.modules.vhud.BetterShulkers;
 import monster.psyop.client.impl.modules.world.*;
 import monster.psyop.client.impl.modules.world.printer.Printer;
 import monster.psyop.client.impl.modules.world.printer.SkyRefill;
@@ -137,7 +139,7 @@ public class Psyop implements ModInitializer {
                         new Thread(
                                 () -> {
                                     if (CONFIG != null) {
-                                        CONFIG.save();
+                                        CONFIG.save(null);
                                     }
 
                                     for (JavaAddon addon : ADDON_MANAGER.plugins.values()) {
@@ -175,7 +177,6 @@ public class Psyop implements ModInitializer {
         new LoginFuckery().load();
         new QueueBypass().load();
         new SilentClose().load();
-        new HostOverride().load();
 
         // HUD
         new ArmorHUD().load();
@@ -187,6 +188,7 @@ public class Psyop implements ModInitializer {
         new PlayerRadarHUD().load();
         new PositionHUD().load();
         new TargetHUD().load();
+        new BetterShulkers().load();
 
         // Misc
         new AntiNarrator().load();
@@ -194,6 +196,7 @@ public class Psyop implements ModInitializer {
         new DetachMouse().load();
         new DiscordRPC().load();
         new Friends().load();
+        new HostnameSpoof().load();
         new InventoryPanel().load();
         new NoMiss().load();
         new NoSwing().load();
@@ -237,6 +240,7 @@ public class Psyop implements ModInitializer {
         new Chams().load();
         new HandView().load();
         new HitTrack().load();
+        new InvisibleFrames().load();
         new ItemESP().load();
         new ItemView().load();
         new NoRender().load();
@@ -244,12 +248,13 @@ public class Psyop implements ModInitializer {
         new PopESP().load();
         new PumpkinSpoof().load();
         new Ripples().load();
+        new BetterSigns().load();
         new SphereESP().load();
         new StorageESP().load();
         new Tint().load();
         new Trail().load();
-        new WorldView().load();
         new VisualRange().load();
+        new WorldView().load();
 
         // Silly
         new HappyHands().load();
@@ -267,11 +272,12 @@ public class Psyop implements ModInitializer {
         new BreakDelay().load();
         new FastBreak().load();
         new Scaffold().load();
-        new SignFucker().load();
+        new SignFricker().load();
 
         // Client
         new AntiCheatModule().load();
         new ConfigModule().load();
+        new GUIModule().load();
         new RenderTweaks().load();
 
         EggLoader.loadEggs();

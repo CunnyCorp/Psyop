@@ -66,16 +66,20 @@ public class BoxESP extends Module {
             .name("friend-color")
             .defaultTo(new float[]{0.0f, 0.6f, 1.0f, 1.0f})
             .addTo(style);
-    public FloatSetting lineWidth = new FloatSetting.Builder()
-            .name("line-width")
-            .defaultTo(2.0f)
-            .range(1.0f, 6.0f)
+    public FloatSetting cornerWidth = new FloatSetting.Builder()
+            .name("corner-width")
+            .defaultTo(0.02f)
+            .range(0.01f, 0.1f)
             .addTo(style);
     public FloatSetting padding = new FloatSetting.Builder()
             .name("padding")
             .description("Expands or shrinks the ESP box size")
             .defaultTo(0.0f)
             .range(-0.5f, 1.0f)
+            .addTo(style);
+    public BoolSetting outline = new BoolSetting.Builder()
+            .name("outline")
+            .defaultTo(false)
             .addTo(style);
     public BoolSetting filled = new BoolSetting.Builder()
             .name("filled")
@@ -86,29 +90,13 @@ public class BoxESP extends Module {
             .defaultTo(0.3f)
             .range(0.0f, 1.0f)
             .addTo(style);
-    public BoolSetting rainbow = new BoolSetting.Builder()
-            .name("rainbow")
-            .defaultTo(false)
-            .addTo(style);
-    public FloatSetting rainbowSpeed = new FloatSetting.Builder()
-            .name("rainbow-speed")
-            .defaultTo(0.2f)
-            .range(0.01f, 5.0f)
-            .addTo(style);
-
     public BoolSetting healthbar2D = new BoolSetting.Builder()
             .name("2d-healthbar")
             .description("Render a vertical health bar next to 2D billboard boxes")
             .defaultTo(true)
             .addTo(style);
-
     public BoolSetting glow = new BoolSetting.Builder()
             .name("glow")
-            .defaultTo(true)
-            .addTo(style);
-    public BoolSetting hideLines = new BoolSetting.Builder()
-            .name("hide-lines")
-            .description("Hide back-facing lines (depth-tested lines instead of see-through)")
             .defaultTo(true)
             .addTo(style);
     public FloatSetting glowWidth = new FloatSetting.Builder()
@@ -137,7 +125,7 @@ public class BoxESP extends Module {
             .addTo(style);
 
     public BoxESP() {
-        super(Categories.RENDER, "box-esp", "Draws 3D boxes around entities.");
+        super(Categories.RENDER, "esp", "Basic ESP.");
     }
 
     public boolean shouldRender(Entity e) {
@@ -152,12 +140,15 @@ public class BoxESP extends Module {
             }
             return true;
         }
+
         if (e.getType().getCategory() == MobCategory.MONSTER || e instanceof Monster) {
             return hostiles.get();
         }
+
         if (e.getType().getCategory() == MobCategory.CREATURE || e.getType().getCategory() == MobCategory.AMBIENT || e.getType().getCategory() == MobCategory.WATER_CREATURE) {
             return animals.get();
         }
+
         return false;
     }
 
@@ -170,12 +161,7 @@ public class BoxESP extends Module {
                 base = friendColor.get();
             }
         }
-        if (rainbow.get()) {
-            float hue = (float) ((System.currentTimeMillis() / 1000.0) * rainbowSpeed.get());
-            hue = hue - (float) Math.floor(hue);
-            float[] rgb = Render3DUtil.hsbToRgb(hue, 0.8f, 1.0f);
-            return new float[]{rgb[0], rgb[1], rgb[2], base[3]};
-        }
+
         return base;
     }
 
@@ -190,7 +176,6 @@ public class BoxESP extends Module {
 
         Iterable<Entity> entities = MC.level.entitiesForRendering();
 
-        RenderSystem.lineWidth(lineWidth.get());
         PoseStack.Pose pose = event.poseStack.last();
 
         Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
@@ -252,7 +237,7 @@ public class BoxESP extends Module {
                         rX, rY, rZ,
                         uX, uY, uZ,
                         halfW, halfH,
-                        0.33f, 0.02f,
+                        0.33f, cornerWidth.get(),
                         c[0], c[1], c[2], c[3]);
 
                 if (healthbar2D.get() && e instanceof LivingEntity le) {
@@ -328,7 +313,9 @@ public class BoxESP extends Module {
                     Render3DUtil.drawBoxInner(event.quads, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], a);
                 }
 
-                Render3DUtil.drawBoxOutline(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], c[3]);
+                if (outline.get()) {
+                    Render3DUtil.drawBoxOutline(event.lines, pose, minX, minY, minZ, maxX, maxY, maxZ, c[0], c[1], c[2], c[3]);
+                }
 
                 if (glow.get()) {
                     int steps = Math.max(1, glowSteps.get());
@@ -355,7 +342,12 @@ public class BoxESP extends Module {
 
                 if (pin.get()) {
                     float[] col = colorFor(e);
-                    Render3DUtil.drawCrossRel(event.lines, pose, e.position(), 0.3f, col[0], col[1], col[2], col[3]);
+
+                    float mX = (float) (e.getX() - camX);
+                    float mY = (float) (e.getY() - camY);
+                    float mZ = (float) (e.getZ() - camZ);
+
+                    Render3DUtil.drawCross(event.lines, pose, mX, mY, mZ, 0.3f, col[0], col[1], col[2], col[3]);
                 }
             }
         }

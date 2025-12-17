@@ -45,37 +45,37 @@ public class Offhand extends Module {
     public void update() {
         boolean shouldForceTotem = false;
 
-        if (forceTotem.get()) {
-            if (belowHealth.get() && MC.player.getHealth() <= health.get()) {
-                shouldForceTotem = true;
-            }
+        if (!items.value().contains(MC.player.getOffhandItem().getItem())) {
+            if (forceTotem.get()) {
+                if (belowHealth.get() && MC.player.getHealth() <= health.get()) {
+                    shouldForceTotem = true;
+                }
 
-            if (nearPlayer.get()) {
-                for (AbstractClientPlayer player : MC.level.players()) {
-                    if (MC.player.equals(player)) {
-                        continue;
-                    }
+                if (nearPlayer.get()) {
+                    for (AbstractClientPlayer player : MC.level.players()) {
+                        if (MC.player.equals(player)) {
+                            continue;
+                        }
 
-                    if (MC.player.distanceToSqr(player) <= 16) {
-                        shouldForceTotem = true;
-                        break;
+                        if (MC.player.distanceToSqr(player) <= 16) {
+                            shouldForceTotem = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (shouldForceTotem) {
-                NotificationManager.get().addNotification("Offhand", "Force swapped to a totem.", NotificationEvent.Type.INFO, 5000L);
-                int slot = InventoryUtils.findAnySlot(Items.TOTEM_OF_UNDYING);
-                if (slot == -1) {
+                if (shouldForceTotem) {
+                    int slot = InventoryUtils.findAnySlot(Items.TOTEM_OF_UNDYING);
+
+                    if (slot == -1) {
+                        return;
+                    }
+
+                    InventoryUtils.swapToHotbar(slot, 40);
                     return;
                 }
-                // lol x1
-                InventoryUtils.swapToHotbar(slot, 40);
-                return;
             }
-        }
 
-        if (!items.value().contains(MC.player.getOffhandItem().getItem())) {
             int slot = InventoryUtils.findAnySlot((stack) -> items.value().contains(stack.getItem()) && stack.getItem() != Items.TOTEM_OF_UNDYING);
 
             if (slot == -1) {
@@ -86,8 +86,6 @@ public class Offhand extends Module {
                 return;
             }
 
-            NotificationManager.get().addNotification("Offhand", "Moved item to offhand.", NotificationEvent.Type.INFO, 5000L);
-            // lol x2
             InventoryUtils.swapToHotbar(slot, 40);
         }
     }

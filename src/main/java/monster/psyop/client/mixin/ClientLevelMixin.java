@@ -41,7 +41,7 @@ public class ClientLevelMixin {
                                 continue;
                             }
 
-                            if (module.alwaysRenderBlockEntities.get() || module.glowBlockEntities.value().contains(blockEntity.getType())) {
+                            if (module.alwaysRenderBlockEntities.get() || module.blockEntities.value().contains(blockEntity.getType())) {
                                 blockEntities.add(blockEntity);
                             }
                         }
@@ -96,6 +96,10 @@ public class ClientLevelMixin {
 
             if (Psyop.MODULES.isActive(PlayerTimer.class)) {
                 PlayerTimer module = Psyop.MODULES.get(PlayerTimer.class);
+
+                if (MC.player.isFallFlying() && module.elytraMode.get().equals("Lock")) {
+                    return;
+                }
 
                 for (int i = 0; i < module.multiplier.get(); i++) {
                     MC.player.tick();

@@ -7,6 +7,8 @@ A ImGui based Minecraft Utility Client specifically made for 9b9t
 
 made with <3
 
+Special thanks to @realfraze for FarSign code, and inspiring some changes and modules <3
+
  <img src="https://img.shields.io/github/contributors/CunnyCorp/Psyop" alt="GitHub contributors"/>
  <img src="https://img.shields.io/github/last-commit/Cunnycorp/Psyop" alt="GitHub last commit"/>
  <img src="https://img.shields.io/github/commit-activity/w/CunnyCorp/Psyop" alt="GitHub commit activity"/> 

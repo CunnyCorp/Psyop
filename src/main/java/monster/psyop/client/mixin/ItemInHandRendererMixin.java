@@ -3,17 +3,46 @@ package monster.psyop.client.mixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.render.HandView;
+import monster.psyop.client.impl.modules.render.InvisibleFrames;
 import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.MapRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.state.MapRenderState;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.level.saveddata.maps.MapId;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ItemInHandRenderer.class, priority = 1)
 public abstract class ItemInHandRendererMixin {
+    @Shadow
+    @Final
+    private MapRenderState mapRenderState;
+
+    @Inject(method = "renderMap", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;addVertex(Lorg/joml/Matrix4f;FFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;"), cancellable = true)
+    public void renderMap(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, ItemStack itemStack, CallbackInfo ci) {
+        if (Psyop.MODULES.isActive(InvisibleFrames.class)) {
+            MapId mapId = itemStack.get(DataComponents.MAP_ID);
+            MapItemSavedData mapData = MapItem.getSavedData(mapId, Psyop.MC.level);
+
+            if (mapData != null) {
+                MapRenderer mapRenderer = Psyop.MC.getMapRenderer();
+                mapRenderer.extractRenderState(mapId, mapData, mapRenderState);
+                mapRenderer.render(mapRenderState, poseStack, multiBufferSource, false, i);
+            }
+
+            ci.cancel();
+        }
+    }
 
     // HandView - MainHandHeight
     @Redirect(method = "renderHandsWithItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F", ordinal = 2))

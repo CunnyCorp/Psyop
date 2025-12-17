@@ -95,7 +95,7 @@ public class Painter extends Module {
 
         }
 
-        if (blocks.isEmpty()) {
+        if (blocks.isEmpty() || placeable.isEmpty()) {
             return;
         }
 

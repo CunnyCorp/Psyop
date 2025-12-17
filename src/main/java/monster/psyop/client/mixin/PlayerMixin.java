@@ -2,11 +2,14 @@ package monster.psyop.client.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import monster.psyop.client.Psyop;
+import monster.psyop.client.impl.modules.movement.PlayerTimer;
 import monster.psyop.client.impl.modules.movement.Speed;
 import monster.psyop.client.impl.modules.player.Reach;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Player.class, priority = 777)
 public class PlayerMixin {
@@ -48,5 +51,16 @@ public class PlayerMixin {
         }
 
         return original;
+    }
+
+    @Inject(method = "canGlide", at = @At("HEAD"), cancellable = true)
+    public void canGlide(CallbackInfoReturnable<Boolean> cir) {
+        if (Psyop.MODULES.isActive(PlayerTimer.class)) {
+            PlayerTimer module = Psyop.MODULES.get(PlayerTimer.class);
+
+            if (module.elytraMode.get().equals("Disabler")) {
+                cir.setReturnValue(false);
+            }
+        }
     }
 }

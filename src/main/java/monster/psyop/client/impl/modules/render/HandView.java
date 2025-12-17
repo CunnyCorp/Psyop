@@ -1,19 +1,16 @@
 package monster.psyop.client.impl.modules.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import imgui.type.ImString;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
+import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
-import monster.psyop.client.framework.modules.settings.types.ProvidedStringSetting;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemUseAnimation;
 import org.joml.Quaternionf;
-
-import java.util.List;
 
 public class HandView extends Module {
     public BoolSetting noHurt = new BoolSetting.Builder()
@@ -21,16 +18,25 @@ public class HandView extends Module {
             .description("Prevents bob-hurting.")
             .defaultTo(true)
             .addTo(coreGroup);
+    public BoolSetting modifyColor = new BoolSetting.Builder()
+            .name("modify-color")
+            .description("Modifies your hand color.")
+            .defaultTo(false)
+            .addTo(coreGroup);
+    public ColorSetting color = new ColorSetting.Builder()
+            .name("color")
+            .defaultTo(new float[]{0.498f, 0.949f, 0.949f, 1.0f})
+            .addTo(coreGroup);
     public BoolSetting wizard = new BoolSetting.Builder()
             .name("wizard")
             .description("You're a wizard...")
-            .defaultTo(true)
+            .defaultTo(false)
             .addTo(coreGroup);
-    public ProvidedStringSetting bufferModifier = new ProvidedStringSetting.Builder()
-            .suggestions(List.of(new ImString("quads"), new ImString("lines"), new ImString("item"), new ImString("wireframe"), new ImString("none")))
-            .name("buffer-modifier")
-            .defaultTo(new ImString("quads"))
+    public ColorSetting wizardColor = new ColorSetting.Builder()
+            .name("wizard-color")
+            .defaultTo(new float[]{0.498f, 0.949f, 0.949f, 1.0f})
             .addTo(coreGroup);
+
     public GroupedSettings animationsGroup = addGroup(new GroupedSettings("animations", "Modifications to animations."));
     public BoolSetting blockAnimation = new BoolSetting.Builder()
             .name("block")

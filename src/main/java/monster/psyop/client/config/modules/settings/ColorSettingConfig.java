@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorSettingConfig extends SettingConfig<List<Float>> {
+    public boolean rainbow = false;
+
     @Override
     public <S> void fromSetting(@NotNull Setting<?, S> setting) {
         ColorSetting colorSetting = (ColorSetting) setting;

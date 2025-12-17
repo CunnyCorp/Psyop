@@ -2,10 +2,8 @@ package monster.psyop.client.mixin;
 
 import monster.psyop.client.Psyop;
 import monster.psyop.client.impl.modules.chat.BetterChat;
-import net.minecraft.client.GuiMessage;
 import net.minecraft.client.gui.components.ChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

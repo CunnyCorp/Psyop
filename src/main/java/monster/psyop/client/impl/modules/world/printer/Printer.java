@@ -165,6 +165,21 @@ public class Printer extends Module {
                     .description("Only places if the player is not in a liquid.")
                     .defaultTo(true)
                     .addTo(coreGroup);
+    public final BoolSetting yLock = new BoolSetting.Builder()
+            .name("y-lock")
+            .defaultTo(true)
+            .addTo(coreGroup);
+    public final IntSetting yLockLevel = new IntSetting.Builder()
+            .name("y-level")
+            .defaultTo(63)
+            .range(-64, 320)
+            .addTo(coreGroup);
+    public final BoolSetting yControl = new BoolSetting.Builder()
+            .name("y-control")
+            .description("Control Y level with + and -")
+            .defaultTo(true)
+            .addTo(coreGroup);
+
     // Color Swapping
     private final GroupedSettings colorSwapping = addGroup(new GroupedSettings("Color Swapping", "Color related settings!"));
     public final BoolSetting strictNoColor =
@@ -191,7 +206,7 @@ public class Printer extends Module {
             new IntSetting.Builder()
                     .name("y-level")
                     .description("The Y level to scan")
-                    .defaultTo(64)
+                    .defaultTo(63)
                     .range(-64, 320)
                     .addTo(anchoring);
     public final BoolSetting useBaritone =
@@ -406,7 +421,7 @@ public class Printer extends Module {
 
         anchorToSort.clear();
         toSort.clear();
-        if (fading != null) fading.clear();
+        fading.clear();
         anchoringTo.set(0, -999, 0);
         lastPlacedBlock.set(0, 0, 0);
         pauseTillRefilled = false;

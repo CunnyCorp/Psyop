@@ -7,7 +7,10 @@ import monster.psyop.client.Psyop;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")

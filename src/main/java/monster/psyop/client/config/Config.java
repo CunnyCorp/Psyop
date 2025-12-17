@@ -14,26 +14,26 @@ import monster.psyop.client.config.gui.*;
 import monster.psyop.client.config.modules.ModuleConfig;
 import monster.psyop.client.config.modules.SettingGroupConfig;
 import monster.psyop.client.config.modules.settings.wraps.ObjectColor;
-import monster.psyop.client.config.sub.Inventory;
 import monster.psyop.client.config.sub.Placing;
 import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.friends.RoleType;
-import monster.psyop.client.framework.gui.views.ViewHandler;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Category;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.Setting;
+import monster.psyop.client.framework.modules.settings.types.ColorSetting;
+import monster.psyop.client.framework.modules.settings.types.ObjectColorListSetting;
 import monster.psyop.client.utility.FileSystem;
 import monster.psyop.client.utility.PathIndex;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
-
-import static monster.psyop.client.Psyop.MC;
 
 public class Config {
     private static final ExclusionStrategy excludeOptional =
@@ -92,7 +92,7 @@ public class Config {
         return guiSettings.hiddenLists.get(setting.name);
     }
 
-    public void save() {
+    public void save(@Nullable Path path) {
         for (Category category : Categories.INDEX) {
             for (Module module : Psyop.MODULES.getModules(category)) {
                 ModuleConfig moduleConfig = new ModuleConfig();
@@ -135,7 +135,7 @@ public class Config {
         try {
             String toJson = GSON.toJson(get());
 
-            FileSystem.write(PathIndex.CONFIG, toJson);
+            FileSystem.write(path != null ? path : PathIndex.CONFIG, toJson);
         } catch (Exception e) {
             Psyop.error("Config failed to load: {}", e.getLocalizedMessage());
             Psyop.LOG.info("Config failed to load.", e);
@@ -146,6 +146,23 @@ public class Config {
     public void load() {
         if (Files.exists(PathIndex.CONFIG) && Files.isRegularFile(PathIndex.CONFIG)) {
             String file = Files.readString(PathIndex.CONFIG);
+            try {
+                Config.INSTANCE = GSON.fromJson(file, Config.class);
+            } catch (Exception e) {
+                FileSystem.write(PathIndex.CLIENT.resolve(file.hashCode() + "_c.json"), file);
+                Psyop.LOG.info("Config Failed to load.", e);
+                Psyop.error("Config failed to load, reset.", e);
+                Config.INSTANCE = this;
+            }
+        } else {
+            Config.INSTANCE = this;
+        }
+    }
+
+    @SneakyThrows
+    public void load(Path path) {
+        if (Files.exists(path) && Files.isRegularFile(path)) {
+            String file = Files.readString(path);
             try {
                 Config.INSTANCE = GSON.fromJson(file, Config.class);
             } catch (Exception e) {
@@ -175,6 +192,41 @@ public class Config {
 
                     if (!moduleConfig.groups.get(sg.name).settings.containsKey(setting.name)) {
                         Psyop.debug("Skipping {} - {} in {}", sg.name, setting.name, module.name);
+                        continue;
+                    }
+
+                    moduleConfig.groups.get(sg.name).settings.get(setting.name).cloneTo(setting.settingConfig);
+
+                    setting.settingConfig.populateSetting(setting);
+
+                    Psyop.debug("Setting {} in {} to {}", setting.name, module.name, setting.value().toString());
+
+                    setting.onPopulated();
+                }
+            }
+        } else {
+            Psyop.log("Module {} does not exist?", module.name);
+        }
+    }
+
+    public void populateModuleRender(Module module) {
+        if (modules.containsKey(module.name)) {
+            Psyop.debug("Loading config for {}", module.name);
+            ModuleConfig moduleConfig = get().modules.get(module.name);
+            module.active(moduleConfig.active.get());
+
+            boolean isHudOrRender = module.category == Categories.RENDER || module.category == Categories.HUD;
+
+            for (GroupedSettings sg : module.getGroupedSettings()) {
+                if (!moduleConfig.groups.containsKey(sg.name)) {
+                    Psyop.debug("Skipping {} in {]", sg.name, module.name);
+                    continue;
+                }
+
+                for (Iterator<Setting<?, ?>> it = sg.get(); it.hasNext(); ) {
+                    Setting<?, ?> setting = it.next();
+
+                    if (!moduleConfig.groups.get(sg.name).settings.containsKey(setting.name) || (!isHudOrRender && !(setting instanceof ColorSetting || setting instanceof ObjectColorListSetting<?, ?>))) {
                         continue;
                     }
 

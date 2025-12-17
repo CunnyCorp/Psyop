@@ -4,6 +4,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 import monster.psyop.client.config.modules.settings.ColorSettingConfig;
 import monster.psyop.client.framework.modules.settings.Setting;
+import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import org.jetbrains.annotations.NotNull;
 
 public class ColorSetting extends Setting<ColorSetting, float[]> {
@@ -14,6 +15,10 @@ public class ColorSetting extends Setting<ColorSetting, float[]> {
 
     public float[] get() {
         return value();
+    }
+
+    public int getColor() {
+        return ImColorW.packed(get());
     }
 
     @Override

@@ -117,13 +117,12 @@ public class Scaffold extends Module {
             int slot = InventoryUtils.findAnySlot(allowed);
             if (slot == -1) break;
 
-            int hotbarOffset = InventoryUtils.getHotbarOffset();
-            if (!allowed.contains(MC.player.getMainHandItem().getItem()) && (slot < hotbarOffset || slot > hotbarOffset + 8)) {
-                InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
+            InventoryUtils.swapSlot(dedicatedSlot.get());
 
+            if (!allowed.contains(MC.player.getMainHandItem().getItem())) {
+                InventoryUtils.swapToHotbar(slot, dedicatedSlot.get());
                 return;
             }
-            InventoryUtils.swapSlot(dedicatedSlot.get());
 
             if (BlockUtils.canPlace(next, placeDistance.get())) {
                 MC.gameMode.useItemOn(MC.player, InteractionHand.MAIN_HAND, BlockUtils.getSafeHitResult(next));

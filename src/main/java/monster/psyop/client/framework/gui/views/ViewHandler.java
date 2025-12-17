@@ -2,6 +2,7 @@ package monster.psyop.client.framework.gui.views;
 
 import imgui.type.ImBoolean;
 import monster.psyop.client.config.Config;
+import monster.psyop.client.impl.modules.client.GUIModule;
 
 import java.util.*;
 
@@ -35,6 +36,7 @@ public class ViewHandler {
     }
 
     public static void showAll() {
+        GUIModule.INSTANCE.applyStyleColors();
         for (View view : SORTED_VIEWS) {
             if (state(view.getClass()).get()) {
                 view.show();

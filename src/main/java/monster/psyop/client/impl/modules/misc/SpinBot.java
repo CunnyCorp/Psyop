@@ -1,4 +1,4 @@
-package monster.psyop.client.impl.modules.movement;
+package monster.psyop.client.impl.modules.misc;
 
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
@@ -21,7 +21,7 @@ public class SpinBot extends Module {
     public final FloatSetting rotationSpeed = new FloatSetting.Builder()
             .name("rotation-speed")
             .description("How fast to spin (degrees per tick).")
-            .defaultTo(10.0f)
+            .defaultTo(45.0f)
             .range(0.1f, 45.0f)
             .addTo(rotationGroup);
     public final BoolSetting randomizeDirection = new BoolSetting.Builder()
@@ -44,7 +44,7 @@ public class SpinBot extends Module {
     public final FloatSetting pitchRange = new FloatSetting.Builder()
             .name("pitch-range")
             .description("Maximum pitch variation when randomized.")
-            .defaultTo(30.0f)
+            .defaultTo(20.0f)
             .range(0.0f, 90.0f)
             .visible(v -> randomizePitch.get())
             .addTo(rotationGroup);
@@ -115,6 +115,10 @@ public class SpinBot extends Module {
     }
 
     private boolean shouldActivate() {
+        if (MC.player.isFallFlying()) {
+            return false;
+        }
+
         return isntHoldingUsable(InteractionHand.MAIN_HAND) || isntHoldingUsable(InteractionHand.OFF_HAND);
     }
 
@@ -126,10 +130,6 @@ public class SpinBot extends Module {
 
     private boolean isUsable(Item item) {
         return item == Items.BOW || item == Items.CROSSBOW || item == Items.EGG || item == Items.SNOWBALL || item == Items.BLUE_EGG || item == Items.ENDER_PEARL || item == Items.EXPERIENCE_BOTTLE || item == Items.FIREWORK_ROCKET || item == Items.ENDER_EYE;
-    }
-
-    private boolean hasValidTarget() {
-        return WorldUtils.isLookingAt(HitResult.Type.ENTITY);
     }
 
     private void updateSpinDirection() {

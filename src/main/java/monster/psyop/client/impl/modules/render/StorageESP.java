@@ -13,6 +13,8 @@ import monster.psyop.client.framework.rendering.Render3DUtil;
 import monster.psyop.client.impl.events.game.OnRender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -155,6 +157,15 @@ public class StorageESP extends Module {
     }
 
     public boolean isDoubleChest(BlockPos blockPos) {
+        boolean passesDist =
+                blockPos.getX() > 20000000 || blockPos.getX() < -20000000 ||
+                blockPos.getZ() > 20000000 || blockPos.getZ() < -20000000;
+
+        // Patch for a bug where containers after a certain distance are never considered single, how mojang? how?
+        if (passesDist) {
+            return false;
+        }
+
         return MC.level != null && MC.level.getBlockState(blockPos).getValueOrElse(BlockStateProperties.CHEST_TYPE, ChestType.SINGLE) != ChestType.SINGLE;
     }
 

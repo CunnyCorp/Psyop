@@ -5,12 +5,19 @@ import monster.psyop.client.impl.events.game.OnMove;
 import monster.psyop.client.impl.modules.movement.AntiPush;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 import static monster.psyop.client.Psyop.MC;
 
@@ -58,5 +65,10 @@ public abstract class EntityMixin {
         } else {
             Psyop.EVENT_HANDLER.call(OnMove.Entity.get(vec3, moverType, (Entity) (Object) this));
         }
+    }
+
+    @Inject(method = "collectColliders", at = @At("RETURN"))
+    private static void collectColliders(@Nullable Entity entity, Level level, List<VoxelShape> list, AABB aABB, CallbackInfoReturnable<List<VoxelShape>> cir) {
+
     }
 }

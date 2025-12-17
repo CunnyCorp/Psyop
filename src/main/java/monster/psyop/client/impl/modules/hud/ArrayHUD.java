@@ -67,7 +67,7 @@ public class ArrayHUD extends HUD {
 
             GUI.drawBackground(bgX, bgY, bgX + bgW, bgY + bgH);
 
-            GUI.drawString(label, textX, curY, new ImColorW(textColor.get()));
+            GUI.drawText(label, textX, curY, new ImColorW(textColor.get()));
 
             curY += (int) (textSize.y + 8);
         }

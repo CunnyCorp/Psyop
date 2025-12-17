@@ -1,15 +1,15 @@
 package monster.psyop.client.impl.modules.render;
 
-import imgui.type.ImString;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.ColorSetting;
-import monster.psyop.client.framework.modules.settings.types.ProvidedStringSetting;
-
-import java.util.List;
 
 public class ItemView extends Module {
+    public BoolSetting walls = new BoolSetting.Builder()
+            .name("walls")
+            .defaultTo(true)
+            .addTo(coreGroup);
     public BoolSetting modifyItemColor = new BoolSetting.Builder()
             .name("modify-item-color")
             .description("Modifies item colors.")

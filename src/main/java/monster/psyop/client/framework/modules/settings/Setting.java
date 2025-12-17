@@ -2,7 +2,6 @@ package monster.psyop.client.framework.modules.settings;
 
 import imgui.ImGui;
 import lombok.SneakyThrows;
-import monster.psyop.client.config.Config;
 import monster.psyop.client.config.modules.settings.SettingConfig;
 import monster.psyop.client.utility.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,8 @@ public class Setting<S, T> {
     private String label;
     private T value;
     private transient Predicate<S> visible = (setting) -> true;
-    private final transient Predicate<S> onChanged = (setting) -> true;
+    // This is public for a neat little hack at some point.
+    public transient Predicate<S> changed = (setting) -> true;
 
     public Setting(SettingBuilder<?, ?, T> builder) {
         this.name = builder.name;
@@ -30,6 +30,9 @@ public class Setting<S, T> {
                 Objects.requireNonNullElseGet(builder.label, () -> StringUtils.readable(this.name));
         if (builder.visible != null) {
             this.visible = (Predicate<S>) builder.visible;
+        }
+        if (builder.changed != null) {
+            this.changed = (Predicate<S>) builder.changed;
         }
         this.value = defaultValue;
     }
@@ -64,6 +67,8 @@ public class Setting<S, T> {
 
     public T value(T value) {
         this.value = value;
+        this.changed.test((S) this);
+
         return value;
     }
 
@@ -81,6 +86,7 @@ public class Setting<S, T> {
         private T defaultValue;
         private String label;
         private Predicate<S> visible;
+        private Predicate<S> changed;
 
         public V name(@NotNull String v) {
             this.name = v;
@@ -104,6 +110,11 @@ public class Setting<S, T> {
 
         public V visible(@NotNull Predicate<S> v) {
             this.visible = v;
+            return (V) this;
+        }
+
+        public V changed(@NotNull Predicate<S> v) {
+            this.changed = v;
             return (V) this;
         }
 

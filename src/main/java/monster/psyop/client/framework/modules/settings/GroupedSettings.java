@@ -3,7 +3,6 @@ package monster.psyop.client.framework.modules.settings;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 import lombok.Setter;
-import monster.psyop.client.config.Config;
 import monster.psyop.client.utility.StringUtils;
 
 import java.util.Iterator;

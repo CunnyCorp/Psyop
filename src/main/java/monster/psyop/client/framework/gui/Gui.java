@@ -5,7 +5,6 @@ import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.ImVec2;
 import imgui.flag.ImDrawFlags;
-import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.type.ImBoolean;
 import monster.psyop.client.Psyop;
@@ -16,17 +15,20 @@ import monster.psyop.client.framework.gui.themes.ThemeManager;
 import monster.psyop.client.framework.gui.utility.KeyUtils;
 import monster.psyop.client.framework.gui.views.View;
 import monster.psyop.client.framework.gui.views.ViewHandler;
+import monster.psyop.client.framework.modules.Categories;
+import monster.psyop.client.framework.modules.Category;
+import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.impl.events.OnGuiRender;
 import monster.psyop.client.impl.events.game.OnKeyInput;
 import monster.psyop.client.impl.events.game.OnMouseClick;
 import monster.psyop.client.impl.modules.client.ConfigModule;
+import monster.psyop.client.impl.modules.client.GUIModule;
 import monster.psyop.client.impl.modules.client.RenderTweaks;
 import monster.psyop.client.utility.PathIndex;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,8 +47,6 @@ public class Gui extends RenderProxy {
     public static OfficialTheme THEME = new OfficialTheme();
 
     public static ImGuiIO io;
-    public static final int bgColor = new ImColorW(new Color(71, 69, 69, 186)).packed();
-    public static final int borderColor = new ImColorW(new Color(11, 10, 10, 255)).packed();
 
     private int WATERMARK_ID = 0;
     private static final float WATERMARK_SCALE = 0.18f;
@@ -82,7 +82,7 @@ public class Gui extends RenderProxy {
         if (event.key == ConfigModule.INSTANCE.openGui.get().get()) {
             IS_LOADED.set(!IS_LOADED.get());
             if (Config.get() != null) {
-                Config.get().save();
+                Config.get().save(null);
             }
         }
 
@@ -90,9 +90,40 @@ public class Gui extends RenderProxy {
             if (IS_LOADED.get()) {
                 IS_LOADED.set(false);
                 if (Config.get() != null) {
-                    Config.get().save();
+                    Config.get().save(null);
                 }
             }
+        }
+    }
+
+    @EventListener(inGame = false)
+    public void onRender(OnGuiRender event) {
+        if (!ConfigModule.INSTANCE.hasRefreshedConfig) {
+            Path currentPath = ConfigModule.INSTANCE.configsPath.resolve(ConfigModule.INSTANCE.configs.get() + ".json");
+            if (Files.exists(currentPath) && Files.isRegularFile(currentPath)) {
+                Config.get().load(currentPath);
+                for (Category category : Categories.INDEX) {
+                    for (Module module : MODULES.getModules(category)) {
+                        try {
+                            if (ConfigModule.INSTANCE.renderOnly) {
+                                Config.get().populateModuleRender(module);
+                            } else {
+                                Config.get().populateModule(module);
+                            }
+                        } catch (RuntimeException exception) {
+                            Psyop.LOG.error("The module {} failed to populate configurations.", module.name, exception);
+                            Config.get().modules.remove(module.name);
+                        }
+                    }
+                }
+            }
+
+            ConfigModule.INSTANCE.hasRefreshedConfig = true;
+        }
+
+        if (System.currentTimeMillis() - ConfigModule.INSTANCE.lastCheckedTime >= 30000L) {
+            ConfigModule.INSTANCE.lastCheckedTime = System.currentTimeMillis();
+            ConfigModule.INSTANCE.loadConfigs();
         }
     }
 
@@ -225,8 +256,8 @@ public class Gui extends RenderProxy {
 
     public void drawBackground(float x, float y, float width, float height) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
-        drawList.addRectFilled(x, y, width, height, bgColor, 4f, ImDrawFlags.RoundCornersAll);
-        drawList.addRect(x, y, width, height, borderColor, 4f, ImDrawFlags.RoundCornersAll);
+        drawList.addRectFilled(x, y, width, height, ImColorW.packed(GUIModule.INSTANCE.hudBg.get()), 4f, ImDrawFlags.RoundCornersAll);
+        drawList.addRect(x, y, width, height, ImColorW.packed(GUIModule.INSTANCE.hudBorder.get()), 4f, ImDrawFlags.RoundCornersAll);
     }
 
     public void drawBackground(float x, float y, float width, float height, int outline, ImColorW color, ImColorW color2) {
@@ -250,7 +281,7 @@ public class Gui extends RenderProxy {
         }
     }
 
-    public void drawString(String text, float x, float y, float minWidth, boolean withBackground) {
+    public void drawText(String text, float x, float y, float minWidth, boolean withBackground) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
         if (withBackground) {
@@ -266,16 +297,16 @@ public class Gui extends RenderProxy {
             drawBackground(bgX, bgY, bgX + bgWidth, bgY + bgHeight);
         }
 
-        drawList.addText(x, y, ImGui.getColorU32(ImGuiCol.Text), text);
+        drawList.addText(x, y, ImColorW.packed(GUIModule.INSTANCE.hudText.get()), text);
     }
 
-    public void drawString(String text, float x, float y, ImColorW color) {
+    public void drawText(String text, float x, float y, ImColorW color) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
         drawList.addText(x, y, color.packed(), text);
     }
 
-    public void drawString(String text, float x, float y, int color) {
+    public void drawText(String text, float x, float y, int color) {
         ImDrawList drawList = ImGui.getBackgroundDrawList();
 
         drawList.addText(x, y, color, text);

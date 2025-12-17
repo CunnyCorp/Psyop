@@ -1,5 +1,6 @@
 package monster.psyop.client.impl.modules.render;
 
+import imgui.type.ImString;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
@@ -24,18 +25,57 @@ public class Chams extends Module {
             .description("Toggles glow off.")
             .defaultTo(true)
             .addTo(entityGroup);
-    public EntityListSetting walls = new EntityListSetting.Builder()
+    public BoolSetting walls = new BoolSetting.Builder()
             .name("walls")
-            .defaultTo(List.of(EntityType.PLAYER))
+            .defaultTo(false)
+            .addTo(entityGroup);
+    public ProvidedStringSetting layerOneMode = new ProvidedStringSetting.Builder()
+            .suggestions(List.of(new ImString("Translucent"), new ImString("Quads"), new ImString("Outline"), new ImString("None")))
+            .name("layer-1-mode")
+            .defaultTo(new ImString("Outline"))
+            .addTo(entityGroup);
+    public ColorSetting layerOneColor = new ColorSetting.Builder()
+            .name("layer-1-color")
+            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.8f})
+            .addTo(entityGroup);
+    public ColorSetting layerOneFriendColor = new ColorSetting.Builder()
+            .name("layer-1-friend-color")
+            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.8f})
+            .addTo(entityGroup);
+    public ProvidedStringSetting layerTwoMode = new ProvidedStringSetting.Builder()
+            .suggestions(List.of(new ImString("Translucent"), new ImString("Quads"), new ImString("Outline"), new ImString("None")))
+            .name("layer-2-mode")
+            .defaultTo(new ImString("Quads"))
+            .addTo(entityGroup);
+    public ColorSetting layerTwoColor = new ColorSetting.Builder()
+            .name("layer-2-color")
+            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.6f})
+            .addTo(entityGroup);
+    public ColorSetting layerTwoFriendColor = new ColorSetting.Builder()
+            .name("layer-2-friend-color")
+            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.6f})
+            .addTo(entityGroup);
+    public ProvidedStringSetting layerThreeMode = new ProvidedStringSetting.Builder()
+            .suggestions(List.of(new ImString("Translucent"), new ImString("Quads"), new ImString("Outline"), new ImString("None")))
+            .name("layer-3-mode")
+            .defaultTo(new ImString("Translucent"))
+            .addTo(entityGroup);
+    public ColorSetting layerThreeColor = new ColorSetting.Builder()
+            .name("layer-3-color")
+            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.4f})
+            .addTo(entityGroup);
+    public ColorSetting layerThreeFriendColor = new ColorSetting.Builder()
+            .name("layer-3-friend-color")
+            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.4f})
+            .addTo(entityGroup);
+    public BoolSetting showCapes = new BoolSetting.Builder()
+            .name("show-capes")
+            .defaultTo(true)
             .addTo(entityGroup);
     public GroupedSettings blockEntityGroup = addGroup(new GroupedSettings("block-entities", "Modifies how block entities are rendered in the world."));
-    public BlockEntityColorListSetting glowBlockEntities = new BlockEntityColorListSetting.Builder()
-            .name("glow")
+    public BlockEntityColorListSetting blockEntities = new BlockEntityColorListSetting.Builder()
+            .name("block-entities")
             .defaultTo(List.of(BlockEntityType.CHEST, BlockEntityType.BANNER, BlockEntityType.TRAPPED_CHEST, BlockEntityType.SHULKER_BOX))
-            .addTo(blockEntityGroup);
-    public ColorSetting blockEntityGlowColor = new ColorSetting.Builder()
-            .name("glow-color")
-            .defaultTo(new float[]{1.0f, 1.0f, 1.0f, 0.6f})
             .addTo(blockEntityGroup);
     public BoolSetting alwaysRenderBlockEntities = new BoolSetting.Builder()
             .name("always-render")
@@ -47,4 +87,6 @@ public class Chams extends Module {
     public Chams() {
         super(Categories.RENDER, "chams", "Modifies how entities/block entities render.");
     }
+
+
 }

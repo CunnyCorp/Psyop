@@ -68,6 +68,10 @@ public class Rotation extends Module {
     public void update() {
         boolean updateFresh = false;
 
+        if (MC.player.isFallFlying()) {
+            return;
+        }
+
         if (reverse.get()) {
             PacketUtils.send(new ServerboundMovePlayerPacket.Rot(-MC.player.getYRot(), -MC.player.getXRot(), MC.player.onGround(), MC.player.horizontalCollision));
             updateFresh = true;
@@ -87,6 +91,10 @@ public class Rotation extends Module {
 
     @EventListener(priority = 999999999)
     public void onTickPre(OnTick.Pre event) {
+        if (MC.player.isFallFlying()) {
+            return;
+        }
+
         if (headBang.get()) {
             if (isUp) {
                 PacketUtils.rotate(90f, MC.player.getYRot(), true);

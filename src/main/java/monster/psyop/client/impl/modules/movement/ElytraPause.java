@@ -91,11 +91,11 @@ public class ElytraPause extends Module {
 
             if (jitterBug.get()) {
                 MathUtils.setY(event.vec3, idleRate.get());
-
             } else {
                 MathUtils.set(event.vec3, 0, idleRate.get(), 0);
 
             }
+
             MC.player.setDeltaMovement(0, idleRate.get(), 0);
             controlEnabled = true;
         } else if (controlEnabled) {

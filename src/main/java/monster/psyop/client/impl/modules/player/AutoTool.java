@@ -1,11 +1,13 @@
 package monster.psyop.client.impl.modules.player;
 
+import imgui.type.ImString;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
+import monster.psyop.client.framework.modules.settings.types.ProvidedStringSetting;
 import monster.psyop.client.impl.events.game.OnPacket;
 import monster.psyop.client.utility.InventoryUtils;
 import net.minecraft.core.BlockPos;
@@ -19,21 +21,19 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
+
 public class AutoTool extends Module {
-
-    public final IntSetting preference = new IntSetting.Builder()
-            .name("preference")
-            .description("Which enchantment to prefer. 0: None, 1: Fortune, 2: Silk Touch.")
-            .defaultTo(0)
-            .range(0, 2)
+    public ProvidedStringSetting preferredEnchant = new ProvidedStringSetting.Builder()
+            .suggestions(List.of(new ImString("None"), new ImString("Fortune"), new ImString("Silk Touch")))
+            .name("preferred-enchant")
+            .defaultTo(new ImString("None"))
             .addTo(coreGroup);
-
     public final BoolSetting switchBack = new BoolSetting.Builder()
             .name("switch-back")
             .description("Switches back to your original slot after breaking the block.")
             .defaultTo(true)
             .addTo(coreGroup);
-
     public final IntSetting switchDelay = new IntSetting.Builder()
             .name("switch-delay")
             .description("The delay in ticks before switching back (20 ticks = 1 second).")
@@ -94,11 +94,10 @@ public class AutoTool extends Module {
                 bestSpeed = speed;
                 bestSlot = i;
             } else if (speed == bestSpeed && bestSlot != -1) {
-                int pref = preference.get();
-                if (pref != 0) {
+                if (!preferredEnchant.get().equals("None")) {
                     ItemStack currentBestStack = MC.player.getInventory().getItem(bestSlot);
-                    int currentBestEnchant = getEnchantmentLevel(currentBestStack, pref);
-                    int newEnchant = getEnchantmentLevel(stack, pref);
+                    int currentBestEnchant = getEnchantmentLevel(currentBestStack, preferredEnchant.get());
+                    int newEnchant = getEnchantmentLevel(stack, preferredEnchant.get());
 
                     if (newEnchant > currentBestEnchant) {
                         bestSlot = i;
@@ -113,13 +112,13 @@ public class AutoTool extends Module {
         }
     }
 
-    private int getEnchantmentLevel(ItemStack stack, int preference) {
+    private int getEnchantmentLevel(ItemStack stack, String preference) {
         if (stack.isEmpty()) return 0;
 
         ResourceKey<Enchantment> key;
-        if (preference == 1) { // Fortune
+        if (preference.equals("Fortune")) {
             key = Enchantments.FORTUNE;
-        } else if (preference == 2) { // Silk Touch
+        } else if (preference.equals("Silk Touch")) {
             key = Enchantments.SILK_TOUCH;
         } else {
             return 0;

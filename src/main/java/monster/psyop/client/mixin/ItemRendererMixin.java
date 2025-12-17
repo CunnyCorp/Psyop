@@ -2,9 +2,11 @@ package monster.psyop.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import monster.psyop.client.Psyop;
 import monster.psyop.client.framework.rendering.CoreRendering;
 import monster.psyop.client.impl.modules.render.ItemView;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -14,8 +16,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import static monster.psyop.client.Psyop.MC;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
@@ -36,6 +36,20 @@ public abstract class ItemRendererMixin {
         }
 
         instance.putBulkData(pose, bakedQuad, f, g, h, i, j, k);
+    }
+
+    @Redirect(method = "renderItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;getFoilBuffer(Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/renderer/RenderType;ZZ)Lcom/mojang/blaze3d/vertex/VertexConsumer;"))
+    private static VertexConsumer getBuffer(MultiBufferSource multiBufferSource, RenderType renderType, boolean bl, boolean bl2) {
+
+        if (Psyop.MODULES.isActive(ItemView.class)) {
+            ItemView module = Psyop.MODULES.get(ItemView.class);
+
+            if (module.walls.get()) {
+                return VertexMultiConsumer.create(multiBufferSource.getBuffer(CoreRendering.glintTranslucent()), multiBufferSource.getBuffer(renderType));
+            }
+        }
+
+        return ItemRenderer.getFoilBuffer(multiBufferSource, renderType, bl, bl2);
     }
 
     // ItemView - ItemColor

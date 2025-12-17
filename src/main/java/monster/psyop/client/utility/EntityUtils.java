@@ -51,7 +51,6 @@ public class EntityUtils {
         return false;
     }
 
-    // Why do we even need this????
     public static boolean isWithinRange(Entity entity) {
         return MC.player.getEyePosition().distanceTo(entity.getEyePosition()) <= MC.player.entityInteractionRange();
     }
