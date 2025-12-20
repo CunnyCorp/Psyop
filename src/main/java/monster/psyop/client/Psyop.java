@@ -267,6 +267,7 @@ public class Psyop implements ModInitializer {
                 new SkyRefill().load();
             }
         }
+        new AutoPortal().load();
         new Nuker().load();
         new Painter().load();
         new BreakDelay().load();
