@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Nuker extends Module {
-    public final GroupedSettings generalGroup = addGroup(new GroupedSettings("general", "Core settings"));
     public final GroupedSettings renderingGroup = addGroup(new GroupedSettings("rendering", "Rendering settings"));
 
     public final BoolSetting ignoreWhitelist = new BoolSetting.Builder()
@@ -46,11 +45,13 @@ public class Nuker extends Module {
             .defaultTo(3.75f)
             .range(2f, 5.0f)
             .addTo(generalGroup);
-    public final IntSetting yScan = new IntSetting.Builder()
-            .name("y-scan")
-            .description("How far to check for Y.")
-            .defaultTo(2)
+    public final IntSetting maxY = new IntSetting.Builder()
+            .name("max-y").defaultTo(5)
             .range(0, 5)
+            .addTo(generalGroup);
+    public final IntSetting minY = new IntSetting.Builder()
+            .name("min-y").defaultTo(0)
+            .range(-5, 0)
             .addTo(generalGroup);
     public final IntSetting blocksPerTick = new IntSetting.Builder()
             .name("blocks-per-tick")
@@ -58,6 +59,12 @@ public class Nuker extends Module {
             .defaultTo(12)
             .range(1, 32)
             .addTo(generalGroup);
+    public final BoolSetting doubleMine = new BoolSetting.Builder()
+            .name("double-mine")
+            .description("Attempts to double mine when possible, slower for terrain.")
+            .defaultTo(false)
+            .addTo(generalGroup);
+
 
     public BoolSetting radius = new BoolSetting.Builder()
             .name("radius")
@@ -82,6 +89,7 @@ public class Nuker extends Module {
             .range(1000, 10000)
             .addTo(renderingGroup);
 
+    public BlockPos[] doubleMineBlocks = new BlockPos[2];
     public List<BrokenBlock> brokenBlocks = new ArrayList<>();
 
     public Nuker() {
@@ -92,8 +100,8 @@ public class Nuker extends Module {
     public void update() {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         List<int[]> blockVecs = new ArrayList<>();
-        for (int y = (MC.player.getAbilities().flying ? -yScan.get() : 0); y <= yScan.get(); y++) {
-            blockVecs.addAll(BlockUtils.findNearBlocksByRadius(MC.player.blockPosition().offset(0, y, 0).mutable(), 5, (vecPos) -> {
+        for (int y = minY.get(); y <= maxY.get(); y++) {
+            blockVecs.addAll(BlockUtils.findNearBlocksByRadius(MC.player.blockPosition().offset(0, y, 0).mutable(), 7, (vecPos) -> {
                 mutableBlockPos.set(vecPos[0], vecPos[1], vecPos[2]);
 
                 if (!ignoreWhitelist.get() && !blocks.value().contains(BlockUtils.getState(mutableBlockPos).getBlock())) {
@@ -123,6 +131,49 @@ public class Nuker extends Module {
 
             return Math.abs(RotationUtils.getYaw(mutableBlockPos) - MC.player.getYRot()) + Math.abs(RotationUtils.getPitch(mutableBlockPos) - MC.player.getXRot());
         }));
+
+        if (doubleMine.get()) {
+            boolean waitingForMineFinish = false;
+            if (doubleMineBlocks[0] != null) {
+                if (BlockUtils.isAir(doubleMineBlocks[0])) {
+                    doubleMineBlocks[0] = null;
+                } else {
+                    waitingForMineFinish = true;
+                }
+            }
+
+            if (doubleMineBlocks[1] != null) {
+                if (BlockUtils.isAir(doubleMineBlocks[1])) {
+                    doubleMineBlocks[1] = null;
+                } else {
+                    waitingForMineFinish = true;
+                }
+            }
+
+            if (!waitingForMineFinish) {
+                if (blockVecs.size() >= 2) {
+                    int[] vec = blockVecs.get(0);
+                    mutableBlockPos.set(vec[0], vec[1], vec[2]);
+
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, getDirection(mutableBlockPos)));
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), getDirection(mutableBlockPos.setY(mutableBlockPos.getY()))));
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), getDirection(mutableBlockPos)));
+
+                    doubleMineBlocks[0] = mutableBlockPos.immutable();
+
+                    vec = blockVecs.get(1);
+                    mutableBlockPos.set(vec[0], vec[1], vec[2]);
+
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, getDirection(mutableBlockPos)));
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), getDirection(mutableBlockPos.setY(mutableBlockPos.getY()))));
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), getDirection(mutableBlockPos)));
+
+                    doubleMineBlocks[1] = mutableBlockPos.immutable();
+                }
+            }
+
+            return;
+        }
 
         for (int i = 0; i < blocksPerTick.get(); i++) {
             if (blockVecs.size() <= i) break;

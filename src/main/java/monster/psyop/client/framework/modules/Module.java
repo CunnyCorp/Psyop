@@ -46,6 +46,7 @@ public class Module {
     private String label;
     private String description;
     public GroupedSettings coreGroup = addGroup(new GroupedSettings("core", "Core module settings."));
+    public GroupedSettings generalGroup = addGroup(new GroupedSettings("general", "General settings"));
     public KeybindingSetting keybinding =
             new KeybindingSetting.Builder()
                     .name("bind")
