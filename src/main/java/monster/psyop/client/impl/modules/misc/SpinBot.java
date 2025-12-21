@@ -7,14 +7,12 @@ import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.utility.PacketUtils;
-import monster.psyop.client.utility.WorldUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.HitResult;
 
 public class SpinBot extends Module {
     public final GroupedSettings rotationGroup = addGroup(new GroupedSettings("rotation", "SpinBot rotation settings."));

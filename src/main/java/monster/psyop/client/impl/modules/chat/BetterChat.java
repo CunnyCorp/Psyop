@@ -115,7 +115,7 @@ public class BetterChat extends Module {
         super(Categories.CHAT, "better-chat", "Improves and modifies in-game chat in various ways.");
     }
 
-    @EventListener
+    @EventListener(inGame = false)
     public void onPacketReceived(OnPacket.Received event) {
         if (noChatLoss.get() && event.packet() instanceof ClientboundDeleteChatPacket) {
             event.cancel();
@@ -216,7 +216,7 @@ public class BetterChat extends Module {
         }
     }
 
-    @EventListener
+    @EventListener(inGame = false)
     public void onPacketSend(OnPacket.Send event) {
         if (event.packet() instanceof ServerboundChatPacket packet) {
             String originalMsg = packet.message();

@@ -216,7 +216,7 @@ public class BetterSigns extends Module {
 
             if (result.getType() == HitResult.Type.BLOCK) {
                 BlockEntity tileEntity = MC.level.getBlockEntity(BlockPos.containing(result.getLocation()));
-                if(tileEntity instanceof SignBlockEntity sign) {
+                if (tileEntity instanceof SignBlockEntity sign) {
                     this.blockEntity = sign;
                 }
             }
@@ -233,13 +233,15 @@ public class BetterSigns extends Module {
 
 
     // I censored the curse words from Fraze's comments -Vali
+
     /**
      * Draws a sign (without the "stick" or "chain" parts).
-     * @param ctx the relevant {@link net.minecraft.client.gui.GuiGraphics}
-     * @param sign the {@link SignBlockEntity} to draw
+     *
+     * @param ctx   the relevant {@link net.minecraft.client.gui.GuiGraphics}
+     * @param sign  the {@link SignBlockEntity} to draw
      * @param front whether to draw the front or the back
-     * @param x coordinate on the x-axis to draw at
-     * @param y coordinate on the y-axis to draw at
+     * @param x     coordinate on the x-axis to draw at
+     * @param y     coordinate on the y-axis to draw at
      * @param scale the scaling multiplier
      */
     public static void sign(GuiGraphics ctx, SignBlockEntity sign, boolean front, int x, int y, float scale) {
@@ -359,22 +361,23 @@ public class BetterSigns extends Module {
 
     /**
      * Extends the traditional text element to work with outlines (like signs).
+     *
      * @see GuiTextRenderState
      */
     public static class TextOutlineGuiElementRenderState extends GuiTextRenderState {
         public final int outlineColor;
 
         public TextOutlineGuiElementRenderState(
-            Font textRenderer,
-            FormattedCharSequence orderedText,
-            Matrix3x2f matrix,
-            int x,
-            int y,
-            int color,
-            int outlineColor,
-            int backgroundColor,
-            boolean shadow,
-            @Nullable ScreenRectangle clipBounds
+                Font textRenderer,
+                FormattedCharSequence orderedText,
+                Matrix3x2f matrix,
+                int x,
+                int y,
+                int color,
+                int outlineColor,
+                int backgroundColor,
+                boolean shadow,
+                @Nullable ScreenRectangle clipBounds
         ) {
             super(textRenderer, orderedText, matrix, x, y, color, backgroundColor, shadow, clipBounds);
             this.outlineColor = outlineColor;
@@ -403,12 +406,12 @@ public class BetterSigns extends Module {
                 }
 
                 Font.PreparedText text = this.font.prepareText(
-                    this.text,
-                    this.x,
-                    this.y,
-                    this.color,
-                    false,
-                    0
+                        this.text,
+                        this.x,
+                        this.y,
+                        this.color,
+                        false,
+                        0
                 );
 
                 this.preparedText = new OutlinedTextPreparation(outline, text);
@@ -430,17 +433,18 @@ public class BetterSigns extends Module {
             return this.bounds;
         }
 
-        private record OutlinedTextPreparation(Font.PreparedText outline, Font.PreparedText text) implements Font.PreparedText {
-                @Override
-                public void visit(Font.GlyphVisitor glyphDrawer) {
-                    this.outline.visit(glyphDrawer);
-                    this.text.visit(glyphDrawer);
-                }
-
-                @Override
-                public @Nullable ScreenRectangle bounds() {
-                    return this.outline.bounds();
-                }
+        private record OutlinedTextPreparation(Font.PreparedText outline,
+                                               Font.PreparedText text) implements Font.PreparedText {
+            @Override
+            public void visit(Font.GlyphVisitor glyphDrawer) {
+                this.outline.visit(glyphDrawer);
+                this.text.visit(glyphDrawer);
             }
+
+            @Override
+            public @Nullable ScreenRectangle bounds() {
+                return this.outline.bounds();
+            }
+        }
     }
 }

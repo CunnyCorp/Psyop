@@ -6,8 +6,6 @@ import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.types.ItemListSetting;
 import monster.psyop.client.utility.InventoryUtils;
-import monster.psyop.client.utility.gui.NotificationEvent;
-import monster.psyop.client.utility.gui.NotificationManager;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.item.Items;
 

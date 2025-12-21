@@ -2,12 +2,12 @@ package monster.psyop.client.impl.modules.render;
 
 import imgui.type.ImBoolean;
 import monster.psyop.client.framework.events.EventListener;
-import monster.psyop.client.impl.events.game.OnPacket;
 import monster.psyop.client.framework.modules.Categories;
 import monster.psyop.client.framework.modules.Module;
 import monster.psyop.client.framework.modules.settings.GroupedSettings;
 import monster.psyop.client.framework.modules.settings.types.BoolSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
+import monster.psyop.client.impl.events.game.OnPacket;
 import net.minecraft.core.particles.*;
 import net.minecraft.world.entity.player.Player;
 

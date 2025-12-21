@@ -4,6 +4,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.MapColor;
 
 import java.util.ArrayList;
@@ -13,9 +15,14 @@ public class McDataCache {
     protected static HashMap<Item, MapColor> ITEM_TO_COLOR = new HashMap<>();
     protected static ArrayList<Integer> MAP_COLOR_IDS = new ArrayList<>();
     protected static HashMap<String, Item> NAME_TO_ITEM = new HashMap<>();
+    protected static HashMap<Item, Block> ITEM_TO_BLOCK = new HashMap<>();
 
     public static void load() {
         refresh();
+    }
+
+    public static Block getBlock(Item item) {
+        return ITEM_TO_BLOCK.getOrDefault(item, Blocks.AIR);
     }
 
     public static MapColor getColor(ItemStack stack) {
@@ -36,6 +43,7 @@ public class McDataCache {
         Item.BY_BLOCK.forEach(
                 (block, item) -> {
                     ITEM_TO_COLOR.put(item, block.defaultMapColor());
+                    ITEM_TO_BLOCK.put(item, block);
 
                     if (!MAP_COLOR_IDS.contains(block.defaultMapColor().id))
                         MAP_COLOR_IDS.add(block.defaultMapColor().id);

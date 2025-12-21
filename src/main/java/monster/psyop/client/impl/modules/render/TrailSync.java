@@ -2,8 +2,8 @@ package monster.psyop.client.impl.modules.render;
 
 import com.google.gson.reflect.TypeToken;
 import monster.psyop.client.config.Config;
-import monster.psyop.client.impl.events.game.OnPacket;
 import monster.psyop.client.framework.modules.Module;
+import monster.psyop.client.impl.events.game.OnPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 
@@ -25,7 +25,8 @@ public class TrailSync {
     private static final Path CONFIG_DIR = Minecraft.getInstance().gameDirectory.toPath().resolve("psyop");
     private static final Path CONFIG_FILE = CONFIG_DIR.resolve("trail-sync.json");
     private static final byte[] IV = new byte[16];
-    private static final Type MAP_TYPE = new TypeToken<Map<UUID, TrailData>>() {}.getType();
+    private static final Type MAP_TYPE = new TypeToken<Map<UUID, TrailData>>() {
+    }.getType();
 
     private final Map<UUID, TrailData> playerTrails = new ConcurrentHashMap<>();
     private final Map<UUID, Long> playerLastSync = new ConcurrentHashMap<>();

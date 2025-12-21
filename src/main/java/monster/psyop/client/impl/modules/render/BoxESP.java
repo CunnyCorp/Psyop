@@ -1,6 +1,5 @@
 package monster.psyop.client.impl.modules.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import monster.psyop.client.framework.events.EventListener;
 import monster.psyop.client.framework.friends.FriendManager;

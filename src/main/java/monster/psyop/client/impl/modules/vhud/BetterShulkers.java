@@ -6,6 +6,7 @@ import monster.psyop.client.framework.modules.settings.types.ColorSetting;
 import monster.psyop.client.framework.modules.settings.types.FloatSetting;
 import monster.psyop.client.framework.modules.settings.types.IntSetting;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
+import monster.psyop.client.impl.events.game.OnRenderSlot;
 import monster.psyop.client.impl.events.game.OnScreenRender;
 import monster.psyop.client.impl.modules.hud.HUD;
 import net.minecraft.client.gui.GuiGraphics;
@@ -178,6 +179,33 @@ public class BetterShulkers extends HUD {
                 }
 
                 guiGraphics.pose().popMatrix();
+            }
+        }
+    }
+
+    @EventListener
+    public void onRenderSlot(OnRenderSlot.Post event) {
+        if (!majorityItems.get()) {
+            return;
+        }
+
+        if (event.stack.has(DataComponents.CONTAINER)) {
+            ItemContainerContents contents = event.stack.get(DataComponents.CONTAINER);
+
+            if (contents != null) {
+                Item majorityItem = getMajorityItem(contents);
+
+                if (majorityItem != Items.AIR) {
+                    event.guiGraphics.pose().pushMatrix();
+                    event.guiGraphics.pose().scale(miScale.get());
+
+                    float inverseScale = 1.0f / miScale.get();
+                    float scaledX = (event.x + xOffsetMI.get()) * inverseScale;
+                    float scaledY = (event.y + yOffsetMI.get()) * inverseScale;
+
+                    event.guiGraphics.renderItem(majorityItem.getDefaultInstance(), (int) scaledX, (int) scaledY);
+                    event.guiGraphics.pose().popMatrix();
+                }
             }
         }
     }

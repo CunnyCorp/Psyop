@@ -49,7 +49,7 @@ public class WindowMixin {
             glfwImage.set(w, h, pixelBuffer);
             glfwImages.put(0, glfwImage);
 
-            long windowHandle = ((Window)(Object)this).getWindow();
+            long windowHandle = ((Window) (Object) this).getWindow();
 
             GLFW.glfwSetWindowIcon(windowHandle, glfwImages);
 

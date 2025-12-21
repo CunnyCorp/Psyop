@@ -31,6 +31,7 @@ import monster.psyop.client.impl.modules.silly.OiledUp;
 import monster.psyop.client.impl.modules.vhud.ArmorHUD;
 import monster.psyop.client.impl.modules.vhud.InventoryHUD;
 import monster.psyop.client.impl.modules.vhud.BetterShulkers;
+import monster.psyop.client.impl.modules.vhud.MapDisplay;
 import monster.psyop.client.impl.modules.world.*;
 import monster.psyop.client.impl.modules.world.printer.Printer;
 import monster.psyop.client.impl.modules.world.printer.SkyRefill;
@@ -187,8 +188,14 @@ public class Psyop implements ModInitializer {
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
         new PositionHUD().load();
+        new SearchBarHUD().load();
         new TargetHUD().load();
+
+        // Vanilla HUD
+        new ArmorHUD().load();
         new BetterShulkers().load();
+        new InventoryHUD().load();
+
 
         // Misc
         new AntiNarrator().load();

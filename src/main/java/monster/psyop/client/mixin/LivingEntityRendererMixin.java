@@ -7,7 +7,6 @@ import monster.psyop.client.framework.friends.FriendManager;
 import monster.psyop.client.framework.modules.settings.wrappers.ImColorW;
 import monster.psyop.client.framework.rendering.CoreRendering;
 import monster.psyop.client.impl.modules.client.RenderTweaks;
-import monster.psyop.client.impl.modules.render.BoxESP;
 import monster.psyop.client.impl.modules.render.Chams;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.PlayerModel;
