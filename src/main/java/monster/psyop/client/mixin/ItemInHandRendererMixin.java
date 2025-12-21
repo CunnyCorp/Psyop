@@ -122,11 +122,11 @@ public abstract class ItemInHandRendererMixin {
             HandView module = Psyop.MODULES.get(HandView.class);
 
             if (module.attackAnimation.get()) {
-                return f * module.attackMn0.get();
+                return Mth.sin(f * module.attackMn0.get());
             }
         }
 
-        return f;
+        return Mth.sin(f);
     }
 
     // HandView - Attack Modifier
@@ -136,11 +136,11 @@ public abstract class ItemInHandRendererMixin {
             HandView module = Psyop.MODULES.get(HandView.class);
 
             if (module.attackAnimation.get()) {
-                return f * module.attackMn1.get();
+                return Mth.sin(f * module.attackMn1.get());
             }
         }
 
-        return f;
+        return Mth.sin(f);
     }
 
     // HandView - Attack Modifier
