@@ -97,6 +97,13 @@ public class Nuker extends Module {
     }
 
     @Override
+    protected void enabled() {
+        super.enabled();
+        doubleMineBlocks[0] = null;
+        doubleMineBlocks[1] = null;
+    }
+
+    @Override
     public void update() {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         List<int[]> blockVecs = new ArrayList<>();
@@ -154,6 +161,8 @@ public class Nuker extends Module {
                 if (blockVecs.size() >= 2) {
                     int[] vec = blockVecs.get(0);
                     mutableBlockPos.set(vec[0], vec[1], vec[2]);
+
+                    Psyop.MODULES.get(AutoTool.class).findAndSwitch(mutableBlockPos);
 
                     PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, getDirection(mutableBlockPos)));
                     PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), getDirection(mutableBlockPos.setY(mutableBlockPos.getY()))));
