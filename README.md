@@ -26,24 +26,36 @@ Special thanks to @realfraze for FarSign code, and inspiring some changes and mo
 
 * Nuker
 
-    A very fast nuker for clearing out terrain
+    Fastest nuker available for clearing out terrain on 9b9t
 
 * GrimBunnyHop
 
-    Bypasses the Grim AC movement checks for a fast working bunnyhop
+    Bypasses the Grim AC movement checks for a fast, working bunnyhop
 
 * Printer
 
     Automatic printer designed specifically for the creation of maparts, probably the best public printer for 9b9t
 
-* AttackBurst
+* BetterSigns
 
-    Mace based combat module made to fast and efficiently break your opponents armor
+    Lets the player both log signs and render signs they are looking at in their HUD
 
 * BetterTab
 
     Our own take on the Better Tab module, much more customizable than what other clients offer
 
+* BetterShulkers
+  
+     Displays more information about shulkers in the HUD, also lets you display the majority item in shulkerboxes
+
+* MapDisplay  
+
+     Displays maps in GUI's
+
+* InvisibleFrames
+
+     Makes the background of a item frame transparent when they have an item in them
+ 
 * AntiKb
 
     Removes knockback from the player
@@ -90,6 +102,9 @@ Special thanks to @realfraze for FarSign code, and inspiring some changes and mo
     * Load a mapart schematic.
     * Bind the printer module to a key for convenience.
 
+# How do I make a custom addon for Psyop?
+
+We recommend that you take a look at, and perhaps even base it off of our addon template, **[Nini](https://github.com/CunnyCorp/Nini)**
 
 # Recommended Mods
 ### Use the clients at your own risk!
