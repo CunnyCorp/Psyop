@@ -217,7 +217,7 @@ public class PlacingManager {
 
         for (PlaceableBlock placeable : placeableBlocks) {
             if (PrinterUtils.placeBlock(placeable.hand(), placeable.itemResult(), placeable.blockPos())) {
-                Printer.lastPlacedBlock.set(placeable.blockPos());
+                MapArtPrinter.lastPlacedBlock.set(placeable.blockPos());
             }
         }
 
@@ -274,7 +274,7 @@ public class PlacingManager {
             PacketUtils.send(new ServerboundUseItemOnPacket(hand, new BlockHitResult(BlockUtils.clickOffset(lowerPos, Direction.UP), Direction.UP, lowerPos, false), 0));
             PrinterUtils.placeBlock(hand, slot, blockPos);
 
-            Printer.lastPlacedBlock.set(blockPos);
+            MapArtPrinter.lastPlacedBlock.set(blockPos);
 
             PrinterUtils.PRINTER.placeTimer = 0;
             placed++;

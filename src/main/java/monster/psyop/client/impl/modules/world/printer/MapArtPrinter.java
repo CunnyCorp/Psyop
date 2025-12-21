@@ -37,7 +37,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class Printer extends Module {
+public class MapArtPrinter extends Module {
     // anchoringTo must be here.
     public static BlockPos.MutableBlockPos anchoringTo = new BlockPos.MutableBlockPos();
     public static BlockPos.MutableBlockPos lastPlacedBlock = new BlockPos.MutableBlockPos();
@@ -407,8 +407,8 @@ public class Printer extends Module {
     private int sameAsLastBlock = 0;
     public int lastSwapTimer = 0;
 
-    public Printer() {
-        super(Categories.WORLD, "printer", "Places litematica schematics, designed for mapart.");
+    public MapArtPrinter() {
+        super(Categories.WORLD, "map-art-printer", "Prints Litematica schematics optimized for map art (color-based matching).");
         PrinterUtils.PRINTER = this;
     }
 

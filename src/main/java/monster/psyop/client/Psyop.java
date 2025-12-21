@@ -30,7 +30,8 @@ import monster.psyop.client.impl.modules.silly.HappyHands;
 import monster.psyop.client.impl.modules.silly.OiledUp;
 import monster.psyop.client.impl.modules.vhud.*;
 import monster.psyop.client.impl.modules.world.*;
-import monster.psyop.client.impl.modules.world.printer.Printer;
+import monster.psyop.client.impl.modules.world.printer.MapArtPrinter;
+import monster.psyop.client.impl.modules.world.printer.LitematicaPrinter;
 import monster.psyop.client.impl.modules.world.printer.SkyRefill;
 import monster.psyop.client.plugins.AddonManager;
 import monster.psyop.client.plugins.JavaAddon;
@@ -265,8 +266,9 @@ public class Psyop implements ModInitializer {
 
         // World
         if (Dependencies.LITEMATICA.isLoaded()) {
+            new LitematicaPrinter().load();
             if (Dependencies.BARITONE.isLoaded() || Dependencies.BARITONE_METEOR.isLoaded()) {
-                new Printer().load();
+                new MapArtPrinter().load();
                 new SkyRefill().load();
             }
         }

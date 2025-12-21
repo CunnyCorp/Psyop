@@ -20,7 +20,7 @@ import static monster.psyop.client.Psyop.MC;
 
 public class PrinterUtils {
 
-    public static Printer PRINTER;
+    public static MapArtPrinter PRINTER;
 
     public static boolean shouldSwimUp() {
         return MC.player != null && MC.player.isInLiquid();
