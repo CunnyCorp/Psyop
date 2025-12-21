@@ -178,6 +178,18 @@ public class Nuker extends Module {
                     PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), getDirection(mutableBlockPos)));
 
                     doubleMineBlocks[1] = mutableBlockPos.immutable();
+                } else if (blockVecs.size() == 1) {
+                    int[] vec = blockVecs.get(0);
+                    mutableBlockPos.set(vec[0], vec[1], vec[2]);
+
+                    Psyop.MODULES.get(AutoTool.class).findAndSwitch(mutableBlockPos);
+
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, mutableBlockPos, getDirection(mutableBlockPos)));
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, mutableBlockPos.setY(mutableBlockPos.getY() + 1337), getDirection(mutableBlockPos.setY(mutableBlockPos.getY()))));
+                    PacketUtils.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, mutableBlockPos.setY(vec[1]), getDirection(mutableBlockPos)));
+
+                    doubleMineBlocks[0] = mutableBlockPos.immutable();
+                    doubleMineBlocks[1] = null;
                 }
             }
 
