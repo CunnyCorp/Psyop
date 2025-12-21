@@ -91,6 +91,7 @@ mutable field net/minecraft/client/Minecraft minecraftSessionService Lcom/mojang
 accessible field net/minecraft/client/Minecraft authenticationService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
 mutable field net/minecraft/client/Minecraft authenticationService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
 
+accessible method net/minecraft/client/gui/screens/ConnectScreen connect (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/multiplayer/resolver/ServerAddress;Lnet/minecraft/client/multiplayer/ServerData;Lnet/minecraft/client/multiplayer/TransferState;)V
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen hoveredSlot Lnet/minecraft/world/inventory/Slot;
 accessible class net/minecraft/client/renderer/blockentity/ShulkerBoxRenderer$ShulkerBoxModel
 accessible field net/minecraft/world/item/component/ItemContainerContents items Lnet/minecraft/core/NonNullList;
@@ -111,3 +112,14 @@ accessible field net/minecraft/client/gui/GuiGraphics scissorStack Lnet/minecraf
 accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
 accessible field net/minecraft/client/gui/GuiGraphics guiRenderState Lnet/minecraft/client/gui/render/state/GuiRenderState;
 accessible method net/minecraft/client/renderer/GameRenderer pick (Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;
+
+# MapDisplay
+accessible method net/minecraft/client/gui/GuiGraphics submitBlit (Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lcom/mojang/blaze3d/textures/GpuTextureView;IIIIFFFFI)V
+accessible field net/minecraft/client/renderer/MapRenderer mapTextureManager Lnet/minecraft/client/resources/MapTextureManager;
+accessible class net/minecraft/client/resources/MapTextureManager$MapInstance
+accessible field net/minecraft/client/resources/MapTextureManager$MapInstance location Lnet/minecraft/resources/ResourceLocation;
+accessible method net/minecraft/client/resources/MapTextureManager$MapInstance replaceMapData (Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;)V
+accessible method net/minecraft/client/resources/MapTextureManager$MapInstance forceUpload ()V
+accessible method net/minecraft/client/resources/MapTextureManager$MapInstance updateTextureIfNeeded ()V
+accessible field net/minecraft/client/resources/MapTextureManager$MapInstance texture Lnet/minecraft/client/renderer/texture/DynamicTexture;
+accessible method net/minecraft/client/resources/MapTextureManager getOrCreateMapInstance (Lnet/minecraft/world/level/saveddata/maps/MapId;Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;)Lnet/minecraft/client/resources/MapTextureManager$MapInstance;

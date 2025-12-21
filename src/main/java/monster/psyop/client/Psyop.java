@@ -177,10 +177,8 @@ public class Psyop implements ModInitializer {
         new SilentClose().load();
 
         // HUD
-        new ArmorHUD().load();
         new ArrayHUD().load();
         new HudEditor().load();
-        new InventoryHUD().load();
         new LookingAtHUD().load();
         new NotificationHUD().load();
         new PlayerRadarHUD().load();
@@ -192,6 +190,7 @@ public class Psyop implements ModInitializer {
         new ArmorHUD().load();
         new BetterShulkers().load();
         new InventoryHUD().load();
+        new MapDisplay().load();
 
 
         // Misc
