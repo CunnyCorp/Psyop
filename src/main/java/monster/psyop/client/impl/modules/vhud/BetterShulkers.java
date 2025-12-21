@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BetterShulkers extends HUD {
-    public GroupedSettings displayGroup = new GroupedSettings("Display", "Displays the shulker content in HUD's");
-    public GroupedSettings majorityItemsGroup = new GroupedSettings("Majority Items", "Displays majority items on shulkers in containers.");
+    public GroupedSettings displayGroup = addGroup(new GroupedSettings("Display", "Displays the shulker content in HUD's"));
+    public GroupedSettings majorityItemsGroup = addGroup(new GroupedSettings("Majority Items", "Displays majority items on shulkers in containers."));
 
     public BoolSetting displayToggle = new BoolSetting.Builder()
             .name("display")
