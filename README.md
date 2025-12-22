@@ -3,7 +3,7 @@
 
 # Psyop
 
-A ImGui based Minecraft Utility Client specifically made for 9b9t
+An ImGui based Minecraft Utility Client specifically made for 9b9t
 
 made with <3
 
@@ -77,7 +77,7 @@ Special thanks to @realfraze for FarSign code, and inspiring some changes and mo
     * Press L to open gui -> Click on the views button in the top left of your screen -> Open the modules window -> Select Client category -> Right Click Config module -> Change the GUI keybind to your preferred key
 
 
-* WHY DO I HAVE TO CONFIGURE EVERYTHING!!!1!!!1 / WHY GUI WEIRD
+* WHY DO I HAVE TO CONFIGURE EVERYTHING??!!!1!!!1 / WHY GUI WEIRD
 
     * The GUI uses ImGui which has a couple massive benefits:
       * It's easy to add new Views/Elements
