@@ -47,20 +47,20 @@ public class LitematicaPrinter extends Module {
     private static final float SENSITIVE_ROT_EPS_DEG = 2.5f;
     private static final double SENSITIVE_MAX_H_SPEED = 0.05;
 
-    private static final int FAIL_COOLDOWN_TICKS = 20;
+    private static final int FAIL_COOLDOWN_TICKS = 8;
     private static final int FAIL_MAX = 2;
 
     public final IntSetting switchDelay = new IntSetting.Builder()
             .name("switch-delay")
             .description("How long to wait (ticks) after switching items before placing.")
-            .defaultTo(4)
+            .defaultTo(7)
             .range(0, 10)
             .addTo(sgGeneral);
 
     public final IntSetting dedicatedSlot = new IntSetting.Builder()
             .name("dedicated-slot")
             .description("Hotbar slot to use for placement (0-8).")
-            .defaultTo(7)
+            .defaultTo(6)
             .range(0, 8)
             .addTo(sgGeneral);
 
@@ -81,21 +81,21 @@ public class LitematicaPrinter extends Module {
     public final IntSetting blocksPerTick = new IntSetting.Builder()
             .name("blocks/tick")
             .description("How many blocks to attempt per tick.")
-            .defaultTo(3)
-            .range(1, 4)
+            .defaultTo(4)
+            .range(1, 8)
             .addTo(sgGeneral);
 
     public final IntSetting actionDelay = new IntSetting.Builder()
             .name("action-delay")
             .description("Delay (ticks) between placement attempts.")
-            .defaultTo(2)
+            .defaultTo(0)
             .range(0, 20)
             .addTo(sgGeneral);
 
     public final IntSetting confirmTicks = new IntSetting.Builder()
             .name("confirm-ticks")
             .description("How long to wait for the world to reflect the placed block/state before failing (ticks).")
-            .defaultTo(8)
+            .defaultTo(3)
             .range(0, 40)
             .addTo(sgGeneral);
 
@@ -236,10 +236,6 @@ public class LitematicaPrinter extends Module {
             Target t = findNextTarget(schematic);
             if (t == null) break;
 
-            if (isStateSensitive(t.required) && !canPlaceSensitiveNow()) {
-                continue;
-            }
-
             Item requiredItem = t.required.getBlock().asItem();
             int invSlot = InventoryUtils.findMatchingSlot((stack, slot) -> stack.getItem() == requiredItem);
             if (invSlot == -1) continue;
@@ -329,6 +325,7 @@ public class LitematicaPrinter extends Module {
         int r = placeRadius.get();
         BlockPos.MutableBlockPos base = MC.player.blockPosition().mutable();
         List<Target> candidates = new ArrayList<>();
+        List<Target> sensitiveCandidates = new ArrayList<>();
 
         for (int dy = -r; dy <= r; dy++) {
             base.setY(MC.player.getBlockY() + dy);
@@ -350,11 +347,43 @@ public class LitematicaPrinter extends Module {
 
                 if (failCooldowns.getOrDefault(p, 0) > 0) continue;
 
-                candidates.add(new Target(p, required));
+                Target target = new Target(p, required);
+                if (isStateSensitive(required) && canPlaceSensitiveTarget(target)) {
+                    sensitiveCandidates.add(target);
+                } else {
+                    candidates.add(target);
+                }
             }
         }
 
+        // Priority: state-sensitive blocks that can be placed right now
+        if (!sensitiveCandidates.isEmpty()) {
+            String mode = targetSort.get();
+            boolean bottomUp = mode != null && mode.equalsIgnoreCase("BottomUp");
+
+            if (bottomUp) {
+                sensitiveCandidates.sort((a, b) -> {
+                    if (MC.player == null) return 0;
+                    int ay = a.pos.getY();
+                    int by = b.pos.getY();
+                    if (ay != by) return Integer.compare(ay, by);
+                    return Double.compare(
+                        MC.player.distanceToSqr(a.pos.getX() + 0.5, a.pos.getY() + 0.5, a.pos.getZ() + 0.5),
+                        MC.player.distanceToSqr(b.pos.getX() + 0.5, b.pos.getY() + 0.5, b.pos.getZ() + 0.5)
+                    );
+                });
+            } else {
+                sensitiveCandidates.sort(Comparator.comparingDouble(t -> {
+                    if (MC.player == null) return 0;
+                    return MC.player.distanceToSqr(t.pos.getX() + 0.5, t.pos.getY() + 0.5, t.pos.getZ() + 0.5);
+                }));
+            }
+            return sensitiveCandidates.get(0);
+        }
+
+        // Fallback: regular blocks
         if (candidates.isEmpty()) return null;
+
         String mode = targetSort.get();
         boolean bottomUp = mode != null && mode.equalsIgnoreCase("BottomUp");
 
@@ -377,6 +406,15 @@ public class LitematicaPrinter extends Module {
             }));
         }
         return candidates.get(0);
+    }
+
+    private boolean canPlaceSensitiveTarget(Target target) {
+        if (!isStateSensitive(target.required)) return true;
+        if (!canPlaceSensitiveNow()) return false;
+
+        // Quick check: try to find a valid placement
+        Placement plan = planPlacement(target.pos, target.required, MC.player.getMainHandItem());
+        return plan != null;
     }
 
     private void decayFailCooldowns() {
